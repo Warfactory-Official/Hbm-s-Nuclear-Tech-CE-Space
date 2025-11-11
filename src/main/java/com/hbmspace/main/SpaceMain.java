@@ -1,5 +1,6 @@
 package com.hbmspace.main;
 
+import com.hbm.entity.logic.IChunkLoader;
 import com.hbm.handler.GuiHandler;
 import com.hbm.inventory.OreDictManager;
 import com.hbmspace.blocks.ModBlocksSpace;
@@ -12,6 +13,8 @@ import com.hbmspace.inventory.OreDictManagerSpace;
 import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.items.weapon.ItemCustomMissilePart;
 import com.hbmspace.world.PlanetGen;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
@@ -25,6 +28,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Okay, so if you read this
@@ -71,6 +75,23 @@ public class SpaceMain {
         int i = 0;
         AutoRegistrySpace.registerEntities(i);
         ItemCustomMissilePart.initSpaceThrusters();
+
+        ForgeChunkManager.setForcedChunkLoadingCallback(this, new ForgeChunkManager.LoadingCallback() {
+
+            @Override
+            public void ticketsLoaded(List<ForgeChunkManager.Ticket> tickets, World world) {
+                for(ForgeChunkManager.Ticket ticket : tickets) {
+                    if(ticket.getType() == ForgeChunkManager.Type.NORMAL) {
+                        ChunkLoaderManager.loadTicket(world, ticket);
+                        return;
+                    }
+
+                    if(ticket.getEntity() instanceof IChunkLoader) {
+                        ((IChunkLoader) ticket.getEntity()).init(ticket);
+                    }
+                }
+            }
+        });
     }
 
 

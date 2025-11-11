@@ -1,6 +1,7 @@
 package com.hbmspace.blocks.machine;
 
 import com.hbm.blocks.ILookOverlay;
+import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.handler.RocketStruct;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.items.ModItems;
@@ -205,6 +206,22 @@ public class BlockOrbitalStation extends BlockDummyableSpace implements IBlockSe
             return;
 
         ILookOverlay.printGeneric(event, I18nUtil.resolveKey(getTranslationKey() + ".name"), 0xffff00, 0x404000, text);
+    }
+
+    @Override
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
+        if (this == ModBlocksSpace.orbital_station) {
+            return false; // block placing of extra main ports (use the dedicated sub-ports!)
+        }
+        return super.canPlaceBlockAt(worldIn, pos);
+    }
+
+    @Override
+    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+        if (this == ModBlocksSpace.orbital_station) {
+            return false; // block removal of main port
+        }
+        return super.removedByPlayer(state, world, pos, player, willHarvest);
     }
 
 }

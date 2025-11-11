@@ -1,7 +1,6 @@
 package com.hbmspace.render.tileentity;
 
 import com.hbm.blocks.BlockDummyable;
-import com.hbm.blocks.ModBlocks;
 import com.hbm.render.item.ItemRenderBase;
 import com.hbm.render.tileentity.IItemRendererProvider;
 import com.hbmspace.blocks.ModBlocksSpace;
@@ -69,8 +68,15 @@ public class RenderOrbitalStation extends TileEntitySpecialRenderer<TileEntityOr
     }
 
     @Override
+    public Item[] getItemsForRenderer(){
+        return new Item[] {
+                Item.getItemFromBlock(ModBlocksSpace.orbital_station),
+                Item.getItemFromBlock(ModBlocksSpace.orbital_station_port)
+        };
+    }
+    @Override
     public Item getItemForRenderer() {
-        return Item.getItemFromBlock(ModBlocksSpace.orbital_station);
+        return Item.getItemFromBlock(ModBlocksSpace.orbital_station_port);
     }
 
     @Override

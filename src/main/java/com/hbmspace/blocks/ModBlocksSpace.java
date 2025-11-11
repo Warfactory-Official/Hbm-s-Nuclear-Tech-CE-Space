@@ -2,7 +2,7 @@ package com.hbmspace.blocks;
 
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.OreEnumUtil;
-import com.hbm.blocks.generic.BlockNTMOre;
+import com.hbm.lib.RefStrings;
 import com.hbm.main.MainRegistry;
 import com.hbmspace.blocks.bomb.LaunchPadRocket;
 import com.hbmspace.blocks.generic.BlockOre;
@@ -57,7 +57,6 @@ public class ModBlocksSpace {
     public static final Block ore_rare = new BlockOre("ore_rare", OreEnumUtil.OreEnum.RARE_EARTHS, 2, 12).setNTMAlt(ModBlocks.ore_rare).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_cobalt = new BlockOre("ore_cobalt", OreEnumUtil.OreEnum.COBALT, 3, 15).setNTMAlt(ModBlocks.ore_cobalt).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_cinnabar = new BlockOre("ore_cinnabar", OreEnumUtil.OreEnum.CINNABAR, 1).setNTMAlt(ModBlocks.ore_cinnabar).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
-
     public static final Block ore_reiium = new BlockOre("ore_reiium", null, 4, 100).setNTMAlt(ModBlocks.ore_reiium).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_weidanium = new BlockOre("ore_weidanium", null, 4, 100).setNTMAlt(ModBlocks.ore_weidanium).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_australium = new BlockOre("ore_australium", null, 4, 100).setNTMAlt(ModBlocks.ore_australium).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
@@ -71,11 +70,15 @@ public class ModBlocksSpace {
     public static final Block machine_htr3 = new MachineHTR3("machine_htr3").setHardness(5.0F).setResistance(100.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_htrf4 = new MachineHTRF4("machine_htrf4").setHardness(5.0F).setResistance(100.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_xenon_thruster = new MachineXenonThruster(Material.IRON, "machine_xenon_thruster").setHardness(5.0F).setResistance(100.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block transporter_rocket = new BlockTransporterRocket(Material.IRON, "transporter_rocket").setHardness(1.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block orbital_station = new BlockOrbitalStation(Material.IRON, "orbital_station").setBlockUnbreakable().setResistance(Float.POSITIVE_INFINITY).setCreativeTab(null);
+    public static final Block orbital_station_port = new BlockOrbitalStation(Material.IRON, "orbital_station_port").setHardness(1.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block orbital_station_computer = new BlockOrbitalStationComputer(Material.IRON, "orbital_station_computer").setHardness(1.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_stardar = new MachineStardar(Material.IRON, "machine_stardar").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_drive_processor = new MachineDriveProcessor(Material.IRON, "machine_drive_processor").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_rocket_assembly = new MachineRocketAssembly(Material.IRON, "machine_rocket_assembly").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.missileTab);
     public static final Block launch_pad_rocket = new LaunchPadRocket(Material.IRON, "launch_pad_rocket").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.missileTab);
+    public static final Block machine_vacuum_circuit = new MachineVacuumCircuit(Material.IRON, "machine_vacuum_circuit").setHardness(5.0F).setResistance(30.0F).setCreativeTab(MainRegistry.machineTab);
 
     public static void preInit(){
         for(Block block : ALL_BLOCKS){
