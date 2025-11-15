@@ -1,12 +1,12 @@
 package com.hbmspace.handler;
 
 import com.hbm.inventory.fluid.FluidType;
-import com.hbm.items.ModItems;
 import com.hbm.items.weapon.ItemMissile;
 import com.hbm.util.BufferUtil;
 import com.hbm.util.Tuple;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.SolarSystem;
+import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.items.weapon.ItemCustomMissilePart;
 import com.hbmspace.render.misc.RocketPart;
 import io.netty.buffer.ByteBuf;
@@ -174,7 +174,7 @@ public class RocketStruct {
     }
 
     public boolean hasSufficientFuel(CelestialBody from, CelestialBody to, boolean fromOrbit, boolean toOrbit) {
-        if(capsule.part == ModItems.rp_pod_20) {
+        if(capsule.part == ModItemsSpace.rp_pod_20) {
             return from == to && (fromOrbit || toOrbit); // Pods can transfer, fall to orbited body, and return to station, but NOT hop on the surface
         }
 

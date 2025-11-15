@@ -3,6 +3,7 @@ package com.hbmspace.mixin.mod.hbm;
 import com.hbm.main.NetworkHandler;
 import com.hbm.packet.PacketDispatcher;
 import com.hbmspace.packet.toclient.ExtPropSpacePacket;
+import com.hbmspace.packet.toclient.TransporterLinkerPacket;
 import com.hbmspace.packet.toserver.GuiLayerPacket;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,5 +24,6 @@ public class MixinPacketDispatcher {
     private static void onRegisterPackets(CallbackInfo ci, @Local int i) {
         wrapper.registerMessage(ExtPropSpacePacket.Handler.class, ExtPropSpacePacket.class, i++, Side.CLIENT);
         wrapper.registerMessage(GuiLayerPacket.Handler.class, GuiLayerPacket.class, i++, Side.SERVER);
+        wrapper.registerMessage(TransporterLinkerPacket.Handler.class, TransporterLinkerPacket.class, i++, Side.CLIENT);
     }
 }

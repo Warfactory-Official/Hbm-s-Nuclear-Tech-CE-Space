@@ -94,7 +94,7 @@ public class BlockOrbitalStation extends BlockDummyableSpace implements IBlockSe
                         station.spawnRocket(held);
                         held.shrink(1);
                     }
-                    if (held.getItem() == ModItems.rp_capsule_20 || held.getItem() == ModItems.rp_pod_20) {
+                    if (held.getItem() == ModItemsSpace.rp_capsule_20 || held.getItem() == ModItemsSpace.rp_pod_20) {
                         station.spawnRocket(ItemCustomRocket.build(new RocketStruct(held)));
                         held.shrink(1);
                     }
@@ -170,7 +170,7 @@ public class BlockOrbitalStation extends BlockDummyableSpace implements IBlockSe
             if(station.hasDocked) {
                 if(!station.hasRider) {
                     if(player.isSneaking()) {
-                        if(player.getHeldItem(player.getActiveHand()).isEmpty()) {
+                        if(player.getHeldItemMainhand().isEmpty()) {
                             text.add(I18nUtil.resolveKey("station.removeRocket"));
                         }
                     } else {
@@ -195,7 +195,7 @@ public class BlockOrbitalStation extends BlockDummyableSpace implements IBlockSe
                     if(held.getItem() == ModItemsSpace.rocket_custom && ItemCustomRocket.hasFuel(held)) {
                         text.add(I18nUtil.resolveKey("station.placeRocket"));
                     }
-                    if(held.getItem() == ModItems.rp_capsule_20 || held.getItem() == ModItems.rp_pod_20) {
+                    if(held.getItem() == ModItemsSpace.rp_capsule_20 || held.getItem() == ModItemsSpace.rp_pod_20) {
                         text.add(I18nUtil.resolveKey("station.placeRocket"));
                     }
                 }

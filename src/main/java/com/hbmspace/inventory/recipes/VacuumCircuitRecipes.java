@@ -12,14 +12,11 @@ import com.hbmspace.items.ModItemsSpace;
 import net.minecraft.item.ItemStack;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class VacuumCircuitRecipes extends SerializableRecipe {
 
-    public static List<VacuumCircuitRecipe> recipes = new ArrayList();
+    public static List<VacuumCircuitRecipe> recipes = new ArrayList<>();
 
     @Override
     public void registerDefaults() {
@@ -63,15 +60,15 @@ public class VacuumCircuitRecipes extends SerializableRecipe {
         return null;
     }
 
-    public static HashMap getRecipes() {
+    public static HashMap<Object, Object> getRecipes() {
 
-        HashMap<Object, Object> recipes = new HashMap<Object, Object>();
+        HashMap<Object, Object> recipes = new HashMap<>();
 
         for(VacuumCircuitRecipe recipe : VacuumCircuitRecipes.recipes) {
 
-            List ingredients = new ArrayList();
-            for(RecipesCommon.AStack stack : recipe.wafer) ingredients.add(stack);
-            for(RecipesCommon.AStack stack : recipe.pcb) ingredients.add(stack);
+            List<RecipesCommon.AStack> ingredients = new ArrayList<>();
+            Collections.addAll(ingredients, recipe.wafer);
+            Collections.addAll(ingredients, recipe.pcb);
 
             recipes.put(ingredients.toArray(), recipe.output);
         }
@@ -100,9 +97,9 @@ public class VacuumCircuitRecipes extends SerializableRecipe {
     public void readRecipe(JsonElement recipe) {
         JsonObject obj = (JsonObject) recipe;
 
-        RecipesCommon.AStack[] wafer = this.readAStackArray(obj.get("wafer").getAsJsonArray());
-        RecipesCommon.AStack[] pcb = this.readAStackArray(obj.get("pcb").getAsJsonArray());
-        ItemStack output = this.readItemStack(obj.get("output").getAsJsonArray());
+        RecipesCommon.AStack[] wafer = readAStackArray(obj.get("wafer").getAsJsonArray());
+        RecipesCommon.AStack[] pcb = readAStackArray(obj.get("pcb").getAsJsonArray());
+        ItemStack output = readItemStack(obj.get("output").getAsJsonArray());
         int duration = obj.get("duration").getAsInt();
         long consumption = obj.get("consumption").getAsLong();
 
@@ -114,23 +111,23 @@ public class VacuumCircuitRecipes extends SerializableRecipe {
         VacuumCircuitRecipe recipe = (VacuumCircuitRecipe) obj;
 
         writer.name("wafer").beginArray();
-        for(RecipesCommon.AStack aStack : recipe.wafer) this.writeAStack(aStack, writer);
+        for(RecipesCommon.AStack aStack : recipe.wafer) writeAStack(aStack, writer);
         writer.endArray();
 
         writer.name("pcb").beginArray();
-        for(RecipesCommon.AStack aStack : recipe.pcb) this.writeAStack(aStack, writer);
+        for(RecipesCommon.AStack aStack : recipe.pcb) writeAStack(aStack, writer);
         writer.endArray();
 
 
         writer.name("output");
-        this.writeItemStack(recipe.output, writer);
+        writeItemStack(recipe.output, writer);
 
         writer.name("duration").value(recipe.duration);
         writer.name("consumption").value(recipe.consumption);
     }
 
-    public static HashSet<RecipesCommon.AStack> wafer = new HashSet();
-    public static HashSet<RecipesCommon.AStack> pcb = new HashSet();
+    public static HashSet<RecipesCommon.AStack> wafer = new HashSet<>();
+    public static HashSet<RecipesCommon.AStack> pcb = new HashSet<>();
 
     public static class VacuumCircuitRecipe {
 
@@ -146,8 +143,8 @@ public class VacuumCircuitRecipes extends SerializableRecipe {
             this.output = output;
             this.duration = duration;
             this.consumption = consumption;
-            for(RecipesCommon.AStack t : wafer) VacuumCircuitRecipes.wafer.add(t);
-            for(RecipesCommon.AStack t : pcb) VacuumCircuitRecipes.pcb.add(t);
+            VacuumCircuitRecipes.wafer.addAll(Arrays.asList(wafer));
+            VacuumCircuitRecipes.pcb.addAll(Arrays.asList(pcb));
         }
     }
 }

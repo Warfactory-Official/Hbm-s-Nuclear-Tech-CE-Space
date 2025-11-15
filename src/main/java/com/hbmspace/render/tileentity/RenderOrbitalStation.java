@@ -2,7 +2,6 @@ package com.hbmspace.render.tileentity;
 
 import com.hbm.blocks.BlockDummyable;
 import com.hbm.render.item.ItemRenderBase;
-import com.hbm.render.tileentity.IItemRendererProvider;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.main.ResourceManagerSpace;
 import com.hbmspace.tileentity.machine.TileEntityOrbitalStation;
@@ -13,7 +12,7 @@ import net.minecraft.item.Item;
 import org.lwjgl.opengl.GL11;
 
 @AutoRegister
-public class RenderOrbitalStation extends TileEntitySpecialRenderer<TileEntityOrbitalStation> implements IItemRendererProvider {
+public class RenderOrbitalStation extends TileEntitySpecialRenderer<TileEntityOrbitalStation> implements IItemRendererProviderSpace {
 
     @Override
     public void render(TileEntityOrbitalStation station, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {

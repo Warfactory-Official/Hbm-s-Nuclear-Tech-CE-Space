@@ -45,5 +45,5 @@ dependencies {
     compileOnly 'mezz:jei:4.29.8'
     implementation 'com.google.guava:guava:31.0.1-jre'
     //implementation rfg.deobf("curse.maven:hbm-nuclear-tech-mod-community-edition-1312314:7180568")
-    implementation rfg.deobf(project.files("libs/NTM-CE-1.12.2-1.0.0.0.jar"))
+    implementation rfg.deobf(project.files("libs/NTM-CE-1.12.2-1.1.1.0.jar"))
 }

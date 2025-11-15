@@ -1,8 +1,12 @@
 package com.hbmspace.main;
 
+import com.hbm.blocks.BlockEnums;
+import com.hbm.blocks.ModBlocks;
 import com.hbm.entity.logic.IChunkLoader;
 import com.hbm.handler.GuiHandler;
 import com.hbm.inventory.OreDictManager;
+import com.hbm.world.feature.OreLayer3D;
+import com.hbmspace.blocks.BlockEnumsSpace;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.capability.HbmLivingCapabilitySpace;
 import com.hbmspace.config.SpaceConfig;
@@ -13,6 +17,7 @@ import com.hbmspace.inventory.OreDictManagerSpace;
 import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.items.weapon.ItemCustomMissilePart;
 import com.hbmspace.world.PlanetGen;
+import com.hbmspace.world.feature.OreLayer3DSpace;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -109,7 +114,12 @@ public class SpaceMain {
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
+        new OreLayer3DSpace(ModBlocksSpace.stone_resource, BlockEnumsSpace.EnumStoneType.CONGLOMERATE.ordinal()).setDimension(SpaceConfig.moonDimension).setScaleH(0.04D).setScaleV(0.25D).setThreshold(220);
+        new OreLayer3DSpace(ModBlocksSpace.stone_resource, BlockEnumsSpace.EnumStoneType.CONGLOMERATE.ordinal()).setDimension(SpaceConfig.ikeDimension).setScaleH(0.04D).setScaleV(0.25D).setThreshold(220);
+        new OreLayer3DSpace(ModBlocksSpace.stone_resource, BlockEnumsSpace.EnumStoneType.CONGLOMERATE.ordinal()).setDimension(SpaceConfig.minmusDimension).setScaleH(0.04D).setScaleV(0.25D).setThreshold(220);
+
         PlanetGen.init();
+        proxy.postInit(event);
     }
 
     @EventHandler

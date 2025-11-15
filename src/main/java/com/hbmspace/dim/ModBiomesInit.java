@@ -44,7 +44,7 @@ public class ModBiomesInit {
                 BiomeGenBaseMoho.mohoCrag.setRegistryName("hbm", "moho_crag"),
                 BiomeGenBaseMoho.mohoBasalt.setRegistryName("hbm", "moho_basalt"),
                 new BiomeGenMoon(new Biome.BiomeProperties("Mun")).setRegistryName("hbm", "moon"),
-                new BiomeGenOrbit(new Biome.BiomeProperties("Orbit")).setRegistryName("hbm", "orbit")
+                BiomeGenOrbit.biome.setRegistryName("hbm", "orbit")
         );
 
         addTypes();

@@ -1,9 +1,7 @@
 package com.hbmspace.main;
 
-import com.hbm.main.AutoRegistry;
 import com.hbm.main.ModEventHandlerClient;
 import com.hbm.render.item.ItemRenderMissilePart;
-import com.hbm.render.misc.MissilePart;
 import com.hbm.sound.AudioWrapper;
 import com.hbm.sound.AudioWrapperClient;
 import com.hbmspace.render.misc.RocketPart;
@@ -18,7 +16,6 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.registry.IRegistry;
@@ -65,9 +62,7 @@ public class ClientProxy extends ServerProxy {
     public void registerMissileItems(IRegistry<ModelResourceLocation, IBakedModel> reg) {
         RocketPart.registerAllParts();
 
-        RocketPart.parts.values().forEach(part -> {
-            registerItemRenderer(part.part, new ItemRenderMissilePart(part), reg);
-        });
+        RocketPart.parts.values().forEach(part -> registerItemRenderer(part.part, new ItemRenderMissilePart(part), reg));
     }
 
     public static void registerItemRenderer(Item i, TileEntityItemStackRenderer render, IRegistry<ModelResourceLocation, IBakedModel> reg) {

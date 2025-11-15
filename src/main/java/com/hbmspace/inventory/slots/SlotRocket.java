@@ -1,8 +1,8 @@
 package com.hbmspace.inventory.slots;
 
-import com.hbm.items.ModItems;
 import com.hbm.items.weapon.ItemMissile;
 import com.hbmspace.items.ItemVOTVdrive;
+import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.items.weapon.ItemCustomRocket;
 import com.hbmspace.tileentity.machine.TileEntityMachineRocketAssembly;
 import net.minecraft.item.ItemStack;
@@ -49,12 +49,10 @@ public class SlotRocket extends SlotItemHandler {
         @Override
         public boolean isItemValid(ItemStack stack) {
             if (stack.isEmpty()) return false;
-            if (!(stack.getItem() instanceof ItemMissile)) return false;
-
-            ItemMissile item = (ItemMissile) stack.getItem();
+            if (!(stack.getItem() instanceof ItemMissile item)) return false;
 
             if (item.type != ItemMissile.PartType.WARHEAD) return false;
-            if (item == ModItems.rp_pod_20) return false;
+            if (item == ModItemsSpace.rp_pod_20) return false;
 
             return item.attributes[0] == ItemMissile.WarheadType.APOLLO || item.attributes[0] == ItemMissile.WarheadType.SATELLITE;
         }

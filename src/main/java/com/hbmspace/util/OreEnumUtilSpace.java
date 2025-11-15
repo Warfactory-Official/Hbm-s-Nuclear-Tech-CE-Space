@@ -5,6 +5,7 @@ import com.hbm.blocks.OreEnumUtil;
 import com.hbm.lib.TriFunction;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 
 import java.util.Random;
@@ -19,11 +20,15 @@ public class OreEnumUtilSpace {
     public static int base4Rand2Fortune(IBlockState state, int fortune, Random rand) {
         return 4 + rand.nextInt(2) + fortune;
     }
+    public static int base4Rand5Fortune(IBlockState state, int fortune, Random rand) {
+        return 4 + rand.nextInt(5) + fortune;
+    }
 
     public enum SpaceOreEnum implements IOreType {
 
         REDSTONE(() -> new ItemStack(Items.REDSTONE), OreEnumUtilSpace::base4Rand2Fortune),
-        NICKEL(() -> new ItemStack(Items.REDSTONE), OreEnumUtilSpace::base4Rand2Fortune),
+        EMERALD(() -> new ItemStack(Items.EMERALD), OreEnumUtil::vanillaFortune),
+        LAPIS(() -> new ItemStack(Items.DYE, 1, EnumDyeColor.BLUE.getDyeDamage()), OreEnumUtilSpace::base4Rand5Fortune)
         ;
 
         public final BiFunction<IBlockState, Random, ItemStack> dropFunction;

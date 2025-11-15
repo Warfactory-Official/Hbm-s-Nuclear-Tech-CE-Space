@@ -1,6 +1,7 @@
 package com.hbmspace.dim;
 
 import com.hbm.config.GeneralConfig;
+import com.hbm.inventory.fluid.FluidStack;
 import com.hbmspace.dim.trait.CBT_Atmosphere;
 import com.hbmspace.dim.trait.CBT_Atmosphere.FluidEntry;
 import com.hbmspace.dim.trait.CBT_Destroyed;
@@ -34,6 +35,14 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 	// Ore gen will attempt to replace this block with ores
 	public Block getStone() {
 		return Blocks.STONE;
+	}
+	// What fluid is required to extract new bedrock ores
+	public FluidStack getBedrockAcid() {
+		return null;
+	}
+	// Should we generate bedrock ice
+	public boolean hasIce() {
+		return false;
 	}
 
 	public boolean hasLife() {

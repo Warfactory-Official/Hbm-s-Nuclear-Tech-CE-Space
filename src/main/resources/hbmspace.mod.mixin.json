@@ -14,8 +14,13 @@
     "hbm.MixinBlockNTMOre",
     "hbm.MixinHBMSoundHandler",
     "hbm.MixinEntityEffectHandler",
-    "hbm.MixinAssemblyRecipes",
-    "hbm.MixinDictFrame"
+    "hbm.recipes.MixinAssemblyRecipes",
+    "hbm.recipes.MixinSmeltingRecipes",
+    "hbm.recipes.MixinSolderingRecipes",
+    "hbm.MixinMatDistribution",
+    "hbm.MixinDictFrame",
+    "hbm.recipes.MixinSerializableRecipe",
+    "hbm.MixinMainRegistry"
   ],
   "server": [],
   "setSourceFile": true,

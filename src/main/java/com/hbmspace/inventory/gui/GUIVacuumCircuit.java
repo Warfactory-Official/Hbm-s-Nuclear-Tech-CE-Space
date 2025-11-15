@@ -27,6 +27,7 @@ public class GUIVacuumCircuit extends GuiInfoContainer {
     @Override
     public void drawScreen(int x, int y, float interp) {
         super.drawScreen(x, y, interp);
+        super.renderHoveredToolTip(x, y);
 
         this.drawElectricityInfo(this, x, y, guiLeft + 132, guiTop + 18, 16, 52, sucker.getPower(), sucker.getMaxPower());
 
@@ -42,6 +43,7 @@ public class GUIVacuumCircuit extends GuiInfoContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float interp, int x, int y) {
+        super.drawDefaultBackground();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);

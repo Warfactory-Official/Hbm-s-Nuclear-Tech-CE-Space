@@ -12,6 +12,7 @@ import com.hbm.util.AstronomyUtil;
 import com.hbm.util.BobMathUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -22,6 +23,7 @@ import net.minecraft.world.biome.BiomeProviderSingle;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.client.IRenderHandler;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -50,8 +52,11 @@ public class WorldProviderOrbit extends WorldProvider {
 	}
 
 	@Override
+	public boolean hasSkyLight() { return true; }
+
+	@Override
 	public void init() {
-		this.biomeProvider = new BiomeProviderSingle(new BiomeGenOrbit(new Biome.BiomeProperties("Space").setRainDisabled()));
+		this.biomeProvider = new BiomeProviderSingle(BiomeGenOrbit.biome);
 	}
 	
 	@Override

@@ -5,6 +5,7 @@ import com.hbm.items.weapon.ItemMissile;
 import com.hbm.main.ResourceManager;
 import com.hbm.render.loader.IModelCustom;
 import com.hbm.render.misc.MissilePart;
+import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.main.ResourceManagerSpace;
 import com.hbmspace.render.entity.rocket.part.RenderDropPod;
 import com.hbmspace.render.entity.rocket.part.RenderRocketPart;
@@ -41,9 +42,9 @@ public class RocketPart extends MissilePart {
     public static void registerAllParts() {
         parts.clear();
 
-        registerPart(ModItems.rp_capsule_20, ItemMissile.PartType.WARHEAD, 3.5, 2.25, ResourceManagerSpace.soyuz_lander_neo, ResourceManagerSpace.module_lander_tex);
-        registerPart(ModItems.rp_station_core_20, ItemMissile.PartType.WARHEAD, 7, 5, ResourceManagerSpace.mp_w_fairing, ResourceManagerSpace.mp_w_fairing_tex);
-        registerPart(ModItems.rp_pod_20, ItemMissile.PartType.WARHEAD, 3.0, 2.25, ResourceManagerSpace.drop_pod, ResourceManagerSpace.drop_pod_tex).withRenderer(new RenderDropPod());
+        registerPart(ModItemsSpace.rp_capsule_20, ItemMissile.PartType.WARHEAD, 3.5, 2.25, ResourceManagerSpace.soyuz_lander_neo, ResourceManagerSpace.module_lander_tex);
+        registerPart(ModItemsSpace.rp_station_core_20, ItemMissile.PartType.WARHEAD, 7, 5, ResourceManagerSpace.mp_w_fairing, ResourceManagerSpace.mp_w_fairing_tex);
+        registerPart(ModItemsSpace.rp_pod_20, ItemMissile.PartType.WARHEAD, 3.0, 2.25, ResourceManagerSpace.drop_pod, ResourceManagerSpace.drop_pod_tex).withRenderer(new RenderDropPod());
 
         // okay you know what, fuck this
         // probably could do it via interface or something, but whatever
@@ -93,7 +94,7 @@ public class RocketPart extends MissilePart {
         registerPart(ModItems.mp_stability_15_soyuz, ItemMissile.PartType.FINS, 0, 3, ResourceManager.mp_s_15_soyuz, ResourceManager.mp_s_15_soyuz_tex);
         //
         // TODO move rp_legs_20 to space
-        registerPart(ModItems.rp_legs_20, ItemMissile.PartType.FINS, 2.4, 3, ResourceManagerSpace.rp_s_20_leggy, ResourceManager.universal).withDeployed(ResourceManagerSpace.rp_s_20_leggy_deployed);
+        registerPart(ModItemsSpace.rp_legs_20, ItemMissile.PartType.FINS, 2.4, 3, ResourceManagerSpace.rp_s_20_leggy, ResourceManager.universal).withDeployed(ResourceManagerSpace.rp_s_20_leggy_deployed);
 
         //////
 
@@ -177,11 +178,11 @@ public class RocketPart extends MissilePart {
         registerPart(ModItems.mp_fuselage_15_20_solid, ItemMissile.PartType.FUSELAGE, 16, 10, ResourceManager.mp_f_15_20_kerosene, ResourceManager.mp_f_15_20_solid_tex);
         //
         // TODO move them all to fucking space
-		registerPart(ModItems.rp_fuselage_20_12, ItemMissile.PartType.FUSELAGE, 12, 8, ResourceManagerSpace.mp_f_20_12_usa, ResourceManager.mp_f_20_kerolox_usa);
-		registerPart(ModItems.rp_fuselage_20_6, ItemMissile.PartType.FUSELAGE, 6, 4.5, ResourceManagerSpace.mp_f_20_6_usa, ResourceManager.mp_f_20_kerolox_usa);
-		registerPart(ModItems.rp_fuselage_20_3, ItemMissile.PartType.FUSELAGE, 3, 2.5, ResourceManagerSpace.mp_f_20_3_usa, ResourceManager.mp_f_20_kerolox).withShroud(ResourceManagerSpace.mp_f_20_6_usa);
-		registerPart(ModItems.rp_fuselage_20_1, ItemMissile.PartType.FUSELAGE, 1, 1.5, ResourceManagerSpace.mp_f_20_1_usa, ResourceManager.mp_f_20_kerolox).withShroud(ResourceManagerSpace.mp_f_20_6_usa);
-        //registerPart(ModItems.rp_fuselage_20_12_hydrazine, PartType.FUSELAGE, 10, 8, ResourceManagerSpace.mp_f_20_neo, ResourceManagerSpace.mp_f_20_hydrazine_tex);
+		registerPart(ModItemsSpace.rp_fuselage_20_12, ItemMissile.PartType.FUSELAGE, 12, 8, ResourceManagerSpace.mp_f_20_12_usa, ResourceManager.mp_f_20_kerolox_usa);
+		registerPart(ModItemsSpace.rp_fuselage_20_6, ItemMissile.PartType.FUSELAGE, 6, 4.5, ResourceManagerSpace.mp_f_20_6_usa, ResourceManager.mp_f_20_kerolox_usa);
+		registerPart(ModItemsSpace.rp_fuselage_20_3, ItemMissile.PartType.FUSELAGE, 3, 2.5, ResourceManagerSpace.mp_f_20_3_usa, ResourceManager.mp_f_20_kerolox).withShroud(ResourceManagerSpace.mp_f_20_6_usa);
+		registerPart(ModItemsSpace.rp_fuselage_20_1, ItemMissile.PartType.FUSELAGE, 1, 1.5, ResourceManagerSpace.mp_f_20_1_usa, ResourceManager.mp_f_20_kerolox).withShroud(ResourceManagerSpace.mp_f_20_6_usa);
+        registerPart(ModItemsSpace.rp_fuselage_20_12_hydrazine, ItemMissile.PartType.FUSELAGE, 10, 8, ResourceManagerSpace.mp_f_20_neo, ResourceManagerSpace.mp_f_20_hydrazine_tex);
 
 
         //////

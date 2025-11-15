@@ -25,6 +25,7 @@ import com.hbmspace.interfaces.AutoRegister;
 import com.hbmspace.inventory.container.ContainerLaunchPadRocket;
 import com.hbmspace.inventory.gui.GUILaunchPadRocket;
 import com.hbmspace.items.ItemVOTVdrive;
+import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.items.weapon.ItemCustomRocket;
 import io.netty.buffer.ByteBuf;
 import li.cil.oc.api.machine.Arguments;
@@ -297,7 +298,7 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
         }
 
         SolarSystem.Body target = ItemVOTVdrive.getDestination(inventory.getStackInSlot(1)).body;
-        if(target == SolarSystem.Body.ORBIT && rocket.capsule.part != ModItems.rp_capsule_20 && rocket.capsule.part != ModItems.rp_station_core_20)
+        if(target == SolarSystem.Body.ORBIT && rocket.capsule.part != ModItemsSpace.rp_capsule_20 && rocket.capsule.part != ModItemsSpace.rp_station_core_20)
             return false;
 
         ItemVOTVdrive.Target from = CelestialBody.getTarget(world, pos.getX(), pos.getZ());
@@ -305,8 +306,8 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
 
         RocketStruct rocket = ItemCustomRocket.get(inventory.getStackInSlot(0));
 
-        if(!to.isValid && rocket.capsule.part != ModItems.rp_station_core_20) return false;
-        if(to.isValid && rocket.capsule.part == ModItems.rp_station_core_20) return false;
+        if(!to.isValid && rocket.capsule.part != ModItemsSpace.rp_station_core_20) return false;
+        if(to.isValid && rocket.capsule.part == ModItemsSpace.rp_station_core_20) return false;
 
         // Check if the stage can make the journey
         return rocket.hasSufficientFuel(from.body, to.body, from.inOrbit, to.inOrbit);
@@ -417,7 +418,7 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
         }
 
         SolarSystem.Body target = ItemVOTVdrive.getDestination(inventory.getStackInSlot(1)).body;
-        if(target == SolarSystem.Body.ORBIT && rocket.capsule.part != ModItems.rp_capsule_20 && rocket.capsule.part != ModItems.rp_station_core_20) {
+        if(target == SolarSystem.Body.ORBIT && rocket.capsule.part != ModItemsSpace.rp_capsule_20 && rocket.capsule.part != ModItemsSpace.rp_station_core_20) {
             issues.add(TextFormatting.RED + "Satellite target must be a planet");
             return issues;
         }
@@ -426,11 +427,11 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
         ItemVOTVdrive.Target from = CelestialBody.getTarget(world, pos.getX(), pos.getZ());
         ItemVOTVdrive.Target to = ItemVOTVdrive.getTarget(inventory.getStackInSlot(1), world);
 
-        if(to.inOrbit && !to.isValid && rocket.capsule.part != ModItems.rp_station_core_20) {
+        if(to.inOrbit && !to.isValid && rocket.capsule.part != ModItemsSpace.rp_station_core_20) {
             issues.add(TextFormatting.RED + "Station not yet launched");
         }
 
-        if(to.inOrbit && to.isValid && rocket.capsule.part == ModItems.rp_station_core_20) {
+        if(to.inOrbit && to.isValid && rocket.capsule.part == ModItemsSpace.rp_station_core_20) {
             issues.add(TextFormatting.RED + "Station already launched");
         }
 

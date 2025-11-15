@@ -54,6 +54,7 @@ public class GUITransporterRocket extends GuiInfoContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float f) {
         super.drawScreen(mouseX, mouseY, f);
+        super.renderHoveredToolTip(mouseX, mouseY);
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 

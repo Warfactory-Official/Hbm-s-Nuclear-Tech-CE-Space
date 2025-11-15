@@ -1,12 +1,15 @@
 package com.hbmspace.dim.orbit;
 
+import com.hbm.config.SpaceConfig;
 import com.hbmspace.dim.BiomeGenBaseCelestial;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
 
 import java.util.Random;
 
 public class BiomeGenOrbit extends BiomeGenBaseCelestial {
+	public static final Biome biome = new BiomeGenOrbit(new BiomeProperties("Space").setRainDisabled());
 
 	public BiomeGenOrbit(BiomeProperties properties) {
 		super(properties);

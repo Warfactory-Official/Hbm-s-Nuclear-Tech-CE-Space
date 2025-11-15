@@ -342,7 +342,7 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
                             if(targetWorld != null) {
                                 Satellite.orbit(targetWorld, Satellite.getIDFromItem(rocket.capsule.part), satFreq, posX, posY, posZ);
                             }
-                        } else if(rocket.capsule.part == ModItems.rp_station_core_20) {
+                        } else if(rocket.capsule.part == ModItemsSpace.rp_station_core_20) {
                             OrbitalStation.addStation(x, z, CelestialBody.getBody(world));
 
                             if(thrower != null && thrower instanceof EntityPlayer player) {
@@ -433,7 +433,7 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
     }
 
     public boolean isReusable() {
-        return getRocket().capsule.part == ModItems.rp_pod_20;
+        return getRocket().capsule.part == ModItemsSpace.rp_pod_20;
     }
 
     @Override
@@ -488,7 +488,7 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
             if(isEntityInvulnerable(source)) {
                 return false;
             } else if(this.getControllingPassenger() == null && source.getTrueSource() instanceof EntityPlayer) {
-                if((getRocket().stages.size() == 0 && getRocket().capsule.part != ModItems.rp_pod_20) || getState() == RocketState.TIPPING) {
+                if((getRocket().stages.size() == 0 && getRocket().capsule.part != ModItemsSpace.rp_pod_20) || getState() == RocketState.TIPPING) {
                     dropNDie(source);
                 } else {
                     EntityPlayer player = (EntityPlayer) source.getTrueSource();

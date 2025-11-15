@@ -42,6 +42,7 @@ public class ResourceManagerSpace {
     public static final ResourceLocation drop_pod_tex = new ResourceLocation(RefStrings.MODID, "textures/models/missile_parts/warheads/rp_drop_pod.png");
     public static final ResourceLocation module_lander_tex = new ResourceLocation("hbm", "textures/models/soyuz_capsule/module_lander_space_elon.png");
     public static final ResourceLocation mp_w_fairing_tex = new ResourceLocation("hbm", "textures/models/missile_parts/warheads/mp_w_fairing.png");
+    public static final ResourceLocation mp_f_20_hydrazine_tex = new ResourceLocation(RefStrings.MODID, "textures/models/missile_parts/fuselages/mp_f_20_hydrazine.png");
     //Space
     public static final ResourceLocation solarp_tex = new ResourceLocation(RefStrings.MODID, "textures/models/machines/solar_panel.png"); //haha... "larp"
     public static final ResourceLocation stardar_tex = new ResourceLocation(RefStrings.MODID, "textures/models/machines/antenna.png");

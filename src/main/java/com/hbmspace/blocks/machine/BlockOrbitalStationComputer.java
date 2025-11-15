@@ -1,6 +1,5 @@
 package com.hbmspace.blocks.machine;
 
-import com.hbm.blocks.BlockDummyable;
 import com.hbm.blocks.ILookOverlay;
 import com.hbm.handler.ThreeInts;
 import com.hbm.lib.HBMSoundHandler;
@@ -8,6 +7,7 @@ import com.hbm.main.MainRegistry;
 import com.hbm.util.BobMathUtil;
 import com.hbm.util.I18nUtil;
 import com.hbmspace.api.tile.IPropulsion;
+import com.hbmspace.blocks.BlockDummyableSpace;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.dim.orbit.OrbitalStation;
@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockOrbitalStationComputer extends BlockDummyable implements ILookOverlay {
+public class BlockOrbitalStationComputer extends BlockDummyableSpace implements ILookOverlay {
 
     public BlockOrbitalStationComputer(Material mat, String s) {
         super(mat, s);

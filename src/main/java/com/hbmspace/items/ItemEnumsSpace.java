@@ -14,4 +14,9 @@ public class ItemEnumsSpace {
         HFCHIP,
         MOLYCHIP
     }
+
+    public static enum EnumChunkType {
+        PENTLANDITE,
+        MOONSTONE
+    }
 }

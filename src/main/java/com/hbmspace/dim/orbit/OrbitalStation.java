@@ -362,7 +362,7 @@ public class OrbitalStation {
 		BlockOrbitalStation block = (BlockOrbitalStation) ModBlocksSpace.orbital_station;
 
 		BlockDummyable.safeRem = true;
-		world.setBlockState(new BlockPos(x, y, z), block.getDefaultState(), 3);
+		world.setBlockState(new BlockPos(x, y, z), block.getDefaultState().withProperty(BlockDummyable.META, 12), 3);
 		block.fillSpace(world, x, y, z, ForgeDirection.NORTH, 0);
 		BlockDummyable.safeRem = false;
 	}
