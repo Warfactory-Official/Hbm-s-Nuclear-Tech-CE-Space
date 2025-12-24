@@ -2,37 +2,40 @@ package com.hbmspace.dim;
 
 import com.google.common.base.Predicate;
 import com.hbm.blocks.ModBlocks;
-import com.hbm.config.GeneralConfig;
 import com.hbm.config.WorldConfig;
 import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.items.ModItems;
-import com.hbm.main.MainRegistry;
+import com.hbm.main.StructureManager;
 import com.hbm.world.feature.BedrockOre;
 import com.hbm.world.feature.DepthDeposit;
-import com.hbm.world.generator.CellularDungeonFactory;
+import com.hbm.world.gen.component.Component;
+import com.hbm.world.gen.nbt.JigsawPiece;
+import com.hbm.world.gen.nbt.JigsawPool;
+import com.hbm.world.gen.nbt.NBTStructure;
+import com.hbm.world.gen.nbt.SpawnCondition;
 import com.hbm.world.generator.DungeonToolbox;
-import com.hbm.world.generator.MeteorDungeonStructure;
 import com.hbmspace.blocks.BlockEnumsSpace;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.blocks.generic.BlockOre;
 import com.hbmspace.config.WorldConfigSpace;
-import com.hbmspace.dim.laythe.biome.BiomeGenBaseLaythe;
+import com.hbmspace.world.PlanetGen;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockMatcher;
-import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenMinable;
+import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class WorldGeneratorCelestial implements IWorldGenerator {
@@ -89,34 +92,12 @@ public class WorldGeneratorCelestial implements IWorldGenerator {
         boolean hasIce = celestialProvider.hasIce();
         int meta = CelestialBody.getMeta(world);
 
-        generateStructures(world, rand, chunkX * 16, chunkZ * 16);
-
         if(blockToReplace != Blocks.STONE) {
             generateVanillaOres(world, rand, chunkX * 16, chunkZ * 16, blockToReplace, meta);
         }
 
         generateNTMOres(world, rand, chunkX * 16, chunkZ * 16, blockToReplace, meta);
         generateBedrockOres(world, rand, chunkX * 16, chunkZ * 16, blockToReplace, hasIce, drillAcid);
-    }
-
-    public void generateStructures(World world, Random rand, int x, int z) {
-		Biome biome = world.getBiomeProvider().getBiome(new BlockPos(x, 150, z));
-
-		if(WorldConfig.meteorStructure > 0 && rand.nextInt(WorldConfig.meteorStructure) == 0 && biome != Biomes.OCEAN && biome != Biomes.DEEP_OCEAN && biome != BiomeGenBaseLaythe.laytheOcean) {
-			int px = x + rand.nextInt(16) + 8;
-			int pz = z + rand.nextInt(16) + 8;
-
-            new MeteorDungeonStructure(CellularDungeonFactory.meteor, 10).generate(world, rand, new BlockPos(px, 10, pz), true);
-
-            if(GeneralConfig.enableDebugMode)
-				MainRegistry.logger.info("[Debug] Successfully spawned meteor dungeon at " + px + " 10 " + pz);
-			
-			int y = world.getHeight(px, pz);
-			
-			for(int f = 0; f < 3; f++)
-				world.setBlockState(new BlockPos(px, y + f, pz), ModBlocks.meteor_pillar.getDefaultState());
-			world.setBlockState(new BlockPos(px, y + 3, pz), ModBlocks.meteor_brick_chiseled.getDefaultState());
-		}
     }
 
     public void generateNTMOres(World world, Random rand, int x, int z, Block planetStone, int meta) {
@@ -182,10 +163,10 @@ public class WorldGeneratorCelestial implements IWorldGenerator {
 
     // This will generate vanilla ores for the chunk when the biome decorator fails to find any regular stone
     public void generateVanillaOres(World world, Random rand, int x, int z, Block planetStone, int meta) {
-        genVanillaOre(world, rand, x, z, 0, 64, 20, 8, ModBlocksSpace.ore_iron, planetStone, meta);
-        genVanillaOre(world, rand, x, z, 0, 32, 2, 8, ModBlocksSpace.ore_gold, planetStone, meta);
-        genVanillaOre(world, rand, x, z, 0, 16, 8, 7, ModBlocksSpace.ore_redstone, planetStone, meta);
-        genVanillaOre(world, rand, x, z, 0, 16, 1, 7, ModBlocksSpace.ore_diamond, planetStone, meta);
+        genVanillaOre(world, rand, x, z, 64, 20, 8, ModBlocksSpace.ore_iron, planetStone, meta);
+        genVanillaOre(world, rand, x, z, 32, 2, 8, ModBlocksSpace.ore_gold, planetStone, meta);
+        genVanillaOre(world, rand, x, z, 16, 8, 7, ModBlocksSpace.ore_redstone, planetStone, meta);
+        genVanillaOre(world, rand, x, z, 16, 1, 7, ModBlocksSpace.ore_diamond, planetStone, meta);
         // what the fuck is a lapis lazuli
         // emeralds also spawn in a special way but... like... fuck emeralds
     }
@@ -199,7 +180,7 @@ public class WorldGeneratorCelestial implements IWorldGenerator {
     }
 
     // A simple reimplementation of `genStandardOre1` without needing to instance a BiomeDecorator
-    private void genVanillaOre(World world, Random rand, int x, int z, int yMin, int yMax, int count, int numberOfBlocks, Block ore, Block target, int meta) {
+    private void genVanillaOre(World world, Random rand, int x, int z, int yMax, int count, int numberOfBlocks, Block ore, Block target, int meta) {
         IBlockState oreState = ore.getStateFromMeta(meta);
         Predicate<IBlockState> targetPredicate = BlockMatcher.forBlock(target);
 
@@ -207,7 +188,7 @@ public class WorldGeneratorCelestial implements IWorldGenerator {
 
         for (int l = 0; l < count; ++l) {
             int genX = x + rand.nextInt(16);
-            int genY = rand.nextInt(yMax - yMin) + yMin; // millenial supremacy
+            int genY = rand.nextInt(yMax); // millenial supremacy
             int genZ = z + rand.nextInt(16);
             worldGenMinable.generate(world, rand, new BlockPos(genX, genY, genZ));
         }

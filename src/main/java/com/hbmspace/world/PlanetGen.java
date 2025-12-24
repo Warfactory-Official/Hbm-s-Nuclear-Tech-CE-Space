@@ -1,5 +1,6 @@
 package com.hbmspace.world;
 
+import com.hbm.util.BobMathUtil;
 import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.Ike.WorldGeneratorIke;
 import com.hbmspace.dim.Ike.WorldProviderIke;
@@ -25,6 +26,8 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import java.util.ArrayList;
 
 public class PlanetGen {
 
@@ -56,8 +59,16 @@ public class PlanetGen {
 
     }
 
+    private static ArrayList<Integer> spaceDimensions = new ArrayList<>();
+
+    public static int[] getSpaceDimensions() {
+        return BobMathUtil.intCollectionToArray(spaceDimensions);
+    }
+
     private static void registerDimension(int dimensionId, String name, Class<? extends WorldProvider> clazz) {
         DimensionType dimensionType = DimensionType.register(name, "_" + name, dimensionId, clazz, false);
         DimensionManager.registerDimension(dimensionId, dimensionType);
+
+        if(dimensionId != SpaceConfig.orbitDimension) spaceDimensions.add(dimensionId);
     }
 }

@@ -1,13 +1,11 @@
 package com.hbmspace.inventory.gui;
 
-import com.hbm.config.SpaceConfig;
+import com.hbmspace.config.SpaceConfig;
 import com.hbm.inventory.gui.GuiInfoContainer;
-import com.hbm.lib.RefStrings;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toserver.NBTControlPacket;
 import com.hbm.saveddata.satellites.Satellite;
 import com.hbm.saveddata.satellites.SatelliteSavedData;
-import com.hbm.util.DelayedTick;
 import com.hbm.util.I18nUtil;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.SolarSystem;
@@ -18,7 +16,6 @@ import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.tileentity.machine.TileEntityMachineStardar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -42,8 +39,8 @@ import java.util.Random;
 
 public class GUIMachineStardar extends GuiInfoContainer {
 
-    public static ResourceLocation texture = new ResourceLocation( RefStrings.MODID + ":textures/gui/machine/gui_stardar.png");
-    private static final ResourceLocation nightTexture = new ResourceLocation(RefStrings.MODID, "textures/misc/space/night.png");
+    public static ResourceLocation texture = new ResourceLocation( "hbm" + ":textures/gui/machine/gui_stardar.png");
+    private static final ResourceLocation nightTexture = new ResourceLocation("hbm", "textures/misc/space/night.png");
 
     private TileEntityMachineStardar star;
     private CelestialBody currentBody;

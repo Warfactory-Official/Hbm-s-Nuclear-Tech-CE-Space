@@ -1,11 +1,10 @@
 package com.hbmspace.dim;
 
-import com.hbm.config.SpaceConfig;
+import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.trait.CBT_Atmosphere;
 import com.hbmspace.dim.trait.CBT_Temperature;
 import com.hbmspace.dim.trait.CBT_Water;
 import com.hbm.inventory.fluid.Fluids;
-import com.hbm.lib.RefStrings;
 import com.hbm.main.MainRegistry;
 import com.hbm.util.AstronomyUtil;
 import com.hbm.util.BobMathUtil;
@@ -34,7 +33,7 @@ public class SolarSystem {
 			.withMassRadius(1.757e28F, 261_600)
 			.withRotationalPeriod(432_000)
 			.withTexture("textures/environment/sun.png")
-			.withShader(new ResourceLocation(RefStrings.MODID, "shaders/blackhole.frag"), 3) // Only shows when CBT_Destroyed
+			.withShader(new ResourceLocation("hbm", "shaders/blackhole.frag"), 3) // Only shows when CBT_Destroyed
 			.withSatellites(
 
 				new CelestialBody("moho", SpaceConfig.mohoDimension, Body.MOHO)
@@ -42,7 +41,7 @@ public class SolarSystem {
 					.withSemiMajorAxis(5_263_138)
 					.withRotationalPeriod(210_000)
 					.withColor(0.4863F, 0.4F, 0.3456F)
-					.withBlockTextures(RefStrings.MODID + ":blocks/moho_stone", "", "", "")
+					.withBlockTextures("hbm" + ":blocks/moho_stone", "", "", "")
 					.withAxialTilt(30F)
 					.withProcessingLevel(1)
 					.withTraits(new CBT_Temperature(200)),
@@ -52,7 +51,7 @@ public class SolarSystem {
 					.withSemiMajorAxis(9_832_684)
 					.withRotationalPeriod(80_500)
 					.withColor(0.408F, 0.298F, 0.553F)
-					.withBlockTextures(RefStrings.MODID + ":blocks/eve_stone_2", "", "", "")
+					.withBlockTextures("hbm" + ":blocks/eve_stone_2", "", "", "")
 					.withProcessingLevel(2)
 					.withTraits(new CBT_Atmosphere(Fluids.EVEAIR, 5D), new CBT_Temperature(400), new CBT_Water(Fluids.MERCURY))
 					.withSatellites(
@@ -78,13 +77,13 @@ public class SolarSystem {
 							.withSemiMajorAxis(12_000)
 							.withRotationalPeriod(138_984)
 							.withTidalLockingTo("kerbin")
-							.withBlockTextures(RefStrings.MODID + ":blocks/moon_rock", "", "", ""),
+							.withBlockTextures("hbm" + ":blocks/moon_rock", "", "", ""),
 
 						new CelestialBody("minmus", SpaceConfig.minmusDimension, Body.MINMUS)
 							.withMassRadius(2.646e19F, 60)
 							.withSemiMajorAxis(47_000)
 							.withRotationalPeriod(40_400)
-							.withBlockTextures(RefStrings.MODID + ":blocks/minmus_stone", "", "", "")
+							.withBlockTextures("hbm" + ":blocks/minmus_stone", "", "", "")
 							.withTraits(new CBT_Water(Fluids.MILK))
 
 					),
@@ -95,7 +94,7 @@ public class SolarSystem {
 					.withRotationalPeriod(65_518)
 					.withTidalLockingTo("ike")
 					.withColor(0.6471f, 0.2824f, 0.1608f)
-					.withBlockTextures(RefStrings.MODID + ":blocks/duna_rock", "", "", "")
+					.withBlockTextures("hbm" + ":blocks/duna_rock", "", "", "")
 					.withProcessingLevel(1)
 					.withTraits(new CBT_Atmosphere(Fluids.DUNAAIR, 0.1D))
 					.withProcessingLevel(1)
@@ -104,7 +103,7 @@ public class SolarSystem {
 						new CelestialBody("ike", SpaceConfig.ikeDimension, Body.IKE)
 							.withMassRadius(2.782e20F, 130)
 							.withSemiMajorAxis(3_200)
-							.withBlockTextures(RefStrings.MODID + ":blocks/ike_stone", "", "", "")
+							.withBlockTextures("hbm" + ":blocks/ike_stone", "", "", "")
 							.withProcessingLevel(1)
 							.withRotationalPeriod(65_518)
 							.withTidalLockingTo("duna")
@@ -117,7 +116,7 @@ public class SolarSystem {
 					.withMassRadius(3.219e20F, 138)
 					.withSemiMajorAxis(40_839_348)
 					.withRotationalPeriod(34_800)
-					.withBlockTextures(RefStrings.MODID + ":blocks/dresbase", "", "", "")
+					.withBlockTextures("hbm" + ":blocks/dresbase", "", "", "")
 					.withProcessingLevel(2),
 					
 
@@ -126,6 +125,7 @@ public class SolarSystem {
 					.withSemiMajorAxis(68_773_560)
 					.withRotationalPeriod(36_000)
 					.withColor(0.4588f, 0.6784f, 0.3059f)
+                    .withGas(Fluids.JOOLGAS)
 					.withSatellites(
 
 						new CelestialBody("laythe", SpaceConfig.laytheDimension, Body.LAYTHE)
@@ -163,6 +163,8 @@ public class SolarSystem {
 					.withSemiMajorAxis(125_798_522)
 					.withRotationalPeriod(28_500)
 					.withColor(1f, 0.6862f, 0.5882f)
+                    .withRings(10.0F, 3, 0.6F, 0.4F, 0.3F)
+                    .withGas(Fluids.SARNUSGAS)
 					.withSatellites(
 							
 					new CelestialBody("hale") //no

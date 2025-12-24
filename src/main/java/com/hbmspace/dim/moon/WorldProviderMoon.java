@@ -1,6 +1,6 @@
 package com.hbmspace.dim.moon;
 
-import com.hbm.config.SpaceConfig;
+import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.dim.WorldProviderCelestial;
 import net.minecraft.block.Block;

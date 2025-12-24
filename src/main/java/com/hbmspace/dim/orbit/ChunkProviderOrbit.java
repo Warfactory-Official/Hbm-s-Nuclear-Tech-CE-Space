@@ -1,6 +1,6 @@
 package com.hbmspace.dim.orbit;
 
-import com.hbm.config.SpaceConfig;
+import com.hbmspace.config.SpaceConfig;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

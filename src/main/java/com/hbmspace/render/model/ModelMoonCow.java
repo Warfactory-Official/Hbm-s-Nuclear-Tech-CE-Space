@@ -1,6 +1,5 @@
 package com.hbmspace.render.model;
 
-import com.hbm.lib.RefStrings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelCow;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ModelMoonCow extends ModelCow {
 
-    private static final ResourceLocation glass = new ResourceLocation(RefStrings.MODID, "textures/blocks/glass_boron.png");
+    private static final ResourceLocation glass = new ResourceLocation("hbm", "textures/blocks/glass_boron.png");
 
     @Override
     public void render(@NotNull Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {

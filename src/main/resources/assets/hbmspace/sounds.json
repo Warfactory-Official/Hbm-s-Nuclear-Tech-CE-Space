@@ -1,0 +1,9 @@
+{
+	"player.plss_breathing": {"category": "player", "sounds": [{"name": "hbmspace:player/plss_breathing", "stream": false}]},
+	"entity.rocketStage": {"category": "player", "sounds": [{"name": "hbmspace:entity/rocketstage", "stream": false}]},
+	"misc.spinshot": {"category": "block", "sounds": ["hbmspace:misc/spinshot1", "hbmspace:misc/spinshot2"]},
+	"misc.spincharge": {"category": "block", "sounds": [{"name": "hbmspace:misc/spincharge", "stream": false}]},
+	"misc.fireflash": {"category": "player", "sounds": [{"name": "hbmspace:misc/flashfire", "stream": false}]},
+	"block.dysonBeam": {"category": "block", "sounds": [{"name": "hbmspace:block/dysonBeam", "stream": false}]},
+	"misc.stationhum": {"category": "player", "sounds": [{"name": "hbmspace:misc/stationhum", "stream": false}]}
+}

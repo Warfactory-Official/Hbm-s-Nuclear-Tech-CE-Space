@@ -5,9 +5,9 @@ import com.hbm.blocks.ICustomBlockItem;
 import com.hbm.blocks.IOreType;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.items.ItemEnums;
-import com.hbmspace.main.RefStrings;
 import com.hbm.main.MainRegistry;
 import com.hbm.util.I18nUtil;
+import com.hbmspace.Tags;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.SolarSystem;
@@ -22,14 +22,12 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextFormatting;
@@ -116,6 +114,21 @@ public class BlockOre extends net.minecraft.block.BlockOre implements ICustomBlo
         return meta % this.META_COUNT;
     }
 
+
+    public int getSubCount() {
+        return SolarSystem.Body.values().length;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (tab == this.getCreativeTab() || tab == CreativeTabs.SEARCH) {
+            for (int i = 0; i < getSubCount(); i++)
+                // 0, 1, 6 metas aren't used in generation at all + meta 6 doesn't have a texture
+                if(!Set.of(0, 1, 6).contains(i)) items.add(new ItemStack(this, 1, i));
+        }
+    }
+
     @Override
     public @NotNull Item getItemDropped(@NotNull IBlockState state, @NotNull Random rand, int fortune) {
         if (oreEnum != null) {
@@ -133,7 +146,6 @@ public class BlockOre extends net.minecraft.block.BlockOre implements ICustomBlo
 
     /*@Override
     public int quantityDropped(Random rand) {
-        if (this == ModBlocks.ore_glowstone) return 1 + rand.nextInt(3);
         if (this == ModBlocks.ore_lapis) return 4 + rand.nextInt(5);
         return 1;
     }*/
@@ -262,7 +274,7 @@ public class BlockOre extends net.minecraft.block.BlockOre implements ICustomBlo
     @SideOnly(Side.CLIENT)
     public void registerSprite(TextureMap map) {
         // Register overlay ore texture (this block's texture)
-        map.registerSprite(new ResourceLocation(RefStrings.MODID, "blocks/" + this.getRegistryName().getPath()));
+        map.registerSprite(new ResourceLocation(Tags.MODID, "blocks/" + this.getRegistryName().getPath()));
         // Register all stone textures
         for (int i = 0; i < META_COUNT; i++) {
             String stone = getStoneTextureName(SolarSystem.Body.values()[i]);
@@ -276,7 +288,7 @@ public class BlockOre extends net.minecraft.block.BlockOre implements ICustomBlo
         try {
             IModel cube = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_all"));
             // Since resource loading fucks itself in the ass, I had to move the ore textures to "hbmspace" folder instead of default "hbm" one
-            String oreTex = new ResourceLocation(RefStrings.MODID, "blocks/" + this.getRegistryName().getPath()).toString();
+            String oreTex = new ResourceLocation(Tags.MODID, "blocks/" + this.getRegistryName().getPath()).toString();
 
             for (int meta = 0; meta < META_COUNT; meta++) {
                 String stoneTex = resolveTexture(getStoneTextureName(SolarSystem.Body.values()[meta])).toString();

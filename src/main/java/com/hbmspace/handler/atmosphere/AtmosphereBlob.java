@@ -8,10 +8,15 @@ import com.hbm.inventory.fluid.FluidType;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.main.MainRegistry;
 import com.hbm.util.AdjacencyGraph;
+import com.hbmspace.entity.effect.EntityDepress;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.BlockFence;
+import net.minecraft.block.IGrowable;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -39,16 +44,22 @@ public class AtmosphereBlob implements Runnable {
 
 	private static ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 16, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>(32));
 	
-	private static HashMap<Block, Boolean> fullBounds = new HashMap<Block, Boolean>();
+	private static HashMap<Block, Boolean> fullBounds = new HashMap<>();
 
 	
 	private boolean executing;
 	private ThreeInts blockPos;
 
+    // If true, run depressurization effects on blobbing failure
+    public boolean runDepress;
+    public ForgeDirection depressDir = ForgeDirection.UP;
+
+    private LinkedHashMap<ThreeInts, Integer> plants = new LinkedHashMap<>();
+
 
 	public AtmosphereBlob(IAtmosphereProvider handler) {
 		this.handler = handler;
-		graph = new AdjacencyGraph<ThreeInts>();
+		graph = new AdjacencyGraph<>();
 	}
 	
 	public boolean isPositionAllowed(World world, ThreeInts pos) {
@@ -69,14 +80,24 @@ public class AtmosphereBlob implements Runnable {
 		Block block = world.getBlockState(pos).getBlock();
 
 		if(block.isAir(block.getDefaultState(), world, pos)) return false; // Air obviously doesn't seal
-		if(block instanceof BlockFarmland) return false;
-		if(block instanceof BlockFence) return false;
-		if(block instanceof IBlockSealable) { // Custom semi-sealables, like doors
-			return ((IBlockSealable)block).isSealed(world, x, y, z);
-		}
-		if(block instanceof BlockDummyable) return false; // Machines can't seal, almost all have gaps
+        switch (block) {
+            case BlockFarmland blockFarmland -> {
+                return false;
+            }
+            case BlockFence blockFence -> {
+                return false;
+            }
+            case IBlockSealable iBlockSealable -> {
+                return iBlockSealable.isSealed(world, x, y, z);  // Custom semi-sealables, like doors
+            }
+            case BlockDummyable blockDummyable -> {
+                return false; // Machines can't seal, almost all have gaps
+            }
+            default -> {
+            }
+        }
 
-		Material material = block.getMaterial(block.getDefaultState());
+        Material material = block.getMaterial(block.getDefaultState());
 		if(material.isLiquid() || !material.isSolid()) return false; // Liquids need to know what pressurized atmosphere they're in to determine evaporation
 		if(material == Material.LEAVES) return false; // Leaves never block air
 
@@ -89,7 +110,7 @@ public class AtmosphereBlob implements Runnable {
 			// we just want to check that it attempts to change its bounding box at all, resulting in null if it does so by checking neighbours
 			// anything that modifies its own bounding box safely (like half slabs) will still work as normal
 			bb = block.getCollisionBoundingBox(block.getDefaultState(), null, pos);
-		} catch(Exception ex) {}
+		} catch(Exception _) {}
 
 		if(bb == null) {
 			fullBounds.put(block, false);
@@ -127,6 +148,10 @@ public class AtmosphereBlob implements Runnable {
 	public void consume(int amount) {
 		handler.consume(amount);
 	}
+
+    public void produce(int amount) {
+        handler.produce(amount);
+    }
 	
 	/**
 	 * Adds a block position to the blob
@@ -151,7 +176,7 @@ public class AtmosphereBlob implements Runnable {
 					try {
 						pool.execute(this);
 					} catch (RejectedExecutionException e) {
-						MainRegistry.logger.warn("Atmosphere calculation at " + this.getRootPosition() + " aborted due to oversize queue!");
+                        MainRegistry.logger.warn("Atmosphere calculation at {} aborted due to oversize queue!", this.getRootPosition());
 					}
 				} else {
 					this.run();
@@ -291,7 +316,7 @@ public class AtmosphereBlob implements Runnable {
 						}
 					} catch (Exception e){
 						// Catches errors with additional information
-						MainRegistry.logger.info("Error: AtmosphereBlob has failed to form correctly due to an error. \nCurrentBlock: " + stackElement + "\tNextPos: " + searchNextPosition + "\tDir: " + dir + "\tStackSize: " + stack.size());
+                        MainRegistry.logger.info("Error: AtmosphereBlob has failed to form correctly due to an error. \nCurrentBlock: {}\tNextPos: {}\tDir: {}\tStackSize: {}", stackElement, searchNextPosition, dir, stack.size());
 						e.printStackTrace();
 
 						// Failed to seal, void
@@ -329,5 +354,48 @@ public class AtmosphereBlob implements Runnable {
 			ChunkAtmosphereManager.proxy.runEffectsOnBlock(newAtmosphere, world, block, pos.x, pos.y, pos.z);
 		}
 	}
+
+    public void decompress(ThreeInts pos, ForgeDirection dir) {
+        World world = handler.getWorld();
+
+        EntityDepress depress = new EntityDepress(world, dir.getOpposite().toEnumFacing(), 20);
+        depress.posX = pos.x + 0.5;
+        depress.posY = pos.y + 0.5;
+        depress.posZ = pos.z + 0.5;
+        world.spawnEntity(depress);
+
+        world.playSound(null, depress.posX, depress.posY, depress.posZ, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.NEUTRAL, 1.0F, 1.6F);
+        world.playSound(null, depress.posX, depress.posY, depress.posZ, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.NEUTRAL, 1.0F, 0.25F);
+    }
+
+    public void checkGrowth() {
+        World world = handler.getWorld();
+
+        Iterator<HashMap.Entry<ThreeInts, Integer>> iterator = plants.entrySet().iterator();
+        while(iterator.hasNext()) {
+            HashMap.Entry<ThreeInts, Integer> entry = iterator.next();
+            ThreeInts pos = entry.getKey();
+            int oldMeta = entry.getValue();
+            IBlockState state = world.getBlockState(new BlockPos(pos.x, pos.y, pos.z));
+            Block block = state.getBlock();
+
+            if(!(block instanceof IGrowable)) {
+                iterator.remove();
+                continue;
+            }
+
+            int newMeta = state.getBlock().getMetaFromState(state);
+
+            if(newMeta != oldMeta) {
+                entry.setValue(newMeta);
+                produce(Math.max(newMeta - oldMeta, 0) * ChunkAtmosphereHandler.CROP_GROWTH_CONVERSION);
+            }
+        }
+    }
+
+    public void addPlant(World world, int x, int y, int z) {
+        IBlockState state = world.getBlockState(new BlockPos(x, y, z));
+        plants.put(new ThreeInts(x, y, z), state.getBlock().getMetaFromState(state));
+    }
 
 }

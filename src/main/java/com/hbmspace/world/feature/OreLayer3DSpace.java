@@ -1,6 +1,5 @@
 package com.hbmspace.world.feature;
 
-import com.hbm.world.feature.OreLayer3D;
 import com.hbmspace.dim.WorldProviderCelestial;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

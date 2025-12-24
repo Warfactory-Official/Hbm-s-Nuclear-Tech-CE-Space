@@ -1,6 +1,6 @@
 package com.hbmspace.dim.laythe.GenLayerLaythe;
 
-import com.hbm.config.SpaceConfig;
+import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.laythe.biome.BiomeGenBaseLaythe;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.layer.GenLayer;

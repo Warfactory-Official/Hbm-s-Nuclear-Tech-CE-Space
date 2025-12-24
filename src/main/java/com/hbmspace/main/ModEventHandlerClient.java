@@ -3,24 +3,32 @@ package com.hbmspace.main;
 import com.google.common.collect.ImmutableMap;
 import com.hbm.blocks.ILookOverlay;
 import com.hbm.blocks.ModBlocks;
-import com.hbm.inventory.material.Mats;
 import com.hbm.inventory.material.NTMMaterial;
 import com.hbm.items.ModItems;
-import com.hbm.items.machine.ItemScraps;
 import com.hbm.items.special.ItemAutogen;
+import com.hbm.lib.HBMSoundHandler;
 import com.hbm.render.icon.RGBMutatorInterpolatedComponentRemap;
 import com.hbm.render.icon.TextureAtlasSpriteMutatable;
 import com.hbm.render.item.BakedModelCustom;
 import com.hbm.render.item.BakedModelNoFPV;
 import com.hbm.render.item.TEISRBase;
+import com.hbm.sound.AudioWrapper;
 import com.hbm.util.I18nUtil;
+import com.hbmspace.Tags;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.blocks.generic.BlockOre;
+import com.hbmspace.capability.HbmLivingPropsSpace;
 import com.hbmspace.config.SpaceConfig;
+import com.hbmspace.dim.CelestialBody;
+import com.hbmspace.dim.SolarSystemWorldSavedData;
 import com.hbmspace.dim.WorldProviderCelestial;
+import com.hbmspace.dim.orbit.WorldProviderOrbit;
+import com.hbmspace.dim.trait.CBT_War;
+import com.hbmspace.dim.trait.CelestialBodyTrait;
 import com.hbmspace.inventory.materials.MatsSpace;
 import com.hbmspace.items.IDynamicModelsSpace;
 import com.hbmspace.items.ModItemsSpace;
+import com.hbmspace.lib.HBMSpaceSoundHandler;
 import com.hbmspace.render.tileentity.IItemRendererProviderSpace;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneOre;
@@ -36,12 +44,14 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.TextFormatting;
@@ -54,13 +64,16 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = RefStrings.MODID)
+@Mod.EventBusSubscriber(modid = Tags.MODID)
 public class ModEventHandlerClient {
 
     @SubscribeEvent
@@ -84,6 +97,8 @@ public class ModEventHandlerClient {
         }
 
         SpaceMain.proxy.registerMissileItems(reg);
+
+        swapModels(ModItemsSpace.swarm_member, reg);
     }
 
     @SubscribeEvent
@@ -93,7 +108,7 @@ public class ModEventHandlerClient {
                 registerModel(item, 0);
             } catch (NullPointerException e) {
                 e.printStackTrace();
-                SpaceMain.logger.info("Failed to register model for " + item.getRegistryName());
+                SpaceMain.logger.info("Failed to register model for {}", item.getRegistryName());
             }
         }
         for (Block block : ModBlocksSpace.ALL_BLOCKS) {
@@ -165,7 +180,7 @@ public class ModEventHandlerClient {
             Minecraft mc = Minecraft.getMinecraft();
             World world = mc.world;
             RayTraceResult mop = mc.objectMouseOver;
-            if(mop.typeOfHit == null) return;
+            if(mop == null || mop.typeOfHit == null) return;
             if(mop.typeOfHit == RayTraceResult.Type.ENTITY) {
                 Entity entity = mop.entityHit;
 
@@ -279,5 +294,77 @@ public class ModEventHandlerClient {
             e.printStackTrace();
         }
     }
+
+    @SubscribeEvent
+    public static void clientTick(TickEvent.ClientTickEvent event) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if(mc.world == null || mc.world.provider == null) return;
+
+        if(!mc.isGamePaused() && event.phase == TickEvent.Phase.END) {
+            for(CelestialBody body : CelestialBody.getAllBodies()) {
+                if(SolarSystemWorldSavedData.getClientTraits(body.name) != null) {
+                    for(CelestialBodyTrait trait : SolarSystemWorldSavedData.getClientTraits(body.name).values()) {
+                        trait.update(true);
+                    }
+                }
+            }
+
+            CBT_War war = CelestialBody.getTrait(mc.world, CBT_War.class);
+
+            if(war != null) {
+                for(int i = 0; i < war.getProjectiles().size(); i++) {
+                    CBT_War.Projectile projectile = war.getProjectiles().get(i);
+                    if(projectile != null && projectile.getTravel() >= 18 && projectile.getTravel() <= 18) {
+                        Minecraft.getMinecraft().player.playSound(HBMSoundHandler.impact, 10F, 1F);
+                    }
+                }
+            }
+        }
+        if(event.phase == TickEvent.Phase.START && mc.world.provider.getDimension() == SpaceConfig.orbitDimension) {
+            for(Object o : mc.world.loadedEntityList) {
+                if(o instanceof EntityItem item) {
+                    item.motionX *= 0.81D; // applies twice on server it seems? 0.9 * 0.9
+                    item.motionY = 0.03999999910593033D;
+                    item.motionZ *= 0.81D;
+                }
+            }
+        }
+    }
+
+    private static AudioWrapper shipHum;
+
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onClientTickLast(TickEvent.ClientTickEvent event) {
+        Minecraft mc = Minecraft.getMinecraft();
+        EntityPlayer player = mc.player;
+        World world = mc.world;
+        if(event.phase == TickEvent.Phase.START) {
+            if (player != null && world.provider instanceof WorldProviderOrbit && HbmLivingPropsSpace.hasGravity(player)) {
+                if (shipHum == null || !shipHum.isPlaying()) {
+                    shipHum = SpaceMain.proxy.getLoopedSound(HBMSpaceSoundHandler.stationHum, SoundCategory.BLOCKS, player, 0.1f /* ClientConfig.AUDIO_SHIP_HUM_VOLUME.get() */, 5.0F, 1.0F, 10);
+                    shipHum.startSound();
+                }
+                // TODO
+                shipHum.updateVolume(0.1f /* the same config */);
+                shipHum.keepAlive();
+            } else if (shipHum != null) {
+                shipHum.stopSound();
+                shipHum = null;
+            }
+        }
+    }
+    // TODO this won't help at all, need to mixin the EntityRenderer... kill me
+    /*@SubscribeEvent
+    public static void onRenderTickPre(TickEvent.RenderTickEvent event) {
+        Minecraft mc = Minecraft.getMinecraft();
+        EntityPlayer player = mc.player;
+
+        if (player != null && player.getRidingEntity() instanceof EntityRideableRocket) {
+            mc.entityRenderer.thirdPersonDistance = 12.0F;
+        } else {
+            mc.entityRenderer.thirdPersonDistance = 4.0F;
+        }
+    }*/
 
 }

@@ -1,0 +1,222 @@
+package com.hbmspace.tileentity.machine;
+
+import com.hbm.api.energymk2.IEnergyReceiverMK2;
+import com.hbm.api.fluid.IFluidStandardTransceiver;
+import com.hbm.inventory.fluid.FluidType;
+import com.hbm.inventory.fluid.Fluids;
+import com.hbm.inventory.fluid.tank.FluidTankNTM;
+import com.hbm.lib.DirPos;
+import com.hbm.lib.ForgeDirection;
+import com.hbm.lib.Library;
+import com.hbmspace.tileentity.ISpaceGuiProvider;
+import com.hbm.tileentity.TileEntityMachineBase;
+import com.hbmspace.interfaces.AutoRegister;
+import com.hbmspace.inventory.container.ContainerMachineMilkReformer;
+import com.hbmspace.inventory.gui.GUIMilkReformer;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+
+@AutoRegister
+public class TileEntityMachineMilkReformer extends TileEntityMachineBase implements ITickable, ISpaceGuiProvider, IFluidStandardTransceiver, IEnergyReceiverMK2 {
+
+    public FluidTankNTM tanks[];
+    public long power;
+    public static final long maxPower = 100_000_000;
+
+    public TileEntityMachineMilkReformer() {
+        super(11, true, true);
+
+        this.tanks = new FluidTankNTM[4];
+        this.tanks[0] = new FluidTankNTM(Fluids.MILK, 64_000);
+        this.tanks[1] = new FluidTankNTM(Fluids.EMILK, 32_000);
+        this.tanks[2] = new FluidTankNTM(Fluids.CMILK, 32_000);
+        this.tanks[3] = new FluidTankNTM(Fluids.CREAM, 32_000);
+    }
+
+    @Override
+    public String getDefaultName() {
+        return "container.milkreformer";
+    }
+
+    @Override
+    public FluidTankNTM[] getAllTanks() {
+        return tanks;
+    }
+
+    @Override
+    public long getPower() {
+        return power;
+    }
+
+    @Override
+    public long getMaxPower() {
+        return maxPower;
+    }
+
+    @Override
+    public void setPower(long power) {
+        this.power = power;
+    }
+
+    @Override
+    public FluidTankNTM[] getSendingTanks() {
+        return new FluidTankNTM[] {tanks[1], tanks[2], tanks[3]};
+    }
+
+    @Override
+    public FluidTankNTM[] getReceivingTanks() {
+        return new FluidTankNTM[] {tanks[0]};
+    }
+
+    @Override
+    public Container provideContainer(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        return new ContainerMachineMilkReformer(player.inventory, this);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiScreen provideGUI(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        return new GUIMilkReformer(player.inventory, this);
+    }
+
+    @Override
+    public void update() {
+
+        if(!world.isRemote) {
+
+            this.updateConnections();
+            power = Library.chargeTEFromItems(inventory, 0, power, maxPower);
+            tanks[0].loadTank(1, 2, inventory);
+
+            refine();
+
+            tanks[1].unloadTank(3, 4, inventory);
+            tanks[2].unloadTank(5, 6, inventory);
+            tanks[3].unloadTank(7, 8, inventory);
+
+            for(DirPos pos : getConPos()) {
+                for(int i = 1; i < 4; i++) {
+                    if(tanks[i].getFill() > 0) {
+                        this.sendFluid(tanks[i], world, pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ(), pos.getDir());
+                    }
+                }
+            }
+
+            this.networkPackNT(150);
+        }
+    }
+
+    @Override
+    public void serialize(ByteBuf buf) {
+        super.serialize(buf);
+        buf.writeLong(power);
+        for(int i = 0; i < 4; i++) tanks[i].serialize(buf);
+    }
+
+    @Override
+    public void deserialize(ByteBuf buf) {
+        super.deserialize(buf);
+        power = buf.readLong();
+        for(int i = 0; i < 4; i++) tanks[i].deserialize(buf);
+    }
+
+    private void refine() {
+
+        if(power < 10_000) return;
+        if(tanks[0].getFill() < 100) return;
+        if(tanks[1].getFill() + 50 > tanks[1].getMaxFill()) return;
+        if(tanks[2].getFill() + 35 > tanks[2].getMaxFill()) return;
+        if(tanks[3].getFill() + 15 > tanks[3].getMaxFill()) return;
+
+        power -= 10_000;
+        tanks[0].setFill(tanks[0].getFill() - 100);
+        tanks[1].setFill(tanks[1].getFill() + 50);
+        tanks[2].setFill(tanks[2].getFill() + 35);
+        tanks[3].setFill(tanks[3].getFill() + 15);
+    }
+
+    private void updateConnections() {
+        for(DirPos pos : getConPos()) {
+            this.trySubscribe(world, pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ(), pos.getDir());
+            this.trySubscribe(tanks[0].getTankType(), world, pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ(), pos.getDir());
+        }
+    }
+
+    public DirPos[] getConPos() {
+        return new DirPos[] {
+                new DirPos(pos.getX() + 2, pos.getY(), pos.getZ() + 1, Library.POS_X),
+                new DirPos(pos.getX() + 2, pos.getY(), pos.getZ() - 1, Library.POS_X),
+                new DirPos(pos.getX() - 2, pos.getY(), pos.getZ() + 1, Library.NEG_X),
+                new DirPos(pos.getX() - 2, pos.getY(), pos.getZ() - 1, Library.NEG_X),
+                new DirPos(pos.getX() + 1, pos.getY(), pos.getZ() + 2, Library.POS_Z),
+                new DirPos(pos.getX() - 1, pos.getY(), pos.getZ() + 2, Library.POS_Z),
+                new DirPos(pos.getX() + 1, pos.getY(), pos.getZ() - 2, Library.NEG_Z),
+                new DirPos(pos.getX() - 1, pos.getY(), pos.getZ() - 2, Library.NEG_Z)
+        };
+    }
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+
+        power = nbt.getLong("power");
+        tanks[0].readFromNBT(nbt, "input");
+        tanks[1].readFromNBT(nbt, "m1");
+        tanks[2].readFromNBT(nbt, "m2");
+        tanks[3].readFromNBT(nbt, "m3");
+    }
+
+    @Override
+    public @NotNull NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+
+        nbt.setLong("power", power);
+        tanks[0].writeToNBT(nbt, "input");
+        tanks[1].writeToNBT(nbt, "m1");
+        tanks[2].writeToNBT(nbt, "m2");
+        tanks[3].writeToNBT(nbt, "m3");
+        return super.writeToNBT(nbt);
+    }
+    AxisAlignedBB bb = null;
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+
+        if(bb == null) {
+            bb = new AxisAlignedBB(
+                    pos.getX() - 2,
+                    pos.getY(),
+                    pos.getZ() - 2,
+                    pos.getX() + 3,
+                    pos.getY() + 7,
+                    pos.getZ() + 3
+            );
+        }
+
+        return bb;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public double getMaxRenderDistanceSquared() {
+        return 65536.0D;
+    }
+
+    @Override
+    public boolean canConnect(ForgeDirection dir) {
+        return dir != ForgeDirection.UNKNOWN && dir != ForgeDirection.DOWN;
+    }
+
+    @Override
+    public boolean canConnect(FluidType type, ForgeDirection dir) {
+        return dir != ForgeDirection.UNKNOWN && dir != ForgeDirection.DOWN;
+    }
+
+}

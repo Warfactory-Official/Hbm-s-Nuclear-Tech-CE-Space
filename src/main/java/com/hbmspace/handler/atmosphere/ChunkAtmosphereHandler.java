@@ -1,5 +1,6 @@
 package com.hbmspace.handler.atmosphere;
 
+import com.hbm.blocks.ModBlocks;
 import com.hbm.config.GeneralConfig;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.orbit.WorldProviderOrbit;
@@ -23,6 +24,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.event.terraingen.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -38,6 +40,14 @@ public class ChunkAtmosphereHandler {
 
 	private HashMap<Integer, HashMap<IAtmosphereProvider, AtmosphereBlob>> worldBlobs = new HashMap<>();
 	private final int MAX_BLOB_RADIUS = 256;
+
+    // How much CO2 is converted into O2 from various growing
+    // Balanced around these amounts of plants providing for a single pressurized room:
+    //  * 25 trees (955s to grow), OR
+    //  * 200 crops (300s per stage)
+    public static final int TREE_GROWTH_CONVERSION = 400; // per sapling -> tree
+    public static final int CROP_GROWTH_CONVERSION = 15; // per stage
+    public static final int GRASS_GROWTH_CONVERSION = 100; // per block // TODO mixin EntityChemical
 
 	/*
 	 * Methods to get information about the current atmosphere
@@ -69,7 +79,7 @@ public class ChunkAtmosphereHandler {
 			}
 		}
 
-		if(atmosphere.fluids.size() == 0) return null;
+		if(atmosphere.fluids.isEmpty()) return null;
 
 		return atmosphere;
 	}
@@ -85,7 +95,7 @@ public class ChunkAtmosphereHandler {
 	}
 
 	public List<AtmosphereBlob> getBlobs(World world, int x, int y, int z) {
-		List<AtmosphereBlob> inBlobs = new ArrayList<AtmosphereBlob>();
+		List<AtmosphereBlob> inBlobs = new ArrayList<>();
 
 		ThreeInts pos = new ThreeInts(x, y, z);
 		HashMap<IAtmosphereProvider, AtmosphereBlob> blobs = worldBlobs.get(world.provider.getDimension());
@@ -116,9 +126,13 @@ public class ChunkAtmosphereHandler {
 		return false;
 	}
 
+    protected List<AtmosphereBlob> getBlobsWithinRadius(World world, ThreeInts pos) {
+        return getBlobsWithinRadius(world, pos, MAX_BLOB_RADIUS);
+    }
+
 	protected List<AtmosphereBlob> getBlobsWithinRadius(World world, ThreeInts pos, int radius) {
 		HashMap<IAtmosphereProvider, AtmosphereBlob> blobs = worldBlobs.get(world.provider.getDimension());
-		List<AtmosphereBlob> list = new LinkedList<AtmosphereBlob>();
+		List<AtmosphereBlob> list = new LinkedList<>();
 
 		if(blobs == null) return list;
 
@@ -241,6 +255,7 @@ public class ChunkAtmosphereHandler {
 				if(blob.contains(pos)) {
 					blob.removeBlock(pos);
 				} else if(!blob.contains(blob.getRootPosition())) {
+                    blob.runDepress = false;
 					blob.addBlock(blob.getRootPosition());
 				}
 			}
@@ -257,6 +272,7 @@ public class ChunkAtmosphereHandler {
 			if(blob.contains(pos)) {
 				blob.removeBlock(pos);
 			} else if(!blob.contains(blob.getRootPosition())) {
+                blob.runDepress = false;
 				blob.addBlock(blob.getRootPosition());
 			}
 		}
@@ -268,6 +284,8 @@ public class ChunkAtmosphereHandler {
 			// Make sure that a block can actually be attached to the blob
 			for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 				if(blob.contains(pos.getPositionAtOffset(dir))) {
+                    blob.runDepress = true;
+                    blob.depressDir = dir;
 					blob.addBlock(pos);
 					break;
 				}
@@ -289,6 +307,19 @@ public class ChunkAtmosphereHandler {
 		worldBlobs.remove(event.getWorld().provider.getDimension());
 	}
 
+    public void receiveWorldTick(TickEvent.WorldTickEvent tick) {
+        if(tick.world.isRemote || tick.phase != TickEvent.Phase.END) return;
+
+        tickTerraforming(tick.world);
+
+        if(tick.world.getTotalWorldTime() % 20 != 0) return;
+
+        HashMap<IAtmosphereProvider, AtmosphereBlob> blobs = worldBlobs.get(tick.world.provider.getDimension());
+        for(AtmosphereBlob blob : blobs.values()) {
+            blob.checkGrowth();
+        }
+    }
+
 	public void receiveBlockPlaced(BlockEvent.PlaceEvent event) {
 		if(event.getWorld().isRemote) return;
 		onBlockPlaced(event.getWorld(), new ThreeInts(event.getPos().getX(), event.getPos().getY(), event.getPos().getZ()));
@@ -306,7 +337,7 @@ public class ChunkAtmosphereHandler {
 	// This just stores the affected blocks, since the explosion hasn't actually occurred yet
 	public void receiveDetonate(ExplosionEvent.Detonate event) {
 		if(event.getWorld().isRemote) return;
-		List<ThreeInts> unsealingBlocks = new ArrayList<ThreeInts>();
+		List<ThreeInts> unsealingBlocks = new ArrayList<>();
 		for(BlockPos block : event.getAffectedBlocks()) {
 			if(AtmosphereBlob.isBlockSealed(event.getWorld(), block.getX(), block.getY(), block.getZ())) {
 				unsealingBlocks.add(new ThreeInts(block.getX(), block.getY(), block.getZ()));
@@ -327,7 +358,7 @@ public class ChunkAtmosphereHandler {
 			List<AtmosphereBlob> nearbyBlobs = getBlobsWithinRadius(event.getWorld(), explosion, MAX_BLOB_RADIUS + MathHelper.ceil(explosion1.size));
 	
 			for(ThreeInts pos : pair.value) {
-				if(nearbyBlobs.size() == 0) break;
+				if(nearbyBlobs.isEmpty()) break;
 	
 				Iterator<AtmosphereBlob> iterator = nearbyBlobs.iterator();
 	
@@ -335,6 +366,8 @@ public class ChunkAtmosphereHandler {
 					AtmosphereBlob blob = iterator.next();
 					for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 						if(blob.contains(pos.getPositionAtOffset(dir))) {
+                            blob.runDepress = true;
+                            blob.depressDir = dir;
 							blob.addBlock(pos);
 							iterator.remove();
 							break;
@@ -346,4 +379,108 @@ public class ChunkAtmosphereHandler {
 
 		explosions.clear();
 	}
+
+    public void receiveTreeGrow(SaplingGrowTreeEvent event) {
+        ThreeInts pos = new ThreeInts(event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
+        List<AtmosphereBlob> nearbyBlobs = getBlobsWithinRadius(event.getWorld(), pos, MAX_BLOB_RADIUS);
+        for(AtmosphereBlob blob : nearbyBlobs) {
+            if(blob.contains(pos)) {
+                blob.produce(TREE_GROWTH_CONVERSION);
+                break;
+            }
+        }
+    }
+
+    public void trackPlant(World world, int x, int y, int z) {
+        ThreeInts pos = new ThreeInts(x, y, z);
+
+        List<AtmosphereBlob> nearbyBlobs = getBlobsWithinRadius(world, pos);
+        for(AtmosphereBlob blob : nearbyBlobs) {
+            if(blob.contains(pos)) {
+                blob.addPlant(world, x, y, z);
+            }
+        }
+    }
+
+    private static HashMap<Integer, Queue<Growth>> growthMap = new HashMap<>();
+
+    private void tickTerraforming(World world) {
+        Queue<Growth> growths = growthMap.get(world.provider.getDimension());
+
+        for(int g = 0; g < 64; g++) {
+            Growth growth = growths.poll();
+
+            if(growth == null) return;
+
+            for(int i = 0; i < 4; i++) {
+                ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[world.rand.nextInt(4) + 2];
+
+                int x = growth.x + dir.offsetX;
+                int z = growth.z + dir.offsetZ;
+
+                for(int y = growth.y + 1; y >= growth.y - 1; y--) {
+                    BlockPos pos = new BlockPos(x, y, z);
+                    Block block = world.getBlockState(pos).getBlock();
+
+                    boolean shouldReplace = growth.from != null
+                            ? block == growth.from
+                            : block == Blocks.DIRT || block == ModBlocks.waste_earth || block == ModBlocks.dirt_dead || block == ModBlocks.dirt_oily;
+
+                    if(shouldReplace) {
+                        world.setBlockState(pos, growth.into.getDefaultState());
+
+                        if (growth.into == Blocks.GRASS) {
+                            world.playEvent(2005, new BlockPos(x, y + 1, z), 0);
+                        }
+
+                        if(growth.time > 0) addGrowth(world, growth.from, growth.into, x, y, z, growth.time - 1);
+
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    public void addGrowth(World world, Block into, int x, int y, int z, int size) {
+        addGrowth(world, null, into, x, y, z, size);
+    }
+
+    public void addGrowth(World world, Block into, int x, int y, int z, int count, int size) {
+        addGrowth(world, null, into, x, y, z, count, size);
+    }
+
+    public void addGrowth(World world, Block from, Block into, int x, int y, int z, int size) {
+        Queue<Growth> growths = growthMap.get(world.provider.getDimension());
+        growths.add(new Growth(from, into, x, y, z, size));
+    }
+
+    public void addGrowth(World world, Block from, Block into, int x, int y, int z, int count, int size) {
+        Queue<Growth> growths = growthMap.get(world.provider.getDimension());
+        for(int i = 0; i < count; i++) {
+            growths.add(new Growth(from, into, x, y, z, size));
+        }
+    }
+
+    private static class Growth {
+
+        public final Block from;
+        public final Block into;
+        public final int time; // remaining
+
+        public final int x;
+        public final int y;
+        public final int z;
+
+        public Growth(Block from, Block into, int x, int y, int z, int time) {
+            this.from = from;
+            this.into = into;
+            this.time = time;
+
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+    }
 }

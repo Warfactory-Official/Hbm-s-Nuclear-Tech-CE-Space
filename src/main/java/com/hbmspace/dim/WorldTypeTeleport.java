@@ -1,6 +1,6 @@
 package com.hbmspace.dim;
 
-import com.hbm.config.SpaceConfig;
+import com.hbmspace.config.SpaceConfig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.WorldType;
 

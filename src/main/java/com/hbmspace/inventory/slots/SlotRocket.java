@@ -5,6 +5,7 @@ import com.hbmspace.items.ItemVOTVdrive;
 import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.items.weapon.ItemCustomRocket;
 import com.hbmspace.tileentity.machine.TileEntityMachineRocketAssembly;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -61,10 +62,10 @@ public class SlotRocket extends SlotItemHandler {
 
     public static class SlotDrive extends SlotLayer {
 
-        TileEntityMachineRocketAssembly inventory;
+        IStage inventory;
 
-        public SlotDrive(TileEntityMachineRocketAssembly inventory, IItemHandler itemHandler, int index, int x, int y, int layer) {
-            super(itemHandler, index, x, y, layer);
+        public SlotDrive(IStage inventory, int index, int x, int y, int layer) {
+            super(inventory, index, x, y, layer);
             this.inventory = inventory;
         }
 
@@ -77,8 +78,14 @@ public class SlotRocket extends SlotItemHandler {
         @Override
         public void setLayer(int layer) {
             super.setLayer(layer);
-            inventory.currentStage = layer;
+            inventory.setCurrentStage(layer);
         }
+
+    }
+
+    public static interface IStage extends IItemHandler {
+
+        public void setCurrentStage(int stage);
 
     }
 

@@ -1,6 +1,5 @@
 package com.hbmspace.render.entity.mob;
 
-import com.hbm.lib.RefStrings;
 import com.hbmspace.entity.mob.EntityMoonCow;
 import com.hbmspace.interfaces.AutoRegister;
 import com.hbmspace.render.model.ModelMoonCow;
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class RenderMoonCow extends RenderLiving<EntityMoonCow> {
     public static final IRenderFactory<EntityMoonCow> FACTORY = RenderMoonCow::new;
 
-    public static final ResourceLocation texture = new ResourceLocation(RefStrings.MODID, "textures/entity/moon_cow.png");
+    public static final ResourceLocation texture = new ResourceLocation("hbm", "textures/entity/moon_cow.png");
 
     public RenderMoonCow(RenderManager man) {
         super(man, new ModelMoonCow(), 0.7F);

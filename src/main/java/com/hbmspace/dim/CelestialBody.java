@@ -1,13 +1,11 @@
 package com.hbmspace.dim;
 
+import com.hbm.inventory.fluid.trait.FluidTraitSimple;
 import com.hbmspace.capability.HbmLivingPropsSpace;
 import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.orbit.OrbitalStation;
-import com.hbmspace.dim.trait.CBT_Atmosphere;
+import com.hbmspace.dim.trait.*;
 import com.hbmspace.dim.trait.CBT_Atmosphere.FluidEntry;
-import com.hbmspace.dim.trait.CBT_War;
-import com.hbmspace.dim.trait.CBT_Water;
-import com.hbmspace.dim.trait.CelestialBodyTrait;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbmspace.items.ItemVOTVdrive.Target;
@@ -39,9 +37,15 @@ public class CelestialBody {
 
 	public boolean canLand = false; // does this body have an associated dimension and a solid surface?
 
-	public float massKg = 0;
-	public float radiusKm = 0;
-	public float semiMajorAxisKm = 0; // Distance to the parent body
+    public float massKg = 0;
+    public float radiusKm = 0;
+    public float semiMajorAxisKm = 0; // Distance to the parent body
+    public float semiMinorAxisFactor = 0; // has a sqrt so done ahead of time
+    public float eccentricity = 0;
+    public float inclination = 0;
+    public float ascendingNode = 0;
+    public float argumentPeriapsis = 0;
+
 	private int rotationalPeriod = 6 * 60 * 60; // Day length in seconds
 
 	public float axialTilt = 0;
@@ -49,9 +53,20 @@ public class CelestialBody {
 	private int minProcessingLevel = 0; // What level of technology can locate this body? This defines the minimum level, automatically adjusted based on stardar location
 
 	public ResourceLocation texture = null;
+    public ResourceLocation biomeMask = null;
+    public ResourceLocation cityMask = null;
 	public float[] color = new float[] {0.4F, 0.4F, 0.4F}; // When too small to render the texture
 
 	public String tidallyLockedTo = null;
+
+    public boolean hasRings = false; // put a ring on it
+    public float ringTilt = 0;
+    public float[] ringColor = new float[] {0.5F, 0.5F, 0.5F};
+    public float ringSize = 2;
+
+    public boolean hasIce = false; // has bedrock ice?
+
+    public FluidType gas;
 	
 	public List<CelestialBody> satellites = new ArrayList<CelestialBody>(); // moon boyes
 	public CelestialBody parent = null;
@@ -130,6 +145,19 @@ public class CelestialBody {
 		tidallyLockedTo = name;
 		return this;
 	}
+
+    public CelestialBody withRings(float tilt, float size, float... color) {
+        this.hasRings = true;
+        this.ringTilt = tilt;
+        this.ringSize = size;
+        this.ringColor = color;
+        return this;
+    }
+
+    public CelestialBody withGas(FluidType gas) {
+        this.gas = gas;
+        return this;
+    }
 
 	public CelestialBody withSatellites(CelestialBody... bodies) {
 		Collections.addAll(satellites, bodies);
@@ -319,6 +347,25 @@ public class CelestialBody {
 		setTraits(world, currentTraits);
 	}
 
+    public static void release(World world, FluidType type, double mB) {
+        if(world.isRemote) return;
+
+        boolean isGas = type.hasTrait(FluidTraitSimple.FT_Gaseous.class) || type.hasTrait(FluidTraitSimple.FT_Gaseous_ART.class);
+        if(!isGas) return;
+
+        CelestialBody.emitGas(world, type, mB);
+    }
+
+    // Extracting gases from the atmosphere
+    public static void capture(World world, FluidType type, double mB) {
+        if(world.isRemote) return;
+
+        boolean isGas = type.hasTrait(FluidTraitSimple.FT_Gaseous.class) || type.hasTrait(FluidTraitSimple.FT_Gaseous_ART.class);
+        if(!isGas) return;
+
+        CelestialBody.consumeGas(world, type, mB);
+    }
+
 	// Checks if we need to update any traits based on the current atmospheric constituents
 	public static void updateChemistry(World world) {
 		boolean hasUpdated = false;
@@ -349,6 +396,17 @@ public class CelestialBody {
 
 		if(hasUpdated) setTraits(world, currentTraits);
 	}
+
+    // Called once per tick to attenuate swarm counts based on a swarm half-life
+    public static void updateSwarms() {
+        // We currently only have the one solar body, so we just update that directly
+        HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait> currentTraits = SolarSystem.kerbol.getTraits();
+
+        CBT_Dyson dyson = (CBT_Dyson) currentTraits.get(CBT_Dyson.class);
+        if(dyson == null) return;
+
+        dyson.attenuate();
+    }
 
 	// /Terraforming
 

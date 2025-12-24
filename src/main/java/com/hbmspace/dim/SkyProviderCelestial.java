@@ -3,7 +3,6 @@ package com.hbmspace.dim;
 import com.hbm.capability.HbmLivingProps;
 import com.hbmspace.dim.SolarSystem.AstroMetric;
 import com.hbmspace.dim.trait.CBT_Atmosphere;
-import com.hbm.lib.RefStrings;
 import com.hbm.render.Shader;
 import com.hbm.saveddata.satellites.Satellite;
 import com.hbm.saveddata.satellites.SatelliteSavedData;
@@ -28,15 +27,15 @@ import java.util.Map;
 
 public class SkyProviderCelestial extends IRenderHandler {
 	
-	private static final ResourceLocation planetTexture = new ResourceLocation(RefStrings.MODID, "textures/misc/space/planet.png");
-	private static final ResourceLocation flareTexture = new ResourceLocation(RefStrings.MODID, "textures/misc/space/sunspike.png");
-	private static final ResourceLocation nightTexture = new ResourceLocation(RefStrings.MODID, "textures/misc/space/night.png");
-	private static final ResourceLocation digammaStar = new ResourceLocation(RefStrings.MODID, "textures/misc/space/star_digamma.png");
+	private static final ResourceLocation planetTexture = new ResourceLocation("hbm", "textures/misc/space/planet.png");
+	private static final ResourceLocation flareTexture = new ResourceLocation("hbm", "textures/misc/space/sunspike.png");
+	private static final ResourceLocation nightTexture = new ResourceLocation("hbm", "textures/misc/space/night.png");
+	private static final ResourceLocation digammaStar = new ResourceLocation("hbm", "textures/misc/space/star_digamma.png");
 
-	private static final ResourceLocation noise = new ResourceLocation(RefStrings.MODID, "shaders/iChannel1.png");
+	private static final ResourceLocation noise = new ResourceLocation("hbm", "shaders/iChannel1.png");
 
-	protected static final Shader planetShader = new Shader(new ResourceLocation(RefStrings.MODID, "shaders/crescent.frag"));
-	protected static final Shader swarmShader = new Shader(new ResourceLocation(RefStrings.MODID, "shaders/swarm.vert"), new ResourceLocation(RefStrings.MODID, "shaders/swarm.frag"));
+	protected static final Shader planetShader = new Shader(new ResourceLocation("hbm", "shaders/crescent.frag"));
+	protected static final Shader swarmShader = new Shader(new ResourceLocation("hbm", "shaders/swarm.vert"), new ResourceLocation("hbm", "shaders/swarm.frag"));
 
 	public static boolean displayListsInitialized = false;
 	public static int skyVBO;

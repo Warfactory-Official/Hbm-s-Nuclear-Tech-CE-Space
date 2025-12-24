@@ -1,6 +1,6 @@
 package com.hbmspace.dim.orbit;
 
-import com.hbm.config.SpaceConfig;
+import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.dim.WorldProviderCelestial;

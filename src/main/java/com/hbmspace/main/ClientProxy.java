@@ -1,6 +1,7 @@
 package com.hbmspace.main;
 
 import com.hbm.main.ModEventHandlerClient;
+import com.hbm.main.client.NTMClientRegistry;
 import com.hbm.render.item.ItemRenderMissilePart;
 import com.hbm.sound.AudioWrapper;
 import com.hbm.sound.AudioWrapperClient;
@@ -67,7 +68,7 @@ public class ClientProxy extends ServerProxy {
 
     public static void registerItemRenderer(Item i, TileEntityItemStackRenderer render, IRegistry<ModelResourceLocation, IBakedModel> reg) {
         i.setTileEntityItemStackRenderer(render);
-        ModEventHandlerClient.swapModels(i, reg);
+        NTMClientRegistry.swapModels(i, reg);
     }
 
     @Override

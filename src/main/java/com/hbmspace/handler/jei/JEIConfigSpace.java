@@ -2,10 +2,12 @@ package com.hbmspace.handler.jei;
 
 import com.hbm.config.GeneralConfig;
 import com.hbmspace.blocks.ModBlocksSpace;
+import com.hbmspace.items.ModItemsSpace;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.JEIPlugin;
+import mezz.jei.api.ingredients.IIngredientBlacklist;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +26,14 @@ public class JEIConfigSpace implements IModPlugin {
         registry.addRecipeCatalyst(new ItemStack(ModBlocksSpace.machine_vacuum_circuit), VACUUM_CIRCUIT);
 
         registry.addRecipes(vacuumCircuitHandler.getRecipes(), VACUUM_CIRCUIT);
+
+        IIngredientBlacklist blacklist = registry.getJeiHelpers().getIngredientBlacklist();
+        blacklist.addIngredientToBlacklist(new ItemStack(ModBlocksSpace.dummy_beam));
+        blacklist.addIngredientToBlacklist(new ItemStack(ModBlocksSpace.orbital_station));
+        blacklist.addIngredientToBlacklist(new ItemStack(ModItemsSpace.rocket_custom));
+        blacklist.addIngredientToBlacklist(new ItemStack(ModBlocksSpace.machine_htrf4neo)); // it's still in-dev, afaik
+        //blacklist.addIngredientToBlacklist(new ItemStack(ModBlocksSpace.war_controller));
+        //blacklist.addIngredientToBlacklist(new ItemStack(ModItemsSpace.sat_war));
     }
 
     @Override

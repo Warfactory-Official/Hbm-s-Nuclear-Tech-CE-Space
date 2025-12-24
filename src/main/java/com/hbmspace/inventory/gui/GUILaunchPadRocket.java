@@ -1,7 +1,6 @@
 package com.hbmspace.inventory.gui;
 
 import com.hbm.inventory.gui.GuiInfoContainer;
-import com.hbm.lib.RefStrings;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toserver.NBTControlPacket;
 import com.hbmspace.inventory.container.ContainerLaunchPadRocket;
@@ -20,7 +19,7 @@ import java.util.List;
 
 public class GUILaunchPadRocket extends GuiInfoContainer {
 
-    private static ResourceLocation texture = new ResourceLocation(RefStrings.MODID + ":textures/gui/machine/gui_launchpad_rocket.png");
+    private static ResourceLocation texture = new ResourceLocation("hbm" + ":textures/gui/machine/gui_launchpad_rocket.png");
     private TileEntityLaunchPadRocket machine;
 
     public GUILaunchPadRocket(InventoryPlayer invPlayer, TileEntityLaunchPadRocket machine) {

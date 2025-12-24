@@ -4,6 +4,7 @@ import com.hbm.blocks.BlockDummyable;
 import com.hbm.interfaces.IControlReceiver;
 import com.hbm.items.ISatChip;
 import com.hbm.lib.ForgeDirection;
+import com.hbmspace.tileentity.ISpaceGuiProvider;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.util.BobMathUtil;
 import com.hbmspace.blocks.ModBlocksSpace;
@@ -11,9 +12,9 @@ import com.hbmspace.handler.RocketStruct;
 import com.hbmspace.interfaces.AutoRegister;
 import com.hbmspace.inventory.container.ContainerMachineRocketAssembly;
 import com.hbmspace.inventory.gui.GUIMachineRocketAssembly;
+import com.hbmspace.inventory.slots.SlotRocket;
 import com.hbmspace.items.ItemVOTVdrive;
 import com.hbmspace.items.weapon.ItemCustomRocket;
-import com.hbmspace.tileentity.ISpaceGuiProvider;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
@@ -34,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 @AutoRegister
-public class TileEntityMachineRocketAssembly extends TileEntityMachineBase implements ITickable, ISpaceGuiProvider, IControlReceiver {
+public class TileEntityMachineRocketAssembly extends TileEntityMachineBase implements ITickable, ISpaceGuiProvider, IControlReceiver, SlotRocket.IStage {
 
     public RocketStruct rocket;
 
@@ -66,6 +67,8 @@ public class TileEntityMachineRocketAssembly extends TileEntityMachineBase imple
     public String getDefaultName() {
         return "container.machineRocketAssembly";
     }
+
+
 
     @Override
     public void update() {
@@ -121,7 +124,7 @@ public class TileEntityMachineRocketAssembly extends TileEntityMachineBase imple
 
                 double checkHeight = rocket.getHeight();
                 if(rocket.capsule != null) checkHeight -= rocket.capsule.height;
-                if(rocket.stages.size() > 0 && rocket.stages.get(0).thruster != null) checkHeight -= rocket.stages.get(0).thruster.height;
+                if(!rocket.stages.isEmpty() && rocket.stages.getFirst().thruster != null) checkHeight -= rocket.stages.getFirst().thruster.height;
 
                 if(checkHeight < maxHeight) {
                     // Create platforms to stand on
@@ -130,8 +133,8 @@ public class TileEntityMachineRocketAssembly extends TileEntityMachineBase imple
                         RocketStruct.RocketStage stage = rocket.stages.get(i);
                         RocketStruct.RocketStage nextStage = i < rocket.stages.size() - 1 ? rocket.stages.get(i + 1) : null;
 
-                        if(stage.fuselage != null) targetHeight += stage.fuselage.height * stage.getStack();
-                        if(nextStage != null && nextStage.thruster != null) targetHeight += nextStage.thruster.height;
+                        if(stage.fuselage != null) targetHeight += (int) (stage.fuselage.height * stage.getStack());
+                        if(nextStage != null && nextStage.thruster != null) targetHeight += (int) nextStage.thruster.height;
 
                         int platform = Math.round(targetHeight);
 
@@ -189,7 +192,7 @@ public class TileEntityMachineRocketAssembly extends TileEntityMachineBase imple
     public void addPlatform(int height) {
         for(int x = -4; x <= 4; x++) {
             for(int z = -4; z <= 4; z++) {
-                int meta = 0;
+                int meta;
 
                 if((x == -4 || x == 4) && (z == -4 || z == 4)) continue;
 
@@ -324,5 +327,36 @@ public class TileEntityMachineRocketAssembly extends TileEntityMachineBase imple
         if(data.getBoolean("deconstruct")) {
             deconstruct();
         }
+    }
+
+    @Override
+    public void setCurrentStage(int stage) {
+        currentStage = stage;
+    }
+
+    @Override
+    public int getSlots() {
+        if(isBreaking) return (1 + RocketStruct.MAX_STAGES * 3 + 1 + RocketStruct.MAX_STAGES * 2) - RocketStruct.MAX_STAGES * 2;
+        return 1 + RocketStruct.MAX_STAGES * 3 + 1 + RocketStruct.MAX_STAGES * 2;
+    }
+
+    @Override
+    public @NotNull ItemStack getStackInSlot(int slot) {
+        return inventory.getStackInSlot(slot);
+    }
+
+    @Override
+    public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+        return inventory.insertItem(slot, stack, simulate);
+    }
+
+    @Override
+    public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
+        return inventory.extractItem(slot, amount, simulate);
+    }
+
+    @Override
+    public int getSlotLimit(int slot) {
+        return 8;
     }
 }

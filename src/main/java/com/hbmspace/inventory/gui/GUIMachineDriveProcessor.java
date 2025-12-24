@@ -1,7 +1,6 @@
 package com.hbmspace.inventory.gui;
 
 import com.hbm.inventory.gui.GuiInfoContainer;
-import com.hbm.lib.RefStrings;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toserver.NBTControlPacket;
 import com.hbmspace.inventory.container.ContainerDriveProcessor;
@@ -18,7 +17,7 @@ import java.io.IOException;
 
 public class GUIMachineDriveProcessor extends GuiInfoContainer {
 
-    private static final ResourceLocation texture = new ResourceLocation( RefStrings.MODID + ":textures/gui/processing/gui_drive_processor.png");
+    private static final ResourceLocation texture = new ResourceLocation( "hbm" + ":textures/gui/processing/gui_drive_processor.png");
 
     private TileEntityMachineDriveProcessor machine;
 

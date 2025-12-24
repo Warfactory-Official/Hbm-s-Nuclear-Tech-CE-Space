@@ -39,10 +39,18 @@ public class RocketPart extends MissilePart {
         return this;
     }
 
+    private RocketPart hideInventoryModel() {
+        this.renderInventoryModel = false;
+        return this;
+    }
+
     public static void registerAllParts() {
         parts.clear();
 
-        registerPart(ModItemsSpace.rp_capsule_20, ItemMissile.PartType.WARHEAD, 3.5, 2.25, ResourceManagerSpace.soyuz_lander_neo, ResourceManagerSpace.module_lander_tex);
+        registerPart(ModItemsSpace.sat_war, ItemMissile.PartType.WARHEAD, 7, 5, ResourceManager.mp_w_fairing, ResourceManager.mp_w_fairing_tex);
+        registerPart(ModItemsSpace.sat_dyson_relay, ItemMissile.PartType.WARHEAD, 7, 5, ResourceManager.mp_w_fairing, ResourceManager.mp_w_fairing_tex).hideInventoryModel();
+
+        registerPart(ModItemsSpace.rp_capsule_20, ItemMissile.PartType.WARHEAD, 3.5, 2.25, ResourceManagerSpace.landing_capsule, ResourceManagerSpace.landing_capsule_tex);
         registerPart(ModItemsSpace.rp_station_core_20, ItemMissile.PartType.WARHEAD, 7, 5, ResourceManagerSpace.mp_w_fairing, ResourceManagerSpace.mp_w_fairing_tex);
         registerPart(ModItemsSpace.rp_pod_20, ItemMissile.PartType.WARHEAD, 3.0, 2.25, ResourceManagerSpace.drop_pod, ResourceManagerSpace.drop_pod_tex).withRenderer(new RenderDropPod());
 
@@ -176,14 +184,19 @@ public class RocketPart extends MissilePart {
         registerPart(ModItems.mp_fuselage_15_20_kerosene, ItemMissile.PartType.FUSELAGE, 16, 10, ResourceManager.mp_f_15_20_kerosene, ResourceManager.mp_f_15_20_kerosene_tex);
         registerPart(ModItems.mp_fuselage_15_20_kerosene_magnusson, ItemMissile.PartType.FUSELAGE, 16, 10, ResourceManager.mp_f_15_20_kerosene, ResourceManager.mp_f_15_20_kerosene_magnusson_tex);
         registerPart(ModItems.mp_fuselage_15_20_solid, ItemMissile.PartType.FUSELAGE, 16, 10, ResourceManager.mp_f_15_20_kerosene, ResourceManager.mp_f_15_20_solid_tex);
-        //
-        // TODO move them all to fucking space
+
+		registerPart(ModItemsSpace.rp_fuselage_20_12_hydrazine, ItemMissile.PartType.FUSELAGE, 10, 8, ResourceManagerSpace.mp_f_20_neo, ResourceManagerSpace.mp_f_20_hydrazine_tex);
 		registerPart(ModItemsSpace.rp_fuselage_20_12, ItemMissile.PartType.FUSELAGE, 12, 8, ResourceManagerSpace.mp_f_20_12_usa, ResourceManager.mp_f_20_kerolox_usa);
 		registerPart(ModItemsSpace.rp_fuselage_20_6, ItemMissile.PartType.FUSELAGE, 6, 4.5, ResourceManagerSpace.mp_f_20_6_usa, ResourceManager.mp_f_20_kerolox_usa);
 		registerPart(ModItemsSpace.rp_fuselage_20_3, ItemMissile.PartType.FUSELAGE, 3, 2.5, ResourceManagerSpace.mp_f_20_3_usa, ResourceManager.mp_f_20_kerolox).withShroud(ResourceManagerSpace.mp_f_20_6_usa);
 		registerPart(ModItemsSpace.rp_fuselage_20_1, ItemMissile.PartType.FUSELAGE, 1, 1.5, ResourceManagerSpace.mp_f_20_1_usa, ResourceManager.mp_f_20_kerolox).withShroud(ResourceManagerSpace.mp_f_20_6_usa);
-        registerPart(ModItemsSpace.rp_fuselage_20_12_hydrazine, ItemMissile.PartType.FUSELAGE, 10, 8, ResourceManagerSpace.mp_f_20_neo, ResourceManagerSpace.mp_f_20_hydrazine_tex);
 
+        registerPart(ModItemsSpace.mp_thruster_20_methalox, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene, ResourceManagerSpace.mp_t_20_methalox_tex);
+        registerPart(ModItemsSpace.mp_thruster_20_methalox_dual, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene_dual, ResourceManagerSpace.mp_t_20_methalox_dual_tex);
+        registerPart(ModItemsSpace.mp_thruster_20_methalox_triple, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene_triple, ResourceManagerSpace.mp_t_20_methalox_dual_tex);
+        registerPart(ModItemsSpace.mp_thruster_20_hydrogen, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene, ResourceManagerSpace.mp_t_20_hydrogen_tex);
+        registerPart(ModItemsSpace.mp_thruster_20_hydrogen_dual, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene_dual, ResourceManagerSpace.mp_t_20_hydrogen_dual_tex);
+        registerPart(ModItemsSpace.mp_thruster_20_hydrogen_triple, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene_triple, ResourceManagerSpace.mp_t_20_hydrogen_dual_tex);
 
         //////
 

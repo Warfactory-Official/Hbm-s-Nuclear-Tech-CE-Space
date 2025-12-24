@@ -1,7 +1,6 @@
 package com.hbmspace.inventory.gui;
 
 import com.hbm.inventory.gui.GuiInfoContainer;
-import com.hbm.lib.RefStrings;
 import com.hbmspace.inventory.container.ContainerVacuumCircuit;
 import com.hbmspace.tileentity.machine.TileEntityMachineVacuumCircuit;
 import net.minecraft.client.Minecraft;
@@ -13,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 public class GUIVacuumCircuit extends GuiInfoContainer {
 
 
-    private static ResourceLocation texture = new ResourceLocation(RefStrings.MODID + ":textures/gui/processing/gui_vac_cir_station.png");
+    private static ResourceLocation texture = new ResourceLocation("hbm" + ":textures/gui/processing/gui_vac_cir_station.png");
     private TileEntityMachineVacuumCircuit sucker;
 
     public GUIVacuumCircuit(InventoryPlayer playerInv, TileEntityMachineVacuumCircuit tile) {

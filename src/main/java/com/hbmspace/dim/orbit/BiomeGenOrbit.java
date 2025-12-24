@@ -1,6 +1,6 @@
 package com.hbmspace.dim.orbit;
 
-import com.hbm.config.SpaceConfig;
+import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.BiomeGenBaseCelestial;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;

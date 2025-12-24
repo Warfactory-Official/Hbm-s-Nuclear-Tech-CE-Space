@@ -1,7 +1,10 @@
 package com.hbmspace.dim.Ike;
 
+import com.hbm.blocks.ModBlocks;
+import com.hbm.config.WorldConfig;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.dim.ChunkProviderCelestial;
+import com.hbmspace.dim.mapgen.MapGenCrater;
 import com.hbmspace.dim.mapgen.MapGenTiltedSpires;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.BlockPos;
@@ -20,12 +23,23 @@ public class ChunkProviderIke extends ChunkProviderCelestial {
 	private MapGenBase caveGenerator = new MapGenCaves();
 	private MapGenTiltedSpires spires = new MapGenTiltedSpires(6, 6, 0F);
 
+    //private MapGenBubble brine = new MapGenBubble(WorldConfig.ikeBrineSpawn);
+    private MapGenCrater sellafield = new MapGenCrater(WorldConfig.radfreq / 10);
+
 	public ChunkProviderIke(World world, long seed, boolean hasMapFeatures) {
 		super(world, seed, hasMapFeatures);
 
 		spires.rock = ModBlocksSpace.ike_stone;
 		spires.regolith = ModBlocksSpace.ike_regolith;
 		spires.mid = 86;
+
+        /*brine.block = ModBlocks.ore_brine;
+        brine.meta = (byte)CelestialBody.getMeta(world);
+        brine.replace = ModBlocks.ike_stone;
+        brine.setSize(8, 16);*/
+
+        sellafield.regolith = ModBlocks.sellafield;
+        sellafield.rock = ModBlocks.sellafield_slaked;
 
 		stoneBlock = ModBlocksSpace.ike_stone;
 	}
@@ -36,6 +50,7 @@ public class ChunkProviderIke extends ChunkProviderCelestial {
 
 		spires.generate(worldObj, x, z, buffer);
 		caveGenerator.generate(worldObj, x, z, buffer);
+        sellafield.generate(worldObj, x, z, buffer);
 		
 		return buffer;
 	}

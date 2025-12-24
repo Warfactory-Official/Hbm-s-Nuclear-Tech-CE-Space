@@ -33,8 +33,8 @@ public class ContainerMachineRocketAssembly extends ContainerBase {
 
         // Drives
         for(int i = 0; i < RocketStruct.MAX_STAGES; i++) {
-            addSlotToContainer(new SlotRocket.SlotDrive(machine, machine.inventory, slotId++, 161, 54, i));
-            addSlotToContainer(new SlotRocket.SlotDrive(machine, machine.inventory, slotId++, 170, 87, i));
+            addSlotToContainer(new SlotRocket.SlotDrive(machine, slotId++, 161, 54, i));
+            addSlotToContainer(new SlotRocket.SlotDrive(machine, slotId++, 170, 87, i));
         }
 
         addSlots(invPlayer, 9, 8, 142, 3, 9); // Player inventory

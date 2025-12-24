@@ -1,5 +1,6 @@
 package com.hbmspace.render.entity.missile;
 
+import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.entity.missile.EntityRideableRocket;
 import com.hbmspace.handler.RocketStruct;
 import com.hbmspace.main.ResourceManagerSpace;
@@ -34,7 +35,7 @@ public class RenderRocketCustom extends Render<EntityRideableRocket> {
             GlStateManager.rotate(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * interp, 0.0F, 0.0F, 1.0F);
             GlStateManager.rotate(entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * interp - 90.0F, 0.0F, -1.0F, 0.0F);
 
-            RocketPronter.prontRocket(rocket, entity, Minecraft.getMinecraft().getTextureManager(), true, interp);
+            RocketPronter.prontRocket(rocket, entity, Minecraft.getMinecraft().getTextureManager(), !CelestialBody.inOrbit(entity.world), entity.decoupleTimer, entity.shroudTimer, interp);
 
         }
         GlStateManager.popMatrix();

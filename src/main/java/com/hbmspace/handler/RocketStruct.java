@@ -53,11 +53,11 @@ public class RocketStruct {
         stage.thruster = thruster;
         stage.fuselageCount = fuselageCount;
         stage.thrusterCount = thrusterCount;
-        stages.add(0, stage);
+        stages.addFirst(stage);
     }
 
     public boolean validate() {
-        if(extraIssues.size() > 0)
+        if(!extraIssues.isEmpty())
             return false;
 
         if(capsule == null || capsule.type != ItemMissile.PartType.WARHEAD)
@@ -66,7 +66,7 @@ public class RocketStruct {
         if(capsule.part.attributes[0] != ItemMissile.WarheadType.APOLLO && capsule.part.attributes[0] != ItemMissile.WarheadType.SATELLITE)
             return false;
 
-        if(stages.size() == 0)
+        if(stages.isEmpty())
             return false;
 
         for(RocketStage stage : stages) {
@@ -91,7 +91,7 @@ public class RocketStruct {
         List<String> issues = new ArrayList<>();
 
         // If we have no parts, we have no worries
-        if(capsule == null && stages.size() == 0) return issues;
+        if(capsule == null && stages.isEmpty()) return issues;
 
         if(capsule == null || (capsule.part.attributes[0] != ItemMissile.WarheadType.APOLLO && capsule.part.attributes[0] != ItemMissile.WarheadType.SATELLITE))
             issues.add(TextFormatting.RED + "Invalid Capsule/Satellite");
@@ -178,7 +178,7 @@ public class RocketStruct {
             return from == to && (fromOrbit || toOrbit); // Pods can transfer, fall to orbited body, and return to station, but NOT hop on the surface
         }
 
-        if(stages.size() == 0) {
+        if(stages.isEmpty()) {
             return from == to && fromOrbit && !toOrbit; // Capsules can return to orbited body from orbit only
         }
 
@@ -210,6 +210,10 @@ public class RocketStruct {
         int isp = getISP(stage);
 
         return SolarSystem.getCostBetween(from, to, rocketMass, thrust, isp, fromOrbit, toOrbit);
+    }
+
+    public int getThrust() {
+        return getThrust(stages.getFirst());
     }
 
     private int getThrust(RocketStage stage) {
@@ -245,7 +249,7 @@ public class RocketStruct {
             if(stage.thruster != null) mass += stage.thruster.part.mass * stage.thrusterCount;
 
             if(stage.fuselage != null && (i > stageNum || wet)) {
-                mass += stage.fuselage.part.getTankSize() * stage.fuselageCount / 4;
+                mass += (int) (stage.fuselage.part.getTankSize() * stage.fuselageCount / 4);
             }
         }
 
@@ -271,13 +275,13 @@ public class RocketStruct {
     public double getHeight(int stageNum) {
         double height = 0;
 
-        if(stages.size() > 0) {
+        if(!stages.isEmpty()) {
             RocketStage stage = stages.get(Math.min(stageNum, stages.size() - 1));
             if(stage.fuselage != null) height += stage.fuselage.height * stage.getStack();
             height += Math.max(stage.thruster != null ? stage.thruster.height : 0, stageNum == 0 && stage.fins != null ? stage.fins.height : 0);
         }
 
-        if(stages.size() == 0 || stageNum == stages.size() - 1) {
+        if(stages.isEmpty() || stageNum == stages.size() - 1) {
             if(capsule != null) height += capsule.height;
         }
 
@@ -371,6 +375,10 @@ public class RocketStruct {
             stage.fuselageCount = Math.max(stageTag.getInteger("fc"), 1);
             stage.thrusterCount = Math.max(stageTag.getInteger("tc"), 1);
             rocket.stages.add(stage);
+        }
+
+        if(rocket.capsule == null) {
+            rocket.capsule = RocketPart.getPart(ModItemsSpace.rp_capsule_20);
         }
 
         return rocket;

@@ -1,5 +1,6 @@
 package com.hbmspace.dim.minmus;
 
+import com.hbm.config.WorldConfig;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.dim.ChunkProviderCelestial;
 import com.hbmspace.dim.mapgen.MapGenCrater;
@@ -18,6 +19,8 @@ public class ChunkProviderMinmus extends ChunkProviderCelestial {
 
 	private MapGenCrater smallCrater = new MapGenCrater(5);
 	private MapGenCrater largeCrater = new MapGenCrater(96);
+
+    //private MapGenBubble brine = new MapGenBubble(WorldConfig.minmusBrineSpawn);
 
 	public ChunkProviderMinmus(World world, long seed, boolean hasMapFeatures) {
 		super(world, seed, hasMapFeatures);

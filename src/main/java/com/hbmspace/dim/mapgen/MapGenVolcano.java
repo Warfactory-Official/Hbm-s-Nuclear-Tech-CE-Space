@@ -2,7 +2,7 @@ package com.hbmspace.dim.mapgen;
 
 import com.hbm.blocks.ModBlocks;
 import com.hbmspace.blocks.ModBlocksSpace;
-import com.hbm.config.SpaceConfig;
+import com.hbmspace.config.SpaceConfig;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.MathHelper;

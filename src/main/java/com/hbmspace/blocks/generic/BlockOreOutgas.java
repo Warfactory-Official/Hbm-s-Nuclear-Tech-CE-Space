@@ -1,8 +1,6 @@
 package com.hbmspace.blocks.generic;
 
 import com.hbm.blocks.ModBlocks;
-import com.hbm.blocks.generic.BlockNTMOre;
-import com.hbm.blocks.generic.BlockOutgas;
 import com.hbm.config.GeneralConfig;
 import com.hbm.util.DelayedTick;
 import com.hbmspace.blocks.ModBlocksSpace;
@@ -90,10 +88,10 @@ public class BlockOreOutgas extends BlockOre {
         if(onNeighbour && !world.isRemote &&world.rand.nextInt(3) == 0) {
             for(EnumFacing dir : EnumFacing.VALUES) {
                 BlockPos targetPos = pos.offset(dir);
-                DelayedTick.nextWorldTick(world, () -> {
-                    IBlockState targetState = world.getBlockState(targetPos);
-                    if (targetState.getBlock().isAir(targetState, world, targetPos)) {
-                        world.setBlockState(targetPos, getGas().getDefaultState(), 3);
+                DelayedTick.nextWorldTickEnd(world, w -> {
+                    IBlockState targetState = w.getBlockState(targetPos);
+                    if (targetState.getBlock().isAir(targetState, w, targetPos)) {
+                        w.setBlockState(targetPos, getGas().getDefaultState(), 3);
                     }
                 });
             }

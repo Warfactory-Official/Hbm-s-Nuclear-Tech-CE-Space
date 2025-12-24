@@ -1,7 +1,7 @@
 package com.hbmspace.dim.minmus;
 
 import com.hbmspace.blocks.ModBlocksSpace;
-import com.hbm.config.SpaceConfig;
+import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.WorldChunkManagerCelestial;
 import com.hbmspace.dim.WorldChunkManagerCelestial.BiomeGenLayers;
 import com.hbmspace.dim.WorldProviderCelestial;

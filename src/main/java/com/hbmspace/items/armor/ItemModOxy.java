@@ -67,7 +67,7 @@ public class ItemModOxy extends ItemArmorModSpace implements IFillableItem {
             ItemStack stack = ArmorModHandler.pryMods(armor)[ArmorModHandler.plate_only];
             if(getInUse(stack) && !player.capabilities.isCreativeMode) {
                 if(audioBreathing == null || !audioBreathing.isPlaying()) {
-                    audioBreathing = SpaceMain.proxy.getLoopedSound(HBMSpaceSoundHandler.getPlssBreathing(), SoundCategory.PLAYERS, entity, 0.1F, 5.0F, 1.0F, 10);
+                    audioBreathing = SpaceMain.proxy.getLoopedSound(HBMSpaceSoundHandler.plssBreathing, SoundCategory.PLAYERS, entity, 0.1F, 5.0F, 1.0F, 10);
                     audioBreathing.startSound();
                 }
 

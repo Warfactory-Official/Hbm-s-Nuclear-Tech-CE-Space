@@ -1,11 +1,8 @@
 package com.hbmspace.main;
 
-import com.hbm.blocks.BlockEnums;
-import com.hbm.blocks.ModBlocks;
 import com.hbm.entity.logic.IChunkLoader;
 import com.hbm.handler.GuiHandler;
-import com.hbm.inventory.OreDictManager;
-import com.hbm.world.feature.OreLayer3D;
+import com.hbmspace.Tags;
 import com.hbmspace.blocks.BlockEnumsSpace;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.capability.HbmLivingCapabilitySpace;
@@ -16,6 +13,7 @@ import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.inventory.OreDictManagerSpace;
 import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.items.weapon.ItemCustomMissilePart;
+import com.hbmspace.lib.HBMSpaceSoundHandler;
 import com.hbmspace.world.PlanetGen;
 import com.hbmspace.world.feature.OreLayer3DSpace;
 import net.minecraft.world.World;
@@ -37,21 +35,25 @@ import java.util.List;
 
 /**
  * Okay, so if you read this
- * It's mostly separated NTM:Space content from NTM:ce, which I did put on a separate repo. Hopefully that won't take TOO much time.
+ * It's mostly separated NTM:Space content from NTM:CE, which I did put on a separate repo. Hopefully that won't take TOO much time.
  * I will try to mostly repeat the structure as it's just comfortable for me
  *
  * "It's fun, after all these times when you've killed me, and now.. all I have to do is to kill you **once**"
  *
  * @author Th3_Sl1ze
 */
-@Mod(modid = RefStrings.MODID, version = RefStrings.VERSION, name = RefStrings.NAME, acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:hbm")
+@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:hbm@[1.2.5.1,)")
 public class SpaceMain {
 
-    @SidedProxy(clientSide = RefStrings.CLIENTSIDE, serverSide = RefStrings.SERVERSIDE)
+    @SidedProxy(clientSide = "com.hbmspace.main.ClientProxy", serverSide = "com.hbmspace.main.ServerProxy")
     public static ServerProxy proxy;
-    @Mod.Instance(RefStrings.MODID)
+    @Mod.Instance(Tags.MODID)
     public static SpaceMain instance;
     public static Logger logger;
+
+    static {
+        HBMSpaceSoundHandler.init();
+    }
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {

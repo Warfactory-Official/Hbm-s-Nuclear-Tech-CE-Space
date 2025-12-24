@@ -8,7 +8,7 @@ import net.minecraft.world.gen.layer.IntCache;
 public class GenLayerMohoBiomes extends GenLayer {
 	
 	// 4 times as much crag
-	private static final Biome[] biomes = new Biome[] { BiomeGenBaseMoho.mohoCrag, BiomeGenBaseMoho.mohoCrag, BiomeGenBaseMoho.mohoCrag, BiomeGenBaseMoho.mohoCrag, BiomeGenBaseMoho.mohoBasalt };
+	private static final Biome[] biomes = new Biome[] { BiomeGenBaseMoho.mohoCrag, BiomeGenBaseMoho.mohoCrag, BiomeGenBaseMoho.mohoLavaSea };
 
 	public GenLayerMohoBiomes(long l) {
 		super(l);

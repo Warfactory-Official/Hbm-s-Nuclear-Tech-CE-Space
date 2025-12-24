@@ -1,7 +1,6 @@
 package com.hbmspace.inventory.gui;
 
 import com.hbm.inventory.gui.GuiInfoContainer;
-import com.hbm.lib.RefStrings;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toserver.NBTControlPacket;
 import com.hbmspace.inventory.container.ContainerTransporterRocket;
@@ -19,7 +18,7 @@ import java.io.IOException;
 
 public class GUITransporterRocket extends GuiInfoContainer {
 
-    protected static final ResourceLocation texture = new ResourceLocation(RefStrings.MODID + ":textures/gui/machine/gui_transporter.png");
+    protected static final ResourceLocation texture = new ResourceLocation("hbm" + ":textures/gui/machine/gui_transporter.png");
 
     private GuiTextField transporterName;
 

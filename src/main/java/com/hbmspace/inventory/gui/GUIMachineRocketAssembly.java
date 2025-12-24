@@ -1,6 +1,5 @@
 package com.hbmspace.inventory.gui;
 
-import com.hbm.lib.RefStrings;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toserver.NBTControlPacket;
 import com.hbm.util.I18nUtil;
@@ -11,7 +10,6 @@ import com.hbmspace.render.misc.RocketPronter;
 import com.hbmspace.tileentity.machine.TileEntityMachineRocketAssembly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.SoundEvents;
@@ -25,7 +23,7 @@ import java.util.List;
 
 public class GUIMachineRocketAssembly extends GuiInfoContainerLayered {
 
-    private static ResourceLocation texture = new ResourceLocation(RefStrings.MODID + ":textures/gui/machine/gui_rocket_assembly.png");
+    private static ResourceLocation texture = new ResourceLocation("hbm" + ":textures/gui/machine/gui_rocket_assembly.png");
 
     private TileEntityMachineRocketAssembly machine;
 

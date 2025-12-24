@@ -2,7 +2,7 @@ package com.hbmspace.dim.Ike;
 
 
 import com.hbmspace.blocks.ModBlocksSpace;
-import com.hbm.config.SpaceConfig;
+import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.WorldProviderCelestial;
 import net.minecraft.block.Block;
 import net.minecraft.world.DimensionType;

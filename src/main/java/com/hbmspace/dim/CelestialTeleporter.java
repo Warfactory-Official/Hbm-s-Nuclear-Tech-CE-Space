@@ -1,5 +1,6 @@
 package com.hbmspace.dim;
 
+import com.hbmspace.entity.missile.EntityRideableRocket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
@@ -79,6 +80,9 @@ public class CelestialTeleporter extends Teleporter {
 				this.sourceServer.resetUpdateEntityTick();
 				this.targetServer.resetUpdateEntityTick();
 				this.playerMP.startRiding(newEntity, true);
+                if(newEntity instanceof EntityRideableRocket) {
+                    ((EntityRideableRocket) newEntity).setThrower(playerMP);
+                }
 				this.playerMP.setPositionAndUpdate(this.x, 900, this.z);
 			}
 		}

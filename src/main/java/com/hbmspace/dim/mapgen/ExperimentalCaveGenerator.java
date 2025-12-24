@@ -17,17 +17,23 @@ public class ExperimentalCaveGenerator extends MapGenBase {
 	public Block lavaBlock;
 	public Block stoneBlock;
 
-	private final int carvingScale;
+	private final float carvingScale;
 	private final int depthThreshold;
 	private final float largeCaveSize;
 
-	PerlinFestival perlinNoise;
+    public float smallCaveSize = 1.0F;
+
+    public Biome ignoreBiome;
+    public Biome onlyBiome;
+
+
+    PerlinFestival perlinNoise;
 
 	public ExperimentalCaveGenerator() {
 		this(3, 30, 6.0F);
 	}
 
-	public ExperimentalCaveGenerator(int carvingScale, int depthThreshold, float largeCaveSize) {
+	public ExperimentalCaveGenerator(float carvingScale, int depthThreshold, float largeCaveSize) {
 		super();
 		this.carvingScale = carvingScale;
 		this.depthThreshold = depthThreshold;
@@ -249,7 +255,7 @@ public class ExperimentalCaveGenerator extends MapGenBase {
 				float f2 = this.rand.nextFloat() * 2.0F + this.rand.nextFloat();
 
 				if (this.rand.nextInt(10) == 0) {
-					f2 *= this.rand.nextFloat() * this.rand.nextFloat() * 3.0F + 1.0F;
+					f2 *= smallCaveSize * this.rand.nextFloat() * this.rand.nextFloat() * 3.0F + 1.0F;
 				}
 
 				this.generateCaveNode(this.rand.nextLong(), p_151538_4_, p_151538_5_, p_151538_6_, d0, d1, d2, f2, f, f1, 0, 0, 1.0D);
@@ -261,23 +267,12 @@ public class ExperimentalCaveGenerator extends MapGenBase {
 		return data[index] == Blocks.FLOWING_WATER || data[index] == Blocks.WATER;
 	}
 
-	// Exception biomes to make sure we generate like vanilla
-	private boolean isExceptionBiome(Biome biome) {
-		if (biome == Biomes.MUSHROOM_ISLAND)
-			return true;
-		if (biome == Biomes.BEACH)
-			return true;
-		if (biome == Biomes.DESERT)
-			return true;
-		return false;
-	}
-
 	// Determine if the block at the specified location is the top block for the
 	// biome, we take into account
 	// Vanilla bugs to make sure that we generate the map the same way vanilla does.
 	private boolean isTopBlock(Block[] data, int index, int x, int y, int z, int chunkX, int chunkZ) {
 		Biome biome = world.getBiomeForCoordsBody(new BlockPos(x + chunkX * 16, 150, z + chunkZ * 16));
-		return (isExceptionBiome(biome) ? data[index] == Blocks.GRASS : data[index] == biome.topBlock);
+        return data[index] == biome.topBlock.getBlock();
 	}
 
 	/**
@@ -300,19 +295,19 @@ public class ExperimentalCaveGenerator extends MapGenBase {
 	 */
 	protected void digBlock(Block[] data, int index, int x, int y, int z, int chunkX, int chunkZ, boolean foundTop) {
 		Biome biome = world.getBiomeForCoordsBody(new BlockPos(x + chunkX * 16, 150, z + chunkZ * 16));
-		Block top = (isExceptionBiome(biome) ? Blocks.GRASS : biome.topBlock.getBlock());
-		Block filler = (isExceptionBiome(biome) ? Blocks.DIRT : biome.fillerBlock.getBlock());
+        if(biome == ignoreBiome) return;
+        if(onlyBiome != null && biome != onlyBiome) return;
 		Block block = data[index];
 
-		if (block != null && (block == stoneBlock || block == filler || block == top || block.getMaterial(block.getDefaultState()).isLiquid())) {
+		if (block != null && (block == stoneBlock || block == biome.fillerBlock.getBlock() || block == biome.topBlock.getBlock() || block.getMaterial(block.getDefaultState()).isLiquid())) {
 			if (y < 10) {
 				data[index] = lavaBlock;
 			} else {
 				data[index] = null;
 
-				if (foundTop && data[index - 1] == filler) {
-					data[index - 1] = top;
-				}
+                if (foundTop && data[index - 1] == biome.fillerBlock.getBlock()) {
+                    data[index - 1] = biome.topBlock.getBlock();
+                }
 			}
 		}
 	}

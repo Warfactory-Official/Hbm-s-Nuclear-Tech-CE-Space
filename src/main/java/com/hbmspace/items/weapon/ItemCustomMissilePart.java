@@ -42,7 +42,6 @@ public class ItemCustomMissilePart extends ItemMissile {
      * [3]: thrust (N)
      * [4]: ISP (s)
      */
-    public Object[] attributes;
 
     public ItemCustomMissilePart(String s) {
         super(s);

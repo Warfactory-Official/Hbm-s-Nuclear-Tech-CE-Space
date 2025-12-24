@@ -14,15 +14,15 @@ public class RocketPronter {
     private static DoubleBuffer buffer;
 
     public static void prontRocket(RocketStruct rocket, TextureManager tex) {
-        prontRocket(rocket, null, tex, true, 0);
+        prontRocket(rocket, null, tex, true, 0, 0, 0);
     }
 
     public static void prontRocket(RocketStruct rocket, TextureManager tex, boolean isDeployed) {
-        prontRocket(rocket, null, tex, isDeployed, 0);
+        prontRocket(rocket, null, tex, isDeployed, 0, 0, 0);
     }
 
     // Attaches a set of stages together
-    public static void prontRocket(RocketStruct rocket, EntityRideableRocket entity, TextureManager tex, boolean isDeployed, float interp) {
+    public static void prontRocket(RocketStruct rocket, EntityRideableRocket entity, TextureManager tex, boolean isDeployed, int decoupleTimer, int shroudTimer, float interp) {
         GlStateManager.pushMatrix();
 
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
@@ -44,6 +44,12 @@ public class RocketPronter {
                 GlStateManager.pushMatrix();
                 {
 
+                    if(decoupleTimer > 0) {
+                        float decoupleLerp = decoupleTimer + interp;
+                        GlStateManager.translate(0, -decoupleLerp, 0);
+                        GlStateManager.rotate(decoupleLerp, 1, 0, 0);
+                    }
+
                     if(c > 0) {
                         float spin = (float)c / (float)(cluster - 1);
                         GlStateManager.rotate(360.0F * spin, 0, 1, 0);
@@ -57,6 +63,13 @@ public class RocketPronter {
 
                     if(stage.thruster != null) {
                         if(hasShroud && stage.fuselage != null) {
+                            if(shroudTimer > 0) {
+                                float shroudLerp = shroudTimer + interp;
+                                GlStateManager.pushMatrix();
+                                GlStateManager.translate(0, -shroudLerp, 0);
+                                GlStateManager.rotate((float) (shroudLerp * 0.5D), 1F, 0F, 0F);
+                            }
+
                             tex.bindTexture(ResourceManager.universal);
                             buffer.put(new double[] {0, -1, 0, stage.thruster.height});
                             buffer.rewind();
@@ -64,7 +77,13 @@ public class RocketPronter {
                             GL11.glClipPlane(GL11.GL_CLIP_PLANE0, buffer);
                             stage.fuselage.getShroud().renderAll();
                             GL11.glDisable(GL11.GL_CLIP_PLANE0);
-                        } else {
+
+                            if(shroudTimer > 0) {
+                                GlStateManager.popMatrix();
+                            }
+                        }
+
+                        if(!hasShroud || shroudTimer > 0) {
                             tex.bindTexture(stage.thruster.texture);
                             stage.thruster.getModel(isDeployed).renderAll();
                         }
@@ -94,6 +113,8 @@ public class RocketPronter {
 
             // Only the bottom-most stage can be deployed
             isDeployed = false;
+            decoupleTimer = 0;
+            if(hasShroud) shroudTimer = 0; // Only the bottom-most shroud (second stage from bottom) should animate
             hasShroud = true;
         }
 

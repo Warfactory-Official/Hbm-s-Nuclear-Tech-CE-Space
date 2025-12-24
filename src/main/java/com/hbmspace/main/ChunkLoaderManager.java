@@ -1,7 +1,6 @@
 package com.hbmspace.main;
 
 import com.hbm.handler.ThreeInts;
-import com.hbm.main.MainRegistry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.ChunkPos;
@@ -9,6 +8,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.util.Constants;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class ChunkLoaderManager {
 
         if(savedData.ticket == null) {
             if(ticket == null)
-                ticket = ForgeChunkManager.requestTicket(MainRegistry.instance, world, ForgeChunkManager.Type.NORMAL);
+                ticket = ForgeChunkManager.requestTicket(SpaceMain.instance, world, ForgeChunkManager.Type.NORMAL);
 
             savedData.ticket = ticket;
         }
@@ -103,7 +103,7 @@ public class ChunkLoaderManager {
         }
 
         @Override
-        public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        public @NotNull NBTTagCompound writeToNBT(@NotNull NBTTagCompound nbt) {
             NBTTagList list = new NBTTagList();
             for(Map.Entry<ThreeInts, ChunkPos> entry : chunksForcedBy.entrySet()) {
                 ThreeInts coords = entry.getKey();

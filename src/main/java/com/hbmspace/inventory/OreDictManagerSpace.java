@@ -15,6 +15,10 @@ public class OreDictManagerSpace {
      * STABLE
      */
 
+    public static final String KEY_STONE = "stone";
+
+    public static final DictGroup ANY_COAL_COKE = new DictGroup("AnyCoalCoke", ANY_COKE, COAL);
+
     /** NICKEL */
     public static final DictFrame NI = new OreDictManager.DictFrame("NickelPure");
     public static final DictFrame NIM = new DictFrame("Nickel"); // Compat with "ferrous metal" so thermal isn't invalidated and neither is our intended progression!
@@ -24,6 +28,10 @@ public class OreDictManagerSpace {
     public static final DictFrame GALLIUM = new DictFrame("Gallium");
     public static final DictFrame GAAS = new DictFrame("GalliumArsenide");
     public static final DictFrame STAINLESS = new DictFrame("StainlessSteel");
+
+
+    public static final DictFrame RICHMAGMA = new DictFrame("RichMagma");
+    public static final DictFrame SEMTEX = new DictFrame("Semtex");
 
     /*
      * DUST AND GEM ORES
@@ -64,6 +72,7 @@ public class OreDictManagerSpace {
         ((IDictFrameAddon) U).oreAll(ore_uranium);
         ((IDictFrameAddon) LA).oreAll(ore_lanthanium);
         ((IDictFrameAddon) NB).oreAll(ore_niobium);
+        ((IDictFrameAddon) I).oreAll(ore_iodine);
 
 
         ((IDictFrameAddon) NI.ingot(ingot_nickel).dust(powder_nickel).plate(plate_nickel).block(block_nickel)).oreAll(ore_nickel).nugget(nugget_nickel);

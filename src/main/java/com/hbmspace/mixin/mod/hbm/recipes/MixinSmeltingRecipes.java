@@ -25,8 +25,8 @@ public class MixinSmeltingRecipes {
     private static void addSpaceSmelting(CallbackInfo ci) {
         // Oredict doesn't work for vanilla smelting :(
         // space ores fuck yeeeeah
-        for(int i = 2; i < SolarSystem.Body.values().length - 1; i++){ // metadata 2-8 have other textures than regular stone
-            if(i != 6) { // metadata 6 doesn't have a stone texture, so yeah
+        for(int i = 0; i < SolarSystem.Body.values().length - 1; i++){
+            if(i != 6 && i != 1) {
                 GameRegistry.addSmelting(new ItemStack(ModBlocksSpace.ore_iron, 1, i), new ItemStack(Items.IRON_INGOT), 0.7F);
                 GameRegistry.addSmelting(new ItemStack(ModBlocksSpace.ore_gold, 1, i), new ItemStack(Items.GOLD_INGOT), 1.0F);
                 GameRegistry.addSmelting(new ItemStack(ModBlocksSpace.ore_diamond, 1, i), new ItemStack(Items.DIAMOND), 1.0F);

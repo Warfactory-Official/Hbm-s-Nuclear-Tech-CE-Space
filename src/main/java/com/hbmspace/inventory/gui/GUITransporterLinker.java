@@ -1,6 +1,5 @@
 package com.hbmspace.inventory.gui;
 
-import com.hbm.lib.RefStrings;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toserver.NBTControlPacket;
 import com.hbmspace.items.ModItemsSpace;
@@ -23,7 +22,7 @@ import java.util.Locale;
 
 public class GUITransporterLinker extends GuiScreen {
 
-    protected static final ResourceLocation texture = new ResourceLocation(RefStrings.MODID + ":textures/gui/tool/gui_transport_linker.png");
+    protected static final ResourceLocation texture = new ResourceLocation("hbm" + ":textures/gui/tool/gui_transport_linker.png");
 
     protected int xSize = 218;
     protected int ySize = 201;

@@ -1,7 +1,6 @@
 package com.hbmspace.inventory.gui;
 
 import com.hbm.inventory.gui.GuiInfoContainer;
-import com.hbm.lib.RefStrings;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toserver.NBTControlPacket;
 import com.hbmspace.dim.orbit.OrbitalStation;
@@ -20,7 +19,7 @@ import java.io.IOException;
 
 public class GUIOrbitalStationComputer extends GuiInfoContainer {
 
-    private static ResourceLocation texture = new ResourceLocation(RefStrings.MODID + ":textures/gui/machine/gui_ship_computer.png");
+    private static ResourceLocation texture = new ResourceLocation("hbm" + ":textures/gui/machine/gui_ship_computer.png");
 
     private TileEntityOrbitalStationComputer computer;
 

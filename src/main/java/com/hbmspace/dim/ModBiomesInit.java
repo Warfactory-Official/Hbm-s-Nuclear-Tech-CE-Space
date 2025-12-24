@@ -1,5 +1,6 @@
 package com.hbmspace.dim;
 
+import com.hbmspace.Tags;
 import com.hbmspace.dim.Ike.BiomeGenIke;
 import com.hbmspace.dim.dres.biome.BiomeGenBaseDres;
 import com.hbmspace.dim.duna.biome.BiomeGenBaseDuna;
@@ -9,7 +10,6 @@ import com.hbmspace.dim.minmus.biome.BiomeGenBaseMinmus;
 import com.hbmspace.dim.moho.biome.BiomeGenBaseMoho;
 import com.hbmspace.dim.moon.BiomeGenMoon;
 import com.hbmspace.dim.orbit.BiomeGenOrbit;
-import com.hbmspace.main.RefStrings;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-@Mod.EventBusSubscriber(modid = RefStrings.MODID)
+@Mod.EventBusSubscriber(modid = Tags.MODID)
 public class ModBiomesInit {
     @SubscribeEvent
     public static void registerBiomes(RegistryEvent.Register<Biome> evt){
@@ -43,6 +43,7 @@ public class ModBiomesInit {
                 BiomeGenBaseMinmus.minmusCanyon.setRegistryName("hbm", "minmus_canyon"),
                 BiomeGenBaseMoho.mohoCrag.setRegistryName("hbm", "moho_crag"),
                 BiomeGenBaseMoho.mohoBasalt.setRegistryName("hbm", "moho_basalt"),
+                BiomeGenBaseMoho.mohoLavaSea.setRegistryName("hbm", "moho_lava_sea"),
                 new BiomeGenMoon(new Biome.BiomeProperties("Mun")).setRegistryName("hbm", "moon"),
                 BiomeGenOrbit.biome.setRegistryName("hbm", "orbit")
         );

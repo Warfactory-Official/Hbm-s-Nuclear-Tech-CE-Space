@@ -31,7 +31,7 @@ import java.util.Stack;
 import java.util.stream.IntStream;
 
 @AutoRegister
-public class TileEntityOrbitalStation extends TileEntityMachineBase implements IFluidStandardReceiver, ITickable {
+public class TileEntityOrbitalStation extends TileEntityOrbStation implements IFluidStandardReceiver, ITickable {
 
     private OrbitalStation station;
     private EntityRideableRocket docked;

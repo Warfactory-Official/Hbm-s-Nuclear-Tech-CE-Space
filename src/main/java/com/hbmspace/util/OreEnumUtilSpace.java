@@ -2,6 +2,7 @@ package com.hbmspace.util;
 
 import com.hbm.blocks.IOreType;
 import com.hbm.blocks.OreEnumUtil;
+import com.hbm.items.ModItems;
 import com.hbm.lib.TriFunction;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Items;
@@ -28,7 +29,12 @@ public class OreEnumUtilSpace {
 
         REDSTONE(() -> new ItemStack(Items.REDSTONE), OreEnumUtilSpace::base4Rand2Fortune),
         EMERALD(() -> new ItemStack(Items.EMERALD), OreEnumUtil::vanillaFortune),
-        LAPIS(() -> new ItemStack(Items.DYE, 1, EnumDyeColor.BLUE.getDyeDamage()), OreEnumUtilSpace::base4Rand5Fortune)
+        LAPIS(() -> new ItemStack(Items.DYE, 1, EnumDyeColor.BLUE.getDyeDamage()), OreEnumUtilSpace::base4Rand5Fortune),
+        FIRE((state, rand) -> (rand != null && rand.nextInt(10) == 0)
+                ? new ItemStack(ModItems.ingot_phosphorus)
+                : new ItemStack(ModItems.powder_fire),
+                (state, fortune, rand) -> 1),
+        GLOWSTONE(() -> new ItemStack(Items.GLOWSTONE_DUST), (state, fortune, rand) -> 1 + rand.nextInt(3))
         ;
 
         public final BiFunction<IBlockState, Random, ItemStack> dropFunction;
