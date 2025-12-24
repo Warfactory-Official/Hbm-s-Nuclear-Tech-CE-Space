@@ -1,6 +1,7 @@
 {
   "required": true,
   "package": "com.hbmspace.mixin.mod",
+  "refmap": "mixins.hbmspace.refmap.json",
   "plugin": "com.hbmspace.mixin.mod.ModMixinConfigPlugin",
   "compatibilityLevel": "JAVA_8",
   "target": "@env(MOD)",
