@@ -73,7 +73,7 @@ import org.lwjgl.opengl.GLContext;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Tags.MODID)
+@Mod.EventBusSubscriber(modid = Tags.MODID, value = Side.CLIENT)
 public class ModEventHandlerClient {
 
     @SubscribeEvent

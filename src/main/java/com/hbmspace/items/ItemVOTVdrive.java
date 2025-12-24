@@ -1,19 +1,16 @@
 package com.hbmspace.items;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.hbm.render.model.BakedModelTransforms;
+import com.hbm.lib.HBMSoundHandler;
 import com.hbm.util.I18nUtil;
 import com.hbmspace.config.SpaceConfig;
-import com.hbmspace.entity.missile.EntityRideableRocket;
-import com.hbm.lib.HBMSoundHandler;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.dim.orbit.OrbitalStation;
+import com.hbmspace.entity.missile.EntityRideableRocket;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.model.ModelRotation;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag;
@@ -28,32 +25,36 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.model.*;
-import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Function;
 
 public class ItemVOTVdrive extends ItemEnumMultiSpace {
     @SideOnly(Side.CLIENT)
     private ModelResourceLocation[] mrls;
     @SideOnly(Side.CLIENT)
-    private final ResourceLocation baseTex = new ResourceLocation("hbm", "items/votv_f");
+    private ResourceLocation baseTex;
     @SideOnly(Side.CLIENT)
-    private final ResourceLocation[] overlayTex;
+    private ResourceLocation[] overlayTex;
 
     public ItemVOTVdrive(String s) {
         super(s, SolarSystem.Body.class, false, false);
         this.setMaxStackSize(1);
         this.setNoRepair();
-        this.overlayTex = new ResourceLocation[SolarSystem.Body.values().length];
-        for (int i = 0; i < overlayTex.length; i++) {
-            SolarSystem.Body body = SolarSystem.Body.values()[i];
-            String name = body != SolarSystem.Body.ORBIT ? body.name().toLowerCase(Locale.US) : "orbit";
-            overlayTex[i] = new ResourceLocation("hbm", "items/votv." + name);
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            this.baseTex = new ResourceLocation("hbm", "items/votv_f");
+            this.overlayTex = new ResourceLocation[SolarSystem.Body.values().length];
+            for (int i = 0; i < overlayTex.length; i++) {
+                SolarSystem.Body body = SolarSystem.Body.values()[i];
+                String name = body != SolarSystem.Body.ORBIT ? body.name().toLowerCase(Locale.US) : "orbit";
+                overlayTex[i] = new ResourceLocation("hbm", "items/votv." + name);
+            }
         }
     }
 
