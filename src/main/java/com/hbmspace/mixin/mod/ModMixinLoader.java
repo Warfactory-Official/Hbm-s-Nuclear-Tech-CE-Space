@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class Loader implements ILateMixinLoader {
+public class ModMixinLoader implements ILateMixinLoader {
     @Override
     public List<String> getMixinConfigs() {
         return Collections.singletonList("hbmspace.mod.mixin.json");

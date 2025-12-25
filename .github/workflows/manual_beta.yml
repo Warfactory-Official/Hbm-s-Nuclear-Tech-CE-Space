@@ -103,11 +103,11 @@ jobs:
 
             ## Which JAR should I download?
 
-            - **NTM-CE-1.12.2-${{ env.MOD_VERSION }}.jar** — **Java 8+** (recommended for most Forge users)
-            - **NTM-CE-1.12.2-${{ env.MOD_VERSION }}-java25.jar** — **Java 25+** (Cleanroom; may be more efficient)
-            - **NTM-CE-1.12.2-${{ env.MOD_VERSION }}-downgraded.jar** — **Java 8+**, but **does not** shade the JVMDG `java-api` (useful if you provide a custom one)
-            - **NTM-CE-1.12.2-${{ env.MOD_VERSION }}-dev.jar** — **Java 8+**, unobfuscated (for developers)
-            - **NTM-CE-1.12.2-${{ env.MOD_VERSION }}-dev-java25.jar** — **Java 25+**, unobfuscated (for developers on the JVMDG/Cleanroom toolchain)
+            - **NTM-Space-1.12.2-${{ env.MOD_VERSION }}.jar** — **Java 8+** (recommended for most Forge users)
+            - **NTM-Space-1.12.2-${{ env.MOD_VERSION }}-java25.jar** — **Java 25+** (Cleanroom; may be more efficient)
+            - **NTM-Space-1.12.2-${{ env.MOD_VERSION }}-downgraded.jar** — **Java 8+**, but **does not** shade the JVMDG `java-api` (useful if you provide a custom one)
+            - **NTM-Space-1.12.2-${{ env.MOD_VERSION }}-dev.jar** — **Java 8+**, unobfuscated (for developers)
+            - **NTM-Space-1.12.2-${{ env.MOD_VERSION }}-dev-java25.jar** — **Java 25+**, unobfuscated (for developers on the JVMDG/Cleanroom toolchain)
 
             **Commit:** `${{ github.sha }}`
             **Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

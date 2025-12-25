@@ -41,8 +41,7 @@
     "hbm.recipes.MixinShredderRecipes",
     "hbm.recipes.MixinSmeltingRecipes",
     "hbm.recipes.MixinSolderingRecipes",
-    "hbm.recipes.MixinToolRecipes",
-    "minecraft.MixinWorldProvider"
+    "hbm.recipes.MixinToolRecipes"
   ],
   "server": [],
   "setSourceFile": true,

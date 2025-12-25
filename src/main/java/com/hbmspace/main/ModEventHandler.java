@@ -254,7 +254,8 @@ public class ModEventHandler {
                 if (hasLiquidPressure) {
                     // for those curious ppl: YES I KNOW ABOUT ACCESSTRANSFORMERS
                     // my gradle simply refuses to work with it and doesn't even try reading lines in the _at.cfg file
-                    ((INetherAccessor) world.provider).setNether(true);
+                    // mlbv: gradlew clean if it doesn't work
+                    world.provider.nether = true;
                 }
             //}
         }

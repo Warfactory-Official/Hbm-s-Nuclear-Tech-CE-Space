@@ -10,7 +10,7 @@ import java.util.Map;
 
 @IFMLLoadingPlugin.MCVersion("1.12.2")
 @IFMLLoadingPlugin.TransformerExclusions("com.hbmspace.core")
-public class Loader implements IFMLLoadingPlugin, IEarlyMixinLoader {
+public class HbmSpaceCorePlugin implements IFMLLoadingPlugin, IEarlyMixinLoader {
     @Override
     public String @Nullable [] getASMTransformerClass() {
         return null;
