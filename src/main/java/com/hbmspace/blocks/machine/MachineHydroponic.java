@@ -107,14 +107,20 @@ public class MachineHydroponic extends BlockDummyableSpace implements ILookOverl
         makeExtra(world, x, y + 2, z);
     }
 
+    private boolean isCoreAt(@NotNull IBlockAccess world, @NotNull BlockPos p) {
+        IBlockState s = world.getBlockState(p);
+        return s.getBlock() == this && this.getMetaFromState(s) >= 12;
+    }
+
     // Only the blocks immediately horizontally adjacent to the core can actually sustain plants, so we do a 4 block search in all cardinals
     @Override
-    public boolean canSustainPlant(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EnumFacing direction, @NotNull IPlantable plantable) {
-        return this.getMetaFromState(state) >= 12
-                || this.getMetaFromState(world.getBlockState(pos.east())) >= 12
-                || this.getMetaFromState(world.getBlockState(pos.west())) >= 12
-                || this.getMetaFromState(world.getBlockState(pos.south())) >= 12
-                || this.getMetaFromState(world.getBlockState(pos.north())) >= 12;
+    public boolean canSustainPlant(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                   @NotNull EnumFacing direction, @NotNull IPlantable plantable) {
+        return (state.getBlock() == this && this.getMetaFromState(state) >= 12)
+                || isCoreAt(world, pos.east())
+                || isCoreAt(world, pos.west())
+                || isCoreAt(world, pos.south())
+                || isCoreAt(world, pos.north());
     }
 
     @SideOnly(Side.CLIENT)
