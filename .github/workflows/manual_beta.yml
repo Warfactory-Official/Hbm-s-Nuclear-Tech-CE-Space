@@ -91,13 +91,13 @@ jobs:
       - name: Create/update GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag: ${{ env.TAG }}
+          tag_name: ${{ env.TAG }}
           name: "Beta ${{ env.TAG }}"
           prerelease: true
-          allowUpdates: true
-          replacesArtifacts: true
-          generateReleaseNotes: true
-          artifacts: "build/libs/*.jar"
+          generate_release_notes: true
+          files: build/libs/*.jar
+          overwrite_files: true
+          fail_on_unmatched_files: true
           body: |
             ⚠️ **Beta-version build** — should be stable in terms of crashes but not in anything else. Use at your own risk.
 
