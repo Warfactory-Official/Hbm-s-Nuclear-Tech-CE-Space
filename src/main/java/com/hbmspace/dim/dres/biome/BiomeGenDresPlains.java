@@ -4,7 +4,6 @@ import com.hbm.blocks.ModBlocks;
 import com.hbmspace.blocks.ModBlocksSpace;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 
@@ -12,68 +11,74 @@ import java.util.Random;
 
 public class BiomeGenDresPlains extends BiomeGenBaseDres {
 
-	public BiomeGenDresPlains(BiomeProperties properties) {
-		super(properties);
-	}
+    public BiomeGenDresPlains(BiomeProperties properties) {
+        super(properties);
+    }
 
-	@Override
-	public void genTerrainBlocks(World world, Random rand, ChunkPrimer chunkPrimer, int x, int z, double noise) {
-		IBlockState topState = this.topBlock;
-		IBlockState fillerState = this.fillerBlock;
-		int k = -1;
-		int l = (int) (noise / 8.0D + 8.0D + rand.nextDouble() * 0.50D);
-		int i1 = x & 15;
-		int j1 = z & 15;
-		int k1 = 256;
+    @Override
+    public void genTerrainBlocks(World world, Random rand, ChunkPrimer primer, int x, int z, double noise) {
+        IBlockState topState;
+        IBlockState fillerState = this.fillerBlock;
 
-		for (int l1 = k1 - 1; l1 >= 0; --l1) {
-			BlockPos pos = new BlockPos(i1, l1, j1);
-			IBlockState currentState = chunkPrimer.getBlockState(i1, l1, j1);
+        int remainingDepth = -1; // k in 1.7
+        int surfaceDepth = (int) (noise / 8.0D + 8.0D + rand.nextDouble() * 0.50D); // l in 1.7
 
-			if (currentState.getBlock() != Blocks.AIR) {
-				if (currentState.getBlock() == ModBlocksSpace.dres_rock) {
-					if (k == -1) {
-						if (l <= 0) {
-							topState = Blocks.AIR.getDefaultState();
-							fillerState = ModBlocks.sellafield_slaked.getDefaultState();
-						} else if (l1 >= 59 && l1 <= 64) {
-							topState = this.topBlock;
-							fillerState = this.fillerBlock;
-						}
+        int localX = x & 15;
+        int localZ = z & 15;
 
-						if (l1 < 63 && (topState.getBlock() == Blocks.AIR)) {
-							topState = this.topBlock;
-						}
+        for (int y = 255; y >= 0; --y) {
+            if (y <= rand.nextInt(5)) {
+                primer.setBlockState(localX, y, localZ, Blocks.BEDROCK.getDefaultState());
+                continue;
+            }
+            IBlockState current = primer.getBlockState(localX, y, localZ);
+            if (current.getBlock() == Blocks.AIR) {
+                remainingDepth = -1;
+                continue;
+            }
+            if (current.getBlock() != ModBlocksSpace.dres_rock) {
+                continue;
+            }
 
-						k = l;
+            if (remainingDepth == -1) {
+                topState = this.topBlock;
+                fillerState = this.fillerBlock;
 
-						if (l1 >= 82) {
-							chunkPrimer.setBlockState(i1, l1, j1, topState);
-						} else if (l1 < 80) {
-							topState = Blocks.AIR.getDefaultState();
-							fillerState = ModBlocks.sellafield_slaked.getDefaultState();
-							if (Math.random() > 0.4) {
-								chunkPrimer.setBlockState(i1, l1, j1, ModBlocks.sellafield_slaked.getDefaultState());
-							} else {
-								chunkPrimer.setBlockState(i1, l1, j1, ModBlocks.sellafield_slaked.getDefaultState());
-							}
-						} else {
-							chunkPrimer.setBlockState(i1, l1, j1, fillerState);
-						}
-					} else if (k > 0) {
-						--k;
-						chunkPrimer.setBlockState(i1, l1, j1, fillerState);
+                if (surfaceDepth <= 0) {
+                    topState = Blocks.AIR.getDefaultState();
+                    fillerState = ModBlocks.sellafield_slaked.getDefaultState();
+                } else if (y >= 59 && y <= 64) {
+                    topState = this.topBlock;
+                    fillerState = this.fillerBlock;
+                }
 
-						if (k == 0 && fillerState.getBlock() == Blocks.SAND) {
-							k = rand.nextInt(4) + Math.max(0, l1 - 63);
-							fillerState = Blocks.SANDSTONE.getDefaultState();
-						}
-					}
-				}
-			} else {
-				k = -1;
-			}
-		}
-	}
+                if (y < 63 && topState.getBlock() == Blocks.AIR) {
+                    topState = this.topBlock;
+                }
 
+                remainingDepth = surfaceDepth;
+
+                // 1.7 split:
+                //  - y >= 82: place topState
+                //  - y < 80 : place sellafield_slaked meta 8/9
+                //  - else   : place fillerState (i.e., y == 80..81)
+                if (y >= 82) {
+                    primer.setBlockState(localX, y, localZ, topState);
+                } else if (y < 80) {
+                    fillerState = ModBlocks.sellafield_slaked.getDefaultState();
+                    primer.setBlockState(localX, y, localZ, (rand.nextFloat() > 0.4F) ? ModBlocks.sellafield_slaked.getStateFromMeta(8) : ModBlocks.sellafield_slaked.getStateFromMeta(9));
+                } else {
+                    primer.setBlockState(localX, y, localZ, fillerState);
+                }
+
+            } else if (remainingDepth > 0) {
+                --remainingDepth;
+                primer.setBlockState(localX, y, localZ, fillerState);
+                if (remainingDepth == 0 && fillerState.getBlock() == Blocks.SAND) {
+                    remainingDepth = rand.nextInt(4) + Math.max(0, y - 63);
+                    fillerState = Blocks.SANDSTONE.getDefaultState();
+                }
+            }
+        }
+    }
 }

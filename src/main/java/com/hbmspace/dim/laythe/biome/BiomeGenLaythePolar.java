@@ -1,8 +1,8 @@
 package com.hbmspace.dim.laythe.biome;
 
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 
@@ -10,78 +10,89 @@ import java.util.Random;
 
 public class BiomeGenLaythePolar extends BiomeGenBaseLaythe {
 
-	public BiomeGenLaythePolar(BiomeProperties properties) {
-		super(properties);
-        
+    public BiomeGenLaythePolar(BiomeProperties properties) {
+        super(properties);
+
         this.topBlock = Blocks.SNOW.getDefaultState();
         this.fillerBlock = Blocks.ICE.getDefaultState();
-	}
+    }
 
-	@Override
-	public void genTerrainBlocks(World world, Random rand, ChunkPrimer chunkPrimer, int x, int z, double noise) {
-		IBlockState topBlockState = this.topBlock;
-		IBlockState fillerBlockState = this.fillerBlock;
-		int k = -1;
-		int l = (int) (noise / 6.0D + 6.0D + rand.nextDouble() * 0.85D);
-		int i1 = x & 15;
-		int j1 = z & 15;
-		int maxHeight = 256; // Максимальная высота мира
+    @Override
+    public void genTerrainBlocks(World world, Random rand, ChunkPrimer primer, int x, int z, double noise) {
+        IBlockState topState = this.topBlock;
+        IBlockState fillerState = this.fillerBlock;
 
-		for (int l1 = maxHeight - 1; l1 >= 0; --l1) {
-			BlockPos pos = new BlockPos(x, l1, z);
-			IBlockState currentState = chunkPrimer.getBlockState(i1, l1, j1);
+        int layerDepthRemaining = -1;
+        int layerThickness = (int) (noise / 6.0D + 6.0D + rand.nextDouble() * 0.85D);
 
-			if (l1 <= 0 + rand.nextInt(5)) {
-				chunkPrimer.setBlockState(i1, l1, j1, Blocks.BEDROCK.getDefaultState());
-			} else {
-				if (currentState.getBlock() != Blocks.AIR) {
-					if (currentState.getBlock() == Blocks.STONE) {
-						if (k == -1) {
-							if (l <= 0) {
-								topBlockState = Blocks.AIR.getDefaultState();
-								fillerBlockState = Blocks.STONE.getDefaultState();
-							} else if (l1 >= 59 && l1 <= 64) {
-								topBlockState = this.topBlock;
-								fillerBlockState = this.fillerBlock;
-							}
+        int localX = x & 15;
+        int localZ = z & 15;
 
-							if (l1 < 63 && (topBlockState.getBlock() == Blocks.AIR)) {
-								if (this.getTemperature(pos) < 0.15F) {
-									topBlockState = this.topBlock;
-								} else {
-									topBlockState = this.topBlock;
-								}
-							}
+        for (int y = 255; y >= 0; --y) {
 
-							k = l;
+            IBlockState currentState = primer.getBlockState(localX, y, localZ);
 
-							if (l1 >= 62) {
-								chunkPrimer.setBlockState(i1, l1, j1, topBlockState);
-							} else if (l1 < 62) {
-								topBlockState = Blocks.AIR.getDefaultState();
-								fillerBlockState = Blocks.STONE.getDefaultState();
-								if (Math.random() > 0.4) {
-									chunkPrimer.setBlockState(i1, l1, j1, Blocks.SNOW.getDefaultState());
-								} else {
-									chunkPrimer.setBlockState(i1, l1, j1, Blocks.PACKED_ICE.getDefaultState());
-								}
-							} else {
-								chunkPrimer.setBlockState(i1, l1, j1, fillerBlockState);
-							}
-						} else if (k > 0) {
-							--k;
-							chunkPrimer.setBlockState(i1, l1, j1, fillerBlockState);
+            // Bedrock thickness (keep original behavior)
+            if (y <= rand.nextInt(5)) {
+                primer.setBlockState(localX, y, localZ, Blocks.BEDROCK.getDefaultState());
+                continue;
+            }
 
-							if (k == 0 && fillerBlockState.getBlock() == Blocks.SAND) {
-								k = rand.nextInt(4) + Math.max(0, l1 - 63);
-								fillerBlockState = Blocks.SANDSTONE.getDefaultState();
-							}
-						}
-					}
-				} else {
-					k = -1;
-				}
-			}
-		}
-	}
+            // Standardized air test
+            if (currentState.getMaterial() == Material.AIR) {
+                layerDepthRemaining = -1;
+                continue;
+            }
+
+            // 1.7: only act on stone
+            if (currentState.getBlock() != Blocks.STONE) {
+                continue;
+            }
+
+            if (layerDepthRemaining == -1) {
+                if (layerThickness <= 0) {
+                    topState = Blocks.AIR.getDefaultState();
+                    fillerState = Blocks.STONE.getDefaultState();
+                } else if (y >= 59 && y <= 64) {
+                    topState = this.topBlock;
+                    fillerState = this.fillerBlock;
+                }
+
+                if (y < 63 && topState.getMaterial() == Material.AIR) {
+                    topState = this.topBlock;
+                }
+
+                layerDepthRemaining = layerThickness;
+
+                // IMPORTANT parity fix: 1.7 uses 65, not 62
+                if (y >= 65) {
+                    primer.setBlockState(localX, y, localZ, topState);
+                } else { // y < 65
+                    topState = Blocks.AIR.getDefaultState();
+                    fillerState = Blocks.STONE.getDefaultState();
+
+                    // "World random": use passed-in rand (replaces Math.random()).
+                    primer.setBlockState(
+                            localX, y, localZ,
+                            rand.nextFloat() > 0.4F
+                                    ? Blocks.SNOW.getDefaultState()
+                                    : Blocks.PACKED_ICE.getDefaultState()
+                    );
+                }
+
+                continue;
+            }
+
+            if (layerDepthRemaining > 0) {
+                --layerDepthRemaining;
+                primer.setBlockState(localX, y, localZ, fillerState);
+
+                // Kept for parity with the vanilla template; effectively unused here.
+                if (layerDepthRemaining == 0 && fillerState.getBlock() == Blocks.SAND) {
+                    layerDepthRemaining = rand.nextInt(4) + Math.max(0, y - 63);
+                    fillerState = Blocks.SANDSTONE.getDefaultState();
+                }
+            }
+        }
+    }
 }

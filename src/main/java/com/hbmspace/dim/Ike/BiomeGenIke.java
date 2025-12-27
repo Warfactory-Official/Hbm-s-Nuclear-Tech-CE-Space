@@ -4,9 +4,9 @@ import com.hbm.blocks.ModBlocks;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.dim.BiomeDecoratorCelestial;
 import com.hbmspace.dim.BiomeGenBaseCelestial;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 
@@ -14,83 +14,88 @@ import java.util.Random;
 
 public class BiomeGenIke extends BiomeGenBaseCelestial {
 
-	public BiomeGenIke(BiomeProperties properties) {
-		super(properties);
-		properties.setBaseBiome("Ike");
-		properties.setRainDisabled();
+    public BiomeGenIke(BiomeProperties properties) {
+        super(properties);
+        properties.setBaseBiome("Ike");
+        properties.setRainDisabled();
 
-		BiomeDecoratorCelestial decorator = new BiomeDecoratorCelestial(ModBlocksSpace.ike_stone);
-		decorator.lakeChancePerChunk = 8;
-		decorator.lakeBlock = ModBlocks.bromine_block;
-		this.decorator = decorator;
-		this.decorator.generateFalls = false;
+        BiomeDecoratorCelestial decorator = new BiomeDecoratorCelestial(ModBlocksSpace.ike_stone);
+        decorator.lakeChancePerChunk = 8;
+        decorator.lakeBlock = ModBlocks.bromine_block;
+        this.decorator = decorator;
+        this.decorator.generateFalls = false;
 
-		this.topBlock = ModBlocksSpace.ike_regolith.getDefaultState();
-		this.fillerBlock = ModBlocksSpace.ike_regolith.getDefaultState(); // thiccer regolith due to uhhhhhh...................
-		this.creatures.clear();
-	}
+        this.topBlock = ModBlocksSpace.ike_regolith.getDefaultState();
+        this.fillerBlock = ModBlocksSpace.ike_regolith.getDefaultState(); // thiccer regolith due to uhhhhhh...................
+        this.creatures.clear();
+    }
 
-	@Override
-	public void genTerrainBlocks(World world, Random rand, ChunkPrimer chunkPrimer, int x, int z, double noise) {
-		IBlockState topBlockState = this.topBlock;
-		IBlockState fillerBlockState = this.fillerBlock;
-		int k = -1;
-		int l = (int) (noise / 8.0D + 8.0D + rand.nextDouble() * 0.50D);
-		int i1 = x & 15;
-		int j1 = z & 15;
-		int maxHeight = 256; // Максимальная высота мира
+    @Override
+    public void genTerrainBlocks(World world, Random rand, ChunkPrimer primer, int x, int z, double noise) {
+        IBlockState topState = this.topBlock;
+        IBlockState fillerState = this.fillerBlock;
 
-		for (int l1 = maxHeight - 1; l1 >= 0; --l1) {
-			BlockPos pos = new BlockPos(x, l1, z);
-			IBlockState currentState = chunkPrimer.getBlockState(i1, l1, j1);
+        int layerDepthRemaining = -1;
+        int surfaceDepth = (int) (noise / 8.0D + 8.0D + rand.nextDouble() * 0.50D);
 
-			if (l1 <= 0 + rand.nextInt(5)) {
-				chunkPrimer.setBlockState(i1, l1, j1, Blocks.BEDROCK.getDefaultState());
-			} else {
-				if (currentState.getBlock() != Blocks.AIR) {
-					if (currentState.getBlock() == ModBlocksSpace.ike_stone) {
-						if (k == -1) {
-							if (l <= 0) {
-								topBlockState = Blocks.AIR.getDefaultState();
-								fillerBlockState = ModBlocksSpace.ike_stone.getDefaultState();
-							} else if (l1 >= 59 && l1 <= 64) {
-								topBlockState = this.topBlock;
-								fillerBlockState = this.fillerBlock;
-							}
+        int localX = x & 15;
+        int localZ = z & 15;
 
-							if (l1 < 63 && (topBlockState.getBlock() == Blocks.AIR)) {
-								if (this.getTemperature(pos) < 0.15F) {
-									topBlockState = this.topBlock;
-								} else {
-									topBlockState = this.topBlock;
-								}
-							}
+        int maxY = world.getActualHeight() - 1; // 255 in vanilla
 
-							k = l;
+        for (int y = maxY; y >= 0; --y) {
 
-							if (l1 >= 62) {
-								chunkPrimer.setBlockState(i1, l1, j1, topBlockState);
-							} else if (l1 < 62) {
-								topBlockState = Blocks.AIR.getDefaultState();
-								fillerBlockState = ModBlocksSpace.ike_stone.getDefaultState();
-								chunkPrimer.setBlockState(i1, l1, j1, Blocks.GRAVEL.getDefaultState());
-							} else {
-								chunkPrimer.setBlockState(i1, l1, j1, fillerBlockState);
-							}
-						} else if (k > 0) {
-							--k;
-							chunkPrimer.setBlockState(i1, l1, j1, fillerBlockState);
+            if (y <= rand.nextInt(5)) {
+                primer.setBlockState(localX, y, localZ, Blocks.BEDROCK.getDefaultState());
+                continue;
+            }
 
-							if (k == 0 && fillerBlockState.getBlock() == Blocks.SAND) {
-								k = rand.nextInt(4) + Math.max(0, l1 - 63);
-								fillerBlockState = Blocks.SANDSTONE.getDefaultState();
-							}
-						}
-					}
-				} else {
-					k = -1;
-				}
-			}
-		}
-	}
+            IBlockState state = primer.getBlockState(localX, y, localZ);
+
+            if (state.getMaterial() == Material.AIR) {
+                layerDepthRemaining = -1;
+                continue;
+            }
+
+            if (state.getBlock() != ModBlocksSpace.ike_stone) {
+                continue;
+            }
+
+            if (layerDepthRemaining == -1) {
+                if (surfaceDepth <= 0) {
+                    topState = Blocks.AIR.getDefaultState();
+                    fillerState = ModBlocksSpace.ike_stone.getDefaultState();
+                } else if (y >= 59 && y <= 64) {
+                    topState = this.topBlock;
+                    fillerState = this.fillerBlock;
+                }
+
+                // legacy parity: redundant branches, keep call behavior
+                if (y < 63 && topState.getMaterial() == Material.AIR) {
+                    topState = this.topBlock;
+                }
+
+                layerDepthRemaining = surfaceDepth;
+
+                if (y >= 62) {
+                    primer.setBlockState(localX, y, localZ, topState);
+                } else if (y < 56 - surfaceDepth) {
+                    // 1.7 parity: gravel below (56 - l)
+                    topState = Blocks.AIR.getDefaultState();
+                    fillerState = ModBlocksSpace.ike_stone.getDefaultState();
+                    primer.setBlockState(localX, y, localZ, Blocks.GRAVEL.getDefaultState());
+                } else {
+                    primer.setBlockState(localX, y, localZ, fillerState);
+                }
+            } else if (layerDepthRemaining > 0) {
+                --layerDepthRemaining;
+                primer.setBlockState(localX, y, localZ, fillerState);
+
+                if (layerDepthRemaining == 0 && fillerState.getBlock() == Blocks.SAND) {
+                    layerDepthRemaining = rand.nextInt(4) + Math.max(0, y - 63);
+                    fillerState = Blocks.SANDSTONE.getDefaultState();
+                }
+            }
+        }
+    }
 }

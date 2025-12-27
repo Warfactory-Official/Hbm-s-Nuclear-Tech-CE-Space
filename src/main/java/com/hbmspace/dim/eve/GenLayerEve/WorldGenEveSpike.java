@@ -3,6 +3,8 @@ package com.hbmspace.dim.eve.GenLayerEve;
 import com.hbmspace.blocks.ModBlocksSpace;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -12,99 +14,122 @@ import java.util.Random;
 
 public class WorldGenEveSpike extends WorldGenerator {
 
-	public boolean generate(World p_76484_1_, Random p_76484_2_, BlockPos pos) {
-		while(p_76484_1_.isAirBlock(pos) && pos.getY() > 2) {
-			pos.down();
-		}
+    private static boolean isReplaceable(IBlockState state) {
+        Block block = state.getBlock();
+        return state.getMaterial() == Material.AIR || block == ModBlocksSpace.eve_silt || block == ModBlocksSpace.eve_rock;
+    }
 
-		if(p_76484_1_.getBlockState(pos) != ModBlocksSpace.eve_silt.getDefaultState()) {
-			return false;
-		} else {
-			pos.up(p_76484_2_.nextInt(4));
-			int l = p_76484_2_.nextInt(4) + 10;
-			int i1 = l / 4 + p_76484_2_.nextInt(2);
+    @Override
+    public boolean generate(World world, Random rand, BlockPos origin) {
+        BlockPos.MutableBlockPos groundPos = new BlockPos.MutableBlockPos(origin);
+        IBlockState groundState = world.getBlockState(groundPos);
+        while (groundPos.getY() > 2 && groundState.getMaterial() == Material.AIR) {
+            groundPos.move(EnumFacing.DOWN);
+            groundState = world.getBlockState(groundPos);
+        }
 
-			if(i1 > 1 && p_76484_2_.nextInt(2) == 0) {
-				pos.up(10 + p_76484_2_.nextInt(30));
-			}
+        if (groundState.getBlock() != ModBlocksSpace.eve_silt) {
+            return false;
+        }
 
-			int j1;
-			int k1;
-			int l1;
+        // 1.7: y += rand.nextInt(4)
+        int baseX = groundPos.getX();
+        int baseZ = groundPos.getZ();
+        int baseY = groundPos.getY() + rand.nextInt(4);
 
-			for(j1 = 0; j1 < l; ++j1) {
-				float f = (1.0F - (float) j1 / (float) l) * (float) i1;
-				k1 = MathHelper.ceil(f);
+        int spikeHeight = 10 + rand.nextInt(4);          // l
+        int spikeRadiusBase = (spikeHeight / 4) + rand.nextInt(2); // i1
 
-				for(l1 = -k1; l1 <= k1; ++l1) {
-					float f1 = (float) MathHelper.abs(l1) - 0.25F;
+        // 1.7: if(i1 > 1 && rand.nextInt(2) == 0) y += 10 + rand.nextInt(30)
+        if (rand.nextInt(2) == 0) {
+            baseY += 10 + rand.nextInt(30);
+        }
 
-					for(int i2 = -k1; i2 <= k1; ++i2) {
-						float f2 = (float) MathHelper.abs(i2) - 0.25F;
+        IBlockState rockState = ModBlocksSpace.eve_rock.getDefaultState();
+        BlockPos.MutableBlockPos placePos = new BlockPos.MutableBlockPos();
+        BlockPos.MutableBlockPos belowPos = new BlockPos.MutableBlockPos();
+        BlockPos.MutableBlockPos columnPos = new BlockPos.MutableBlockPos();
 
-						if((l1 == 0 && i2 == 0 || f1 * f1 + f2 * f2 <= f * f) && (l1 != -k1 && l1 != k1 && i2 != -k1 && i2 != k1 || p_76484_2_.nextFloat() <= 0.75F)) {
-							Block block = p_76484_1_.getBlockState(pos.add(l1, j1, i2)).getBlock();
+        for (int layer = 0; layer < spikeHeight; ++layer) {
+            float radiusF = (1.0F - (float) layer / (float) spikeHeight) * (float) spikeRadiusBase;
+            float radiusSq = radiusF * radiusF;
+            int radius = MathHelper.ceil(radiusF);
 
-							if(block.getMaterial(block.getDefaultState()) == Material.AIR || block == ModBlocksSpace.eve_silt || block == ModBlocksSpace.eve_rock) {
-								this.setBlockAndNotifyAdequately(p_76484_1_, pos.add(l1, j1, i2), ModBlocksSpace.eve_rock.getDefaultState());
-							}
+            for (int dx = -radius; dx <= radius; ++dx) {
+                float dxF = (float) MathHelper.abs(dx) - 0.25F;
 
-							if(j1 != 0 && k1 > 1) {
-								block = p_76484_1_.getBlockState(pos.add(l1, -j1, i2)).getBlock();
+                for (int dz = -radius; dz <= radius; ++dz) {
+                    float dzF = (float) MathHelper.abs(dz) - 0.25F;
 
-								if (block.getMaterial(block.getDefaultState()) == Material.AIR || block == ModBlocksSpace.eve_silt || block == ModBlocksSpace.eve_rock) {
-									this.setBlockAndNotifyAdequately(p_76484_1_, pos.add(l1, -j1, i2), ModBlocksSpace.eve_rock.getDefaultState());
-								}
-							}
-						}
-					}
-				}
-			}
+                    float distSq = dxF * dxF + dzF * dzF;
+                    boolean inside = (dx == 0 && dz == 0) || (distSq <= radiusSq);
+                    boolean onEdge = (dx == -radius || dx == radius || dz == -radius || dz == radius);
 
-			j1 = i1 - 1;
+                    if (inside && (!onEdge || rand.nextFloat() <= 0.75F)) {
+                        placePos.setPos(baseX + dx, baseY + layer, baseZ + dz);
+                        IBlockState state = world.getBlockState(placePos);
 
-			if(j1 < 0) {
-				j1 = 0;
-			} else if(j1 > 1) {
-				j1 = 1;
-			}
+                        if (isReplaceable(state)) {
+                            world.setBlockState(placePos, rockState, 2 | 16);
+                        }
 
-			for(int j2 = -j1; j2 <= j1; ++j2) {
-				k1 = -j1;
+                        if (layer != 0 && radius > 1) {
+                            belowPos.setPos(baseX + dx, baseY - layer, baseZ + dz);
+                            IBlockState belowState = world.getBlockState(belowPos);
 
-				while(k1 <= j1) {
-					l1 = pos.getY() - 1;
-					int k2 = 50;
+                            if (isReplaceable(belowState)) {
+                                world.setBlockState(belowPos, rockState, 2 | 16);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-					if(Math.abs(j2) == 1 && Math.abs(k1) == 1) {
-						k2 = p_76484_2_.nextInt(5);
-					}
+        int columnRadius = spikeRadiusBase - 1;
+        if (columnRadius < 0) {
+            columnRadius = 0;
+        } else if (columnRadius > 1) {
+            columnRadius = 1;
+        }
 
-					while(true) {
-						if (l1 > 50) {
-							Block block1 = p_76484_1_.getBlockState(pos.add(j2, l1 - pos.getY(), k1)).getBlock();
+        for (int dx = -columnRadius; dx <= columnRadius; ++dx) {
+            for (int dz = -columnRadius; dz <= columnRadius; ++dz) {
+                int y = baseY - 1;
+                int runLeft = 50;
 
-							if(block1.getMaterial(block1.getDefaultState()) == Material.AIR || block1 == ModBlocksSpace.eve_silt || block1 == ModBlocksSpace.eve_silt || block1 == ModBlocksSpace.eve_silt || block1 == ModBlocksSpace.eve_rock) {
-								this.setBlockAndNotifyAdequately(p_76484_1_, pos.add(j2, l1 - pos.getY(), k1), ModBlocksSpace.eve_rock.getDefaultState());
-								--l1;
-								--k2;
+                if (Math.abs(dx) == 1 && Math.abs(dz) == 1) {
+                    runLeft = rand.nextInt(5);
+                }
 
-								if(k2 <= 0) {
-									l1 -= p_76484_2_.nextInt(5) + 1;
-									k2 = p_76484_2_.nextInt(5);
-								}
+                while (true) {
+                    if (y > 50) {
+                        columnPos.setPos(baseX + dx, y, baseZ + dz);
+                        IBlockState state = world.getBlockState(columnPos);
+                        Block block = state.getBlock();
 
-								continue;
-							}
-						}
+                        // mlbv: 1.7 had repeated "eve_silt" checks; they are redundant.
+                        // semantically identically, we can replace if air OR eve_silt OR eve_rock.
+                        if (block.isAir(state, world, columnPos) || block == ModBlocksSpace.eve_silt || block == ModBlocksSpace.eve_rock) {
+                            world.setBlockState(columnPos, rockState, 2 | 16);
 
-						++k1;
-						break;
-					}
-				}
-			}
+                            --y;
+                            --runLeft;
 
-			return true;
-		}
-	}
+                            if (runLeft <= 0) {
+                                y -= rand.nextInt(5) + 1;
+                                runLeft = rand.nextInt(5);
+                            }
+
+                            continue;
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        return true;
+    }
 }

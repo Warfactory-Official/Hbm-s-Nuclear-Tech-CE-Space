@@ -2,6 +2,7 @@ package com.hbmspace.dim;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -10,68 +11,86 @@ import java.util.Random;
 
 public class WorldGenLiquidsCelestial extends WorldGenerator {
 
-	// Identical to WorldGenLiquids except you can specify the stone block to replace
+    // Identical to WorldGenLiquids except you can specify the stone block to replace
 
-	private final Block liquidBlock;
-	private final Block targetBlock;
+    private final Block liquidBlock;
+    private final Block targetBlock;
 
-	public WorldGenLiquidsCelestial(Block liquidBlock, Block targetBlock) {
-		this.liquidBlock = liquidBlock;
-		this.targetBlock = targetBlock;
-	}
+    public WorldGenLiquidsCelestial(Block liquidBlock, Block targetBlock) {
+        this.liquidBlock = liquidBlock;
+        this.targetBlock = targetBlock;
+    }
 
-	public boolean generate(World world, Random rand, BlockPos pos) {
-		if(world.getBlockState(pos.up()).getBlock() != targetBlock) {
-			return false;
-		} else if(world.getBlockState(pos.down()).getBlock() != targetBlock) {
-			return false;
-		} else if(world.getBlockState(pos).getMaterial() != Material.AIR && world.getBlockState(pos).getBlock() != targetBlock) {
-			return false;
-		} else {
-			int l = 0;
+    @Override
+    public boolean generate(World worldIn, Random rand, BlockPos position) {
+        int x = position.getX();
+        int y = position.getY();
+        int z = position.getZ();
 
-			if(world.getBlockState(pos.add(-1, 0, 0)).getBlock() == targetBlock) {
-				++l;
-			}
+        BlockPos.MutableBlockPos mp = new BlockPos.MutableBlockPos();
 
-			if(world.getBlockState(pos.add(1, 0, 0)).getBlock() == targetBlock) {
-				++l;
-			}
+        mp.setPos(x, y + 1, z);
+        if (worldIn.getBlockState(mp).getBlock() != targetBlock) {
+            return false;
+        }
 
-			if(world.getBlockState(pos.add(0, 0, -1)).getBlock() == targetBlock) {
-				++l;
-			}
+        mp.setPos(x, y - 1, z);
+        if (worldIn.getBlockState(mp).getBlock() != targetBlock) {
+            return false;
+        }
 
-			if(world.getBlockState(pos.add(0, 0, 1)).getBlock() == targetBlock) {
-				++l;
-			}
+        IBlockState centerState = worldIn.getBlockState(position);
+        if (!(centerState.getMaterial() == Material.AIR) && centerState.getBlock() != targetBlock) {
+            return false;
+        }
 
-			int i1 = 0;
+        int i = 0;
 
-			if(world.isAirBlock(pos.add(-1, 0, 0))) {
-				++i1;
-			}
+        mp.setPos(x - 1, y, z);
+        if (worldIn.getBlockState(mp).getBlock() == targetBlock) ++i;
 
-			if(world.isAirBlock(pos.add(1, 0, 0))) {
-				++i1;
-			}
+        mp.setPos(x + 1, y, z);
+        if (worldIn.getBlockState(mp).getBlock() == targetBlock) ++i;
 
-			if(world.isAirBlock(pos.add(0, 0, -1))) {
-				++i1;
-			}
+        mp.setPos(x, y, z - 1);
+        if (worldIn.getBlockState(mp).getBlock() == targetBlock) ++i;
 
-			if(world.isAirBlock(pos.add(0, 0, 1))) {
-				++i1;
-			}
+        mp.setPos(x, y, z + 1);
+        if (worldIn.getBlockState(mp).getBlock() == targetBlock) ++i;
 
-			if(l == 3 && i1 == 1) {
-				world.setBlockState(pos, this.liquidBlock.getDefaultState(), 2);
-				world.scheduledUpdatesAreImmediate = true;
-				this.liquidBlock.updateTick(world, pos, liquidBlock.getDefaultState(), rand);
-				world.scheduledUpdatesAreImmediate = false;
-			}
+        int j = 0;
 
-			return true;
-		}
-	}
+        mp.setPos(x - 1, y, z);
+        {
+            IBlockState s = worldIn.getBlockState(mp);
+            if (s.getMaterial() == Material.AIR) ++j;
+        }
+
+        mp.setPos(x + 1, y, z);
+        {
+            IBlockState s = worldIn.getBlockState(mp);
+            if (s.getMaterial() == Material.AIR) ++j;
+        }
+
+        mp.setPos(x, y, z - 1);
+        {
+            IBlockState s = worldIn.getBlockState(mp);
+            if (s.getMaterial() == Material.AIR) ++j;
+        }
+
+        mp.setPos(x, y, z + 1);
+        {
+            IBlockState s = worldIn.getBlockState(mp);
+            if (s.getMaterial() == Material.AIR) ++j;
+        }
+
+        if (i == 3 && j == 1) {
+            IBlockState liquidState = this.liquidBlock.getDefaultState();
+            worldIn.setBlockState(position, liquidState, 2);
+            worldIn.immediateBlockTick(position, liquidState, rand);
+        }
+
+        return true;
+    }
+
 }

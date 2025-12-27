@@ -11,79 +11,82 @@ import java.util.Random;
 
 public class BiomeGenDunaPolar extends BiomeGenBaseDuna {
 
-	public BiomeGenDunaPolar(BiomeProperties properties) {
-		super(properties);
+    public BiomeGenDunaPolar(BiomeProperties properties) {
+        super(properties);
+        this.topBlock = Blocks.SNOW.getDefaultState();
+        this.fillerBlock = Blocks.SNOW.getDefaultState();
+    }
 
-		this.topBlock = Blocks.SNOW.getDefaultState();
-		this.fillerBlock = Blocks.SNOW.getDefaultState();
-	}
+    @Override
+    public void genTerrainBlocks(World world, Random rand, ChunkPrimer primer, int x, int z, double noise) {
+        IBlockState topState;
+        IBlockState fillerState = this.fillerBlock;
 
-	@Override
-	public void genTerrainBlocks(World world, Random rand, ChunkPrimer chunkPrimer, int x, int z, double noise) {
-		IBlockState topBlockState = this.topBlock;
-		IBlockState fillerBlockState = this.fillerBlock;
-		int k = -1;
-		int l = (int) (noise / 6.0D + 6.0D + rand.nextDouble() * 0.85D);
-		int i1 = x & 15;
-		int j1 = z & 15;
-		int maxHeight = 256; // Максимальная высота мира
+        int remainingDepth = -1; // k in 1.7
+        int surfaceDepth = (int) (noise / 6.0D + 6.0D + rand.nextDouble() * 0.85D); // l in 1.7
 
-		for (int l1 = maxHeight - 1; l1 >= 0; --l1) {
-			BlockPos pos = new BlockPos(x, l1, z);
-			IBlockState currentState = chunkPrimer.getBlockState(i1, l1, j1);
+        int localX = x & 15;
+        int localZ = z & 15;
+        int seaLevel = world.getSeaLevel();
+        int gravelBelowY = (seaLevel - 8) - surfaceDepth;
 
-			if (l1 <= 0 + rand.nextInt(5)) {
-				chunkPrimer.setBlockState(i1, l1, j1, Blocks.BEDROCK.getDefaultState());
-			} else {
-				if (currentState.getBlock() != Blocks.AIR) {
-					if (currentState.getBlock() == ModBlocksSpace.duna_rock) {
-						if (k == -1) {
-							if (l <= 0) {
-								topBlockState = Blocks.AIR.getDefaultState();
-								fillerBlockState = ModBlocksSpace.duna_rock.getDefaultState();
-							} else if (l1 >= 59 && l1 <= 64) {
-								topBlockState = this.topBlock;
-								fillerBlockState = this.fillerBlock;
-							}
+        BlockPos.MutableBlockPos tempPos = new BlockPos.MutableBlockPos();
 
-							if (l1 < 63 && (topBlockState.getBlock() == Blocks.AIR)) {
-								if (this.getTemperature(pos) < 0.15F) {
-									topBlockState = this.topBlock;
-								} else {
-									topBlockState = this.topBlock;
-								}
-							}
+        for (int y = 255; y >= 0; --y) {
 
-							k = l;
+            // 1.7 bedrock floor
+            if (y <= rand.nextInt(5)) {
+                primer.setBlockState(localX, y, localZ, Blocks.BEDROCK.getDefaultState());
+                continue;
+            }
 
-							if (l1 >= 62) {
-								chunkPrimer.setBlockState(i1, l1, j1, topBlockState);
-							} else if (l1 < 62) {
-								topBlockState = Blocks.AIR.getDefaultState();
-								fillerBlockState = ModBlocksSpace.dry_ice.getDefaultState();
-								if (Math.random() > 0.4) {
-									chunkPrimer.setBlockState(i1, l1, j1, ModBlocksSpace.duna_rock.getDefaultState());
-								} else {
-									chunkPrimer.setBlockState(i1, l1, j1, Blocks.GRAVEL.getDefaultState());
-								}
-							} else {
-								chunkPrimer.setBlockState(i1, l1, j1, fillerBlockState);
-							}
-						} else if (k > 0) {
-							--k;
-							chunkPrimer.setBlockState(i1, l1, j1, fillerBlockState);
+            IBlockState state = primer.getBlockState(localX, y, localZ);
 
-							if (k == 0 && fillerBlockState.getBlock() == Blocks.SAND) {
-								k = rand.nextInt(4) + Math.max(0, l1 - 63);
-								fillerBlockState = Blocks.SANDSTONE.getDefaultState();
-							}
-						}
-					}
-				} else {
-					k = -1;
-				}
-			}
-		}
-	}
+            if (state.getBlock() == Blocks.AIR) {
+                remainingDepth = -1;
+                continue;
+            }
+            if (state.getBlock() != ModBlocksSpace.duna_rock) {
+                continue;
+            }
 
+            if (remainingDepth == -1) {
+                topState = this.topBlock;
+                fillerState = this.fillerBlock;
+
+                if (surfaceDepth <= 0) {
+                    // 1.7: block = null (air), block1 = duna_rock
+                    topState = Blocks.AIR.getDefaultState();
+                    fillerState = ModBlocksSpace.duna_rock.getDefaultState();
+                } else if (y >= seaLevel - 5 && y <= seaLevel) { // 59..64 when seaLevel=64
+                    topState = this.topBlock;
+                    fillerState = this.fillerBlock;
+                }
+
+                if (y < seaLevel - 1 && topState.getBlock() == Blocks.AIR) { // <63 when seaLevel=64
+                    tempPos.setPos(x, y, z);
+                    this.getTemperature(tempPos);
+                    topState = this.topBlock;
+                }
+
+                remainingDepth = surfaceDepth;
+
+                if (y >= seaLevel - 2) { // >=62 when seaLevel=64
+                    // 1.7: if(Math.random() > 0.4) place top else dry_ice
+                    primer.setBlockState(localX, y, localZ, (rand.nextFloat() > 0.4F) ? topState : ModBlocksSpace.dry_ice.getDefaultState());
+                } else if (y < gravelBelowY) {
+                    // 1.7: below (56 - l): force gravel; also set filler for the following depth-fill to duna_rock
+                    fillerState = ModBlocksSpace.duna_rock.getDefaultState();
+                    primer.setBlockState(localX, y, localZ, Blocks.GRAVEL.getDefaultState());
+                } else {
+                    // 1.7: otherwise fill with block1 (fillerState)
+                    primer.setBlockState(localX, y, localZ, fillerState);
+                }
+
+            } else if (remainingDepth > 0) {
+                --remainingDepth;
+                primer.setBlockState(localX, y, localZ, fillerState);
+            }
+        }
+    }
 }

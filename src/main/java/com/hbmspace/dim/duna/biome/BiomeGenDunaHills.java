@@ -1,9 +1,11 @@
 package com.hbmspace.dim.duna.biome;
 
 import com.hbmspace.blocks.ModBlocksSpace;
+import net.minecraft.block.BlockColored;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
@@ -12,229 +14,198 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class BiomeGenDunaHills extends BiomeGenBaseDuna {
+    private IBlockState[] clayBands;
+    private long worldSeed;
+    private NoiseGeneratorPerlin pillarNoise;
+    private NoiseGeneratorPerlin pillarRoofNoise;
+    private NoiseGeneratorPerlin clayBandsOffsetNoise;
+    private boolean brycePillars;
+    private boolean hasForest;
 
-	private byte[] field_150621_aC;
-	private long seed;
-	private NoiseGeneratorPerlin perlin1;
-	private NoiseGeneratorPerlin perlin2;
-	private NoiseGeneratorPerlin perlin3;
-	private boolean field_150626_aH;
-	private boolean field_150620_aI;
+    public BiomeGenDunaHills(BiomeProperties properties) {
+        super(properties);
+    }
 
-	public BiomeGenDunaHills(BiomeProperties properties) {
-		super(properties);
-	}
+    private static boolean isStainedClay(IBlockState state, EnumDyeColor color) {
+        return state.getBlock() == Blocks.STAINED_HARDENED_CLAY && state.getValue(BlockColored.COLOR) == color;
+    }
 
-	// Ripped from BiomeGenMesa
-	@Override
-	public void genTerrainBlocks(World world, Random rand, ChunkPrimer chunkPrimer, int x, int z, double noise) {
-		if (this.field_150621_aC == null || this.seed != world.getSeed()) {
-			this.generateBuffers(world.getSeed());
-		}
+    @Override
+    public void genTerrainBlocks(World world, Random rand, ChunkPrimer primer, int x, int z, double noise) {
+        long seed = world.getSeed();
+        if (this.clayBands == null || this.worldSeed != seed) {
+            generateBands(seed);
+        }
+        if (this.pillarNoise == null || this.pillarRoofNoise == null || this.worldSeed != seed) {
+            Random r = new Random(seed);
+            this.pillarNoise = new NoiseGeneratorPerlin(r, 4);
+            this.pillarRoofNoise = new NoiseGeneratorPerlin(r, 1);
+        }
+        this.worldSeed = seed;
 
-		if (this.perlin1 == null || this.perlin2 == null || this.seed != world.getSeed()) {
-			Random random1 = new Random(this.seed);
-			this.perlin1 = new NoiseGeneratorPerlin(random1, 4);
-			this.perlin2 = new NoiseGeneratorPerlin(random1, 1);
-		}
+        double pillarTopY = 0.0D;
+        if (this.brycePillars) { // unreachable
+            int i = (x & -16) + (z & 15);
+            int j = (z & -16) + (x & 15);
 
-		this.seed = world.getSeed();
-		double d5 = 0.0D;
-		int k;
-		int l;
+            double d0 = Math.min(Math.abs(noise), this.pillarNoise.getValue(i * 0.25D, j * 0.25D));
+            if (d0 > 0.0D) {
+                double d2 = Math.abs(this.pillarRoofNoise.getValue(i * 0.001953125D, j * 0.001953125D));
+                double d4 = d0 * d0 * 2.5D;
+                double cap = Math.ceil(d2 * 50.0D) + 14.0D;
+                if (d4 > cap) d4 = cap;
+                pillarTopY = d4 + 64.0D;
+            }
+        }
 
-		if (this.field_150626_aH) {
-			k = (x & -16) + (z & 15);
-			l = (z & -16) + (x & 15);
-			double d1 = Math.min(Math.abs(noise),
-					this.perlin1.getValue((double) k * 0.25D, (double) l * 0.25D));
+        int localX = x & 15;
+        int localZ = z & 15;
+        int seaLevel = world.getSeaLevel();
 
-			if (d1 > 0.0D) {
-				double d2 = 0.001953125D;
-				double d3 = Math.abs(this.perlin2.getValue((double) k * d2, (double) l * d2));
-				d5 = d1 * d1 * 2.5D;
-				double d4 = Math.ceil(d3 * 50.0D) + 14.0D;
+        int surfaceDepth = (int) (noise / 3.0D + 3.0D + rand.nextDouble() * 0.25D);
+        boolean cosineFlag = Math.cos(noise / 3.0D * Math.PI) > 0.0D;
 
-				if (d5 > d4) {
-					d5 = d4;
-				}
+        int remainingDepth = -1;
+        boolean placedTop = false;
+        IBlockState filler = this.fillerBlock;
 
-				d5 += 64.0D;
-			}
-		}
+        for (int y = 255; y >= 0; --y) {
+            IBlockState state = primer.getBlockState(localZ, y, localX);
+            if (state.getMaterial() == Material.AIR && y < (int) pillarTopY) {
+                primer.setBlockState(localZ, y, localX, ModBlocksSpace.duna_rock.getDefaultState());
+                state = ModBlocksSpace.duna_rock.getDefaultState();
+            }
+            if (y <= rand.nextInt(5)) {
+                primer.setBlockState(localZ, y, localX, Blocks.BEDROCK.getDefaultState());
+                continue;
+            }
 
-		k = x & 15;
-		l = z & 15;
-		IBlockState topBlockState = ModBlocksSpace.ferric_clay.getDefaultState();
-		IBlockState fillerBlockState = this.fillerBlock;
-		int i1 = (int) (noise / 3.0D + 3.0D + rand.nextDouble() * 0.25D);
-		boolean flag1 = Math.cos(noise / 3.0D * Math.PI) > 0.0D;
-		int j1 = -1;
-		boolean flag2 = false;
-		int maxHeight = 256; // Максимальная высота мира
+            if (state.getMaterial() == Material.AIR) {
+                remainingDepth = -1;
+                continue;
+            }
 
-		for (int l1 = maxHeight - 1; l1 >= 0; --l1) {
-			BlockPos pos = new BlockPos(x, l1, z);
-			IBlockState currentState = chunkPrimer.getBlockState(k, l1, l);
+            if (state.getBlock() != ModBlocksSpace.duna_rock) {
+                continue;
+            }
 
-			if ((currentState.getBlock() == Blocks.AIR) && l1 < (int) d5) {
-				chunkPrimer.setBlockState(k, l1, l, ModBlocksSpace.duna_rock.getDefaultState());
-			}
+            if (remainingDepth == -1) {
+                placedTop = false;
+                if (surfaceDepth <= 0) {
+                    filler = ModBlocksSpace.duna_rock.getDefaultState();
+                } else if (y >= seaLevel - 4 && y <= seaLevel + 1) {
+                    filler = this.fillerBlock;
+                }
 
-			if (l1 <= 0 + rand.nextInt(5)) {
-				chunkPrimer.setBlockState(k, l1, l, Blocks.BEDROCK.getDefaultState());
-			} else {
-				if (currentState.getBlock() == ModBlocksSpace.duna_rock) {
-					if (j1 == -1) {
-						flag2 = false;
+                remainingDepth = surfaceDepth + Math.max(0, y - seaLevel);
 
-						if (i1 <= 0) {
-							topBlockState = Blocks.AIR.getDefaultState();
-							fillerBlockState = ModBlocksSpace.duna_rock.getDefaultState();
-						} else if (l1 >= 59 && l1 <= 64) {
-							topBlockState = ModBlocksSpace.ferric_clay.getDefaultState();
-							fillerBlockState = this.fillerBlock;
-						}
+                if (y >= seaLevel - 1) {
+                    if (this.hasForest && y > 86 + surfaceDepth * 2) {  // unreachable
+                        primer.setBlockState(localZ, y, localX, ModBlocksSpace.duna_sands.getDefaultState());
+                    } else if (y > seaLevel + 3 + surfaceDepth) {
+                        // 1.7 behavior:
+                        // - within 64..127: if cosineFlag == true -> rock; else -> red clay IFF band is "clay" (not rock)
+                        // - outside 64..127: always red clay
+                        boolean placeRedClay = (y < 64 || y > 127) || (!cosineFlag && isBandClay(x, y, z));
+                        primer.setBlockState(localZ, y, localX, placeRedClay ? Blocks.STAINED_HARDENED_CLAY.getDefaultState()
+                                                                                                           .withProperty(BlockColored.COLOR,
+                                                                                                                   EnumDyeColor.RED) : ModBlocksSpace.duna_rock.getDefaultState());
+                    } else {
+                        primer.setBlockState(localZ, y, localX, this.topBlock);
+                        placedTop = true;
+                    }
+                } else {
+                    primer.setBlockState(localZ, y, localX, filler);
+                }
 
-						if (l1 < 63 && (topBlockState.getBlock() == Blocks.AIR)) {
-							topBlockState = Blocks.WATER.getDefaultState();
-						}
+            } else if (remainingDepth > 0) {
+                --remainingDepth;
 
-						j1 = i1 + Math.max(0, l1 - 63);
+                if (placedTop) {
+                    primer.setBlockState(localZ, y, localX, ModBlocksSpace.ferric_clay.getDefaultState());
+                } else {
+                    IBlockState band = getBand(x, y, z);
 
-						if (l1 >= 62) {
-							if (this.field_150620_aI && l1 > 86 + i1 * 2) {
-								if (flag1) {
-									chunkPrimer.setBlockState(k, l1, l, ModBlocksSpace.duna_sands.getDefaultState());
-								} else {
-									chunkPrimer.setBlockState(k, l1, l, ModBlocksSpace.duna_sands.getDefaultState());
-								}
-							} else if (l1 > 66 + i1) {
-								byte b0 = 16;
+                    if (isStainedClay(band, EnumDyeColor.YELLOW)) {
+                        // yellow is ugly
+                        primer.setBlockState(localZ, y, localX, ModBlocksSpace.ferric_clay.getDefaultState());
+                    } else if (isStainedClay(band, EnumDyeColor.WHITE)) {
+                        // white is good for yer teeth
+                        // primer.setBlockState(localZ, y, localX, ModBlocksSpace.stone_resource.getDefaultState());
+                        primer.setBlockState(localZ, y, localX, ModBlocksSpace.duna_rock.getDefaultState());
+                    } else if (band.getBlock() == Blocks.STAINED_HARDENED_CLAY) {
+                        primer.setBlockState(localZ, y, localX, band);
+                    } else {
+                        primer.setBlockState(localZ, y, localX, ModBlocksSpace.duna_rock.getDefaultState());
+                    }
+                }
+            }
+        }
+    }
 
-								if (l1 >= 64 && l1 <= 127) {
-									if (!flag1) {
-										b0 = this.func_150618_d(x, l1, z);
-									}
-								} else {
-									b0 = 1;
-								}
+    private boolean isBandClay(int x, int y, int z) {
+        return getBand(x, y, z).getBlock() == Blocks.STAINED_HARDENED_CLAY;
+    }
 
-								if (b0 < 16) {
-									chunkPrimer.setBlockState(k, l1, l, Blocks.STAINED_HARDENED_CLAY.getDefaultState());
-								} else {
-									chunkPrimer.setBlockState(k, l1, l, ModBlocksSpace.duna_rock.getDefaultState());
-								}
-							} else {
-								chunkPrimer.setBlockState(k, l1, l, this.topBlock);
-								flag2 = true;
-							}
-						} else {
-							chunkPrimer.setBlockState(k, l1, l, fillerBlockState);
-						}
-					} else if (j1 > 0) {
-						--j1;
+    public void generateBands(long seed) {
+        this.clayBands = new IBlockState[64];
+        Arrays.fill(this.clayBands, ModBlocksSpace.duna_rock.getDefaultState());
 
-						if (flag2) {
-							chunkPrimer.setBlockState(k, l1, l, ModBlocksSpace.ferric_clay.getDefaultState());
-						} else {
-							byte b0 = this.func_150618_d(x, l1, z);
+        Random random = new Random(seed);
+        this.clayBandsOffsetNoise = new NoiseGeneratorPerlin(random, 1);
 
-							if (b0 == 4) { // yellow is ugly
-								chunkPrimer.setBlockState(k, l1, l, ModBlocksSpace.ferric_clay.getDefaultState());
-							} else if (b0 == 0) { // white is good for yer teeth
-								//chunkPrimer.setBlockState(k, l1, l, ModBlocksSpace.stone_resource.getDefaultState());
-							} else if (b0 < 16) {
-								chunkPrimer.setBlockState(k, l1, l, Blocks.STAINED_HARDENED_CLAY.getDefaultState());
-							} else {
-								chunkPrimer.setBlockState(k, l1, l, ModBlocksSpace.duna_rock.getDefaultState());
-							}
-						}
-					}
-				} else {
-					j1 = -1;
-				}
-			}
-		}
-	}
+        for (int i = 0; i < 64; ++i) {
+            i += random.nextInt(5) + 1;
+            if (i < 64) this.clayBands[i] = Blocks.STAINED_HARDENED_CLAY.getDefaultState().withProperty(BlockColored.COLOR, EnumDyeColor.ORANGE);
+        }
 
-	public void generateBuffers(long seed) {
-		this.field_150621_aC = new byte[64];
-		Arrays.fill(this.field_150621_aC, (byte) 16);
-		Random random = new Random(seed);
-		this.perlin3 = new NoiseGeneratorPerlin(random, 1);
-		int j;
+        int count = random.nextInt(4) + 2;
+        for (int n = 0; n < count; ++n) {
+            int len = random.nextInt(3) + 1;
+            int start = random.nextInt(64);
+            for (int j = 0; start + j < 64 && j < len; ++j) {
+                this.clayBands[start + j] = Blocks.STAINED_HARDENED_CLAY.getDefaultState().withProperty(BlockColored.COLOR, EnumDyeColor.YELLOW);
+            }
+        }
 
-		for (j = 0; j < 64; ++j) {
-			j += random.nextInt(5) + 1;
+        count = random.nextInt(4) + 2;
+        for (int n = 0; n < count; ++n) {
+            int len = random.nextInt(3) + 2;
+            int start = random.nextInt(64);
+            for (int j = 0; start + j < 64 && j < len; ++j) {
+                this.clayBands[start + j] = Blocks.STAINED_HARDENED_CLAY.getDefaultState().withProperty(BlockColored.COLOR, EnumDyeColor.BROWN);
+            }
+        }
 
-			if (j < 64) {
-				this.field_150621_aC[j] = 1;
-			}
-		}
+        count = random.nextInt(4) + 2;
+        for (int n = 0; n < count; ++n) {
+            int len = random.nextInt(3) + 1;
+            int start = random.nextInt(64);
+            for (int j = 0; start + j < 64 && j < len; ++j) {
+                this.clayBands[start + j] = Blocks.STAINED_HARDENED_CLAY.getDefaultState().withProperty(BlockColored.COLOR, EnumDyeColor.RED);
+            }
+        }
 
-		j = random.nextInt(4) + 2;
-		int k;
-		int l;
-		int i1;
-		int j1;
+        int stripes = random.nextInt(3) + 3;
+        int cursor = 0;
+        for (int n = 0; n < stripes; ++n) {
+            cursor += random.nextInt(16) + 4;
+            for (int j = 0; cursor + j < 64 && j < 1; ++j) {
+                int idx = cursor + j;
+                this.clayBands[idx] = Blocks.STAINED_HARDENED_CLAY.getDefaultState().withProperty(BlockColored.COLOR, EnumDyeColor.WHITE);
 
-		for (k = 0; k < j; ++k) {
-			l = random.nextInt(3) + 1;
-			i1 = random.nextInt(64);
+                if (idx > 1 && random.nextBoolean()) {
+                    this.clayBands[idx - 1] = Blocks.STAINED_HARDENED_CLAY.getDefaultState().withProperty(BlockColored.COLOR, EnumDyeColor.SILVER);
+                }
+                if (idx < 63 && random.nextBoolean()) {
+                    this.clayBands[idx + 1] = Blocks.STAINED_HARDENED_CLAY.getDefaultState().withProperty(BlockColored.COLOR, EnumDyeColor.SILVER);
+                }
+            }
+        }
+    }
 
-			for (j1 = 0; i1 + j1 < 64 && j1 < l; ++j1) {
-				this.field_150621_aC[i1 + j1] = 4;
-			}
-		}
-
-		k = random.nextInt(4) + 2;
-		int k1;
-
-		for (l = 0; l < k; ++l) {
-			i1 = random.nextInt(3) + 2;
-			j1 = random.nextInt(64);
-
-			for (k1 = 0; j1 + k1 < 64 && k1 < i1; ++k1) {
-				this.field_150621_aC[j1 + k1] = 12;
-			}
-		}
-
-		l = random.nextInt(4) + 2;
-
-		for (i1 = 0; i1 < l; ++i1) {
-			j1 = random.nextInt(3) + 1;
-			k1 = random.nextInt(64);
-
-			for (int l1 = 0; k1 + l1 < 64 && l1 < j1; ++l1) {
-				this.field_150621_aC[k1 + l1] = 14;
-			}
-		}
-
-		i1 = random.nextInt(3) + 3;
-		j1 = 0;
-
-		for (k1 = 0; k1 < i1; ++k1) {
-			byte b0 = 1;
-			j1 += random.nextInt(16) + 4;
-
-			for (int i2 = 0; j1 + i2 < 64 && i2 < b0; ++i2) {
-				this.field_150621_aC[j1 + i2] = 0;
-
-				if (j1 + i2 > 1 && random.nextBoolean()) {
-					this.field_150621_aC[j1 + i2 - 1] = 8;
-				}
-
-				if (j1 + i2 < 63 && random.nextBoolean()) {
-					this.field_150621_aC[j1 + i2 + 1] = 8;
-				}
-			}
-		}
-	}
-
-	private byte func_150618_d(int p_150618_1_, int p_150618_2_, int p_150618_3_) {
-		int l = (int)Math.round(this.perlin3.getValue((double)p_150618_1_ * 1.0D / 512.0D, (double)p_150618_1_ * 1.0D / 512.0D) * 2.0D);
-		return this.field_150621_aC[(p_150618_2_ + l + 64) % 64];
-	}
-
+    private IBlockState getBand(int x, int y, int z) {
+        int offset = (int) Math.round(this.clayBandsOffsetNoise.getValue((double) x / 512.0D, (double) x / 512.0D) * 2.0D);
+        return this.clayBands[(y + offset + 64) & 63];
+    }
 }
