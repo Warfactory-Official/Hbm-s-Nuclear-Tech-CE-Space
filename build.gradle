@@ -1706,7 +1706,7 @@ tasks.register("downloadNtmCe") {
             throw new GradleException("[downloadNtmCe] GitHub API error ${apiCode}. Body:\n${apiRaw.take(2000)}")
         }
 
-        def mainJarPattern = ~/^NTM-CE-1\.12\.2-.*(?<!-api)\.jar$/
+        def mainJarPattern = ~/^NTM-CE-1\.12\.2-.*-dev\.jar$/
         def apiJarPattern  = ~/^NTM-CE-1\.12\.2-.*-api\.jar$/
 
         def chosenAsset = null
