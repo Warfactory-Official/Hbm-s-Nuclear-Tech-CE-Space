@@ -82,3 +82,5 @@ run/
 
 logs/
 /processor/build/
+
+libs/NTM-CE.jar
