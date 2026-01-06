@@ -47,6 +47,7 @@ public class ItemCustomMissilePart extends ItemMissile {
         super(s);
         ModItems.ALL_ITEMS.remove(this);
         ModItemsSpace.ALL_ITEMS.add(this);
+        setMaxStackSize(64);
     }
 
     public ItemCustomMissilePart makeChip(float inaccuracy) {

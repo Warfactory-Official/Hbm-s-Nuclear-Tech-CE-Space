@@ -16,10 +16,13 @@ import com.hbmspace.items.weapon.ItemCustomMissilePart;
 import com.hbmspace.lib.HBMSpaceSoundHandler;
 import com.hbmspace.world.PlanetGen;
 import com.hbmspace.world.feature.OreLayer3DSpace;
+import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -27,7 +30,10 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.eventhandler.EventBus;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.registries.ForgeRegistry;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
@@ -43,6 +49,7 @@ import java.util.List;
  * @author Th3_Sl1ze
 */
 @Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:hbm@[1.2.5.1,);required-after:mixinbooter@[10.6,)")
+@Mod.EventBusSubscriber
 public class SpaceMain {
 
     @SidedProxy(clientSide = "com.hbmspace.main.ClientProxy", serverSide = "com.hbmspace.main.ServerProxy")
@@ -55,6 +62,10 @@ public class SpaceMain {
         HBMSpaceSoundHandler.init();
     }
 
+    @SubscribeEvent
+    public static void onRegisterItems(RegistryEvent.Register<Item> event) {
+        ModItemsSpace.swapStackSizes(event);
+    }
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         if (logger == null)

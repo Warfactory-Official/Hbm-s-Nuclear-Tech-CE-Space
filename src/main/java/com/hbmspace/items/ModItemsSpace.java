@@ -1,6 +1,7 @@
 package com.hbmspace.items;
 
 import com.hbm.blocks.ICustomBlockItem;
+import com.hbm.items.ModItems;
 import com.hbm.items.machine.ItemSatellite;
 import com.hbm.items.special.ItemConsumable;
 import com.hbm.items.weapon.ItemMissile;
@@ -18,10 +19,12 @@ import net.minecraft.block.Block;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ModItemsSpace {
 
@@ -120,5 +123,15 @@ public class ModItemsSpace {
                 ForgeRegistries.ITEMS.register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
             }
         }
+    }
+
+    public static void swapStackSizes(RegistryEvent.Register<Item> event){
+        var filteredSet = ModItems.ALL_ITEMS.stream().filter( o -> o instanceof ItemMissile).collect(Collectors.toSet());
+
+        for(Item itemMissile : filteredSet){
+           itemMissile.setMaxStackSize(64);
+           event.getRegistry().register(itemMissile);
+        }
+
     }
 }
