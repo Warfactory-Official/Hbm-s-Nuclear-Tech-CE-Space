@@ -1,13 +1,13 @@
 package com.hbmspace.dim;
 
-import com.hbmspace.config.SpaceConfig;
-import com.hbmspace.dim.trait.CBT_Atmosphere;
-import com.hbmspace.dim.trait.CBT_Temperature;
-import com.hbmspace.dim.trait.CBT_Water;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.main.MainRegistry;
 import com.hbm.util.AstronomyUtil;
 import com.hbm.util.BobMathUtil;
+import com.hbmspace.config.SpaceConfig;
+import com.hbmspace.dim.trait.CBT_Atmosphere;
+import com.hbmspace.dim.trait.CBT_Temperature;
+import com.hbmspace.dim.trait.CBT_Water;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -213,6 +213,8 @@ public class SolarSystem {
 		IKE("ike"),
 		LAYTHE("laythe");
 		// TEKTO("tekto");
+
+		public static final Body[] VALUES = values();
 
 		public String name;
 

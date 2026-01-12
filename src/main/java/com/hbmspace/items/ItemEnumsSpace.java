@@ -12,11 +12,15 @@ public class ItemEnumsSpace {
         PROCESST3,
         GASCHIP,
         HFCHIP,
-        MOLYCHIP
+        MOLYCHIP;
+
+        public static final EnumCircuitType[] VALUES = values();
     }
 
     public static enum EnumChunkType {
         PENTLANDITE,
-        MOONSTONE
+        MOONSTONE;
+
+        public static final EnumChunkType[] VALUES = values();
     }
 }

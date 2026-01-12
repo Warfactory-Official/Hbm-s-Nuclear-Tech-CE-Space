@@ -2,11 +2,10 @@ package com.hbmspace.blocks;
 
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.OreEnumUtil;
-import com.hbm.blocks.generic.BlockBakeBase;
 import com.hbm.inventory.fluid.Fluids;
-import com.hbmspace.blocks.generic.*;
 import com.hbm.main.MainRegistry;
 import com.hbmspace.blocks.bomb.LaunchPadRocket;
+import com.hbmspace.blocks.generic.*;
 import com.hbmspace.blocks.machine.*;
 import com.hbmspace.util.OreEnumUtilSpace;
 import net.minecraft.block.Block;
@@ -81,7 +80,7 @@ public class ModBlocksSpace {
     public static final Block ore_uranium = new BlockOreOutgas(true, 20, true, "ore_uranium").setNTMAlt(ModBlocks.ore_uranium).setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.resourceTab);
     public static final Block ore_asbestos = new BlockOreOutgas(true, 5, true, "ore_asbestos").setNTMAlt(ModBlocks.ore_asbestos).setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.resourceTab);
 
-    public static final Block stone_resource = new BlockEnumMetaSpace(Material.ROCK, SoundType.STONE, "stone_resource", BlockEnumsSpace.EnumStoneType.class, true, true).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
+    public static final Block stone_resource = new BlockEnumMetaSpace<>(Material.ROCK, SoundType.STONE, "stone_resource", BlockEnumsSpace.EnumStoneType.VALUES, true, true).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
 
     public static final Block vinyl_log = new BlockLogNT("vinyl_log", "vinyl_log_side", "vinyl_log_top").setSoundType(SoundType.WOOD).setCreativeTab(MainRegistry.blockTab).setHardness(0.5F).setResistance(2.5F);
     public static final Block pvc_log = new BlockLogNT("pvc_log", "pvc_log_side", "pvc_log_top").setSoundType(SoundType.WOOD).setCreativeTab(MainRegistry.blockTab).setHardness(0.5F).setResistance(2.5F);

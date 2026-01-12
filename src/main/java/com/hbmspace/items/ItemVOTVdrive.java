@@ -35,7 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.Locale;
 
-public class ItemVOTVdrive extends ItemEnumMultiSpace {
+public class ItemVOTVdrive extends ItemEnumMultiSpace<SolarSystem.Body> {
     @SideOnly(Side.CLIENT)
     private ModelResourceLocation[] mrls;
     @SideOnly(Side.CLIENT)
@@ -44,7 +44,7 @@ public class ItemVOTVdrive extends ItemEnumMultiSpace {
     private ResourceLocation[] overlayTex;
 
     public ItemVOTVdrive(String s) {
-        super(s, SolarSystem.Body.class, false, false);
+        super(s, SolarSystem.Body.VALUES, false, false);
         this.setMaxStackSize(1);
         this.setNoRepair();
         if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
@@ -101,7 +101,7 @@ public class ItemVOTVdrive extends ItemEnumMultiSpace {
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (!this.isInCreativeTab(tab)) return;
 
-        for (int i = 0; i < theEnum.getEnumConstants().length; i++) {
+        for (int i = 0; i < theEnum.length; i++) {
             ItemStack stack = new ItemStack(this, 1, i);
             NBTTagCompound stackTag = new NBTTagCompound();
             stackTag.setInteger("x", 1);

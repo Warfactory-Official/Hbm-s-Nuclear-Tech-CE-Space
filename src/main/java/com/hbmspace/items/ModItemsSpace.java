@@ -2,11 +2,10 @@ package com.hbmspace.items;
 
 import com.hbm.blocks.ICustomBlockItem;
 import com.hbm.items.ModItems;
-import com.hbm.items.machine.ItemSatellite;
-import com.hbm.items.special.ItemConsumable;
 import com.hbm.items.weapon.ItemMissile;
 import com.hbm.main.MainRegistry;
 import com.hbmspace.blocks.ModBlocksSpace;
+import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.items.armor.ItemModOxy;
 import com.hbmspace.items.food.ItemLemonSpace;
 import com.hbmspace.items.machine.ItemSatelliteSpace;
@@ -32,8 +31,8 @@ public class ModItemsSpace {
     public static final Item rocket_custom = new ItemCustomRocket("rocket_custom").setMaxStackSize(1).setCreativeTab(null);
     public static final Item oxy_plss = new ItemModOxy("oxy_plss", 16000, 10, 1).setCreativeTab(MainRegistry.consumableTab).setMaxStackSize(1);
     public static final Item hard_drive = new ItemBakedSpace("hard_drive", "votv_e").setMaxStackSize(64).setCreativeTab(MainRegistry.partsTab);
-    public static final ItemEnumMultiSpace full_drive = (ItemEnumMultiSpace) new ItemVOTVdrive("hard_drive_full").setCreativeTab(MainRegistry.controlTab);
-    public static final Item circuit = new ItemEnumMultiSpace("circuit", ItemEnumsSpace.EnumCircuitType.class, true, true).setCreativeTab(MainRegistry.partsTab);
+    public static final ItemEnumMultiSpace<SolarSystem.Body> full_drive = new ItemVOTVdrive("hard_drive_full").setCreativeTab(MainRegistry.controlTab);
+    public static final Item circuit = new ItemEnumMultiSpace<>("circuit", ItemEnumsSpace.EnumCircuitType.VALUES, true, true).setCreativeTab(MainRegistry.partsTab);
     public static final Item transporter_linker = new ItemTransporterLinker("transporter_linker").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
     public static final Item rp_fuselage_20_12 = new ItemCustomMissilePart("rp_f_20_12").makeFuselage(ItemMissile.FuelType.ANY, 64000F, 4000, ItemMissile.PartSize.SIZE_20, ItemMissile.PartSize.SIZE_20);
     public static final Item rp_fuselage_20_6 = new ItemCustomMissilePart("rp_f_20_6").makeFuselage(ItemMissile.FuelType.ANY, 32000F, 2100, ItemMissile.PartSize.SIZE_20, ItemMissile.PartSize.SIZE_20);
@@ -60,7 +59,7 @@ public class ModItemsSpace {
     public static final Item crystal_mineral = new ItemCustomLoreSpace("crystal_mineral").setCreativeTab(MainRegistry.partsTab);
     public static final Item crystal_cleaned = new ItemCustomLoreSpace("crystal_cleaned", "crystal_mineralcf").setCreativeTab(MainRegistry.partsTab);
     public static final Item mineral_dust = new ItemCustomLoreSpace("mineral_dust", "powder_mineral").setCreativeTab(MainRegistry.partsTab);
-    public static final Item chunk_ore = new ItemEnumMultiSpace("chunk_ore", ItemEnumsSpace.EnumChunkType.class, true, true).setCreativeTab(MainRegistry.partsTab);
+    public static final Item chunk_ore = new ItemEnumMultiSpace<>("chunk_ore", ItemEnumsSpace.EnumChunkType.VALUES, true, true).setCreativeTab(MainRegistry.partsTab);
     public static final Item mineral_fragment = new ItemMineralOre("mineral_fragment").setCreativeTab(MainRegistry.partsTab);
     public static final Item swarm_member = new ItemBaseSpace("swarm_member").setCreativeTab(MainRegistry.partsTab);
     public static final Item saltleaf = new ItemBakedSpace("saltleaf", "salt_leaf").setCreativeTab(MainRegistry.partsTab);

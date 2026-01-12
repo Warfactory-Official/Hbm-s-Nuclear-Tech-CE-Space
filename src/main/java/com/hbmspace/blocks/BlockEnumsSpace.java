@@ -4,6 +4,8 @@ package com.hbmspace.blocks;
 public class BlockEnumsSpace {
     public enum EnumStoneType {
         CONGLOMERATE,
-        CALCIUM,
+        CALCIUM;
+
+        public static final EnumStoneType[] VALUES = values();
     }
 }
