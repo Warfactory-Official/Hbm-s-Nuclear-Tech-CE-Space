@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.Item;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 @AutoRegister
@@ -68,8 +69,8 @@ public class RenderDysonReceiver extends TileEntitySpecialRenderer<TileEntityDys
 
                 OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
                 // TODO it used alpha on 1.7
-                BeamPronter.prontBeamwithDepth(new Vec3(0, 0, length), BeamPronter.EnumWaveType.SPIRAL, BeamPronter.EnumBeamType.SOLID, color, color, 0, 1, 0F, 2, 0.4F);
-                BeamPronter.prontBeamwithDepth(new Vec3(0, 0, length), BeamPronter.EnumWaveType.RANDOM, BeamPronter.EnumBeamType.SOLID, color, color, (int)(tileEntity.getWorld().getTotalWorldTime() % 1000), (length / 2), 0.0625F, 2, 0.4F);
+                BeamPronter.prontBeamwithDepth(new Vec3d(0, 0, length), BeamPronter.EnumWaveType.SPIRAL, BeamPronter.EnumBeamType.SOLID, color, color, 0, 1, 0F, 2, 0.4F);
+                BeamPronter.prontBeamwithDepth(new Vec3d(0, 0, length), BeamPronter.EnumWaveType.RANDOM, BeamPronter.EnumBeamType.SOLID, color, color, (int)(tileEntity.getWorld().getTotalWorldTime() % 1000), (length / 2), 0.0625F, 2, 0.4F);
 
                 GlStateManager.enableLighting();
                 GL11.glPopAttrib();

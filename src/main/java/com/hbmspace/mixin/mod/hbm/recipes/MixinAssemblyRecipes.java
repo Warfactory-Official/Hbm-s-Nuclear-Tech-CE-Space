@@ -81,7 +81,7 @@ public abstract class MixinAssemblyRecipes extends GenericRecipes<GenericRecipe>
                         new OreDictStack(W.plateWelded(), 4),
                         new ComparableStack(ModBlocks.steel_scaffold, 32),
                         new ComparableStack(ModItems.crystal_xen),
-                        new ComparableStack(ModBlocks.fusion_conductor, 16),
+                        new ComparableStack(ModBlocks.hadron_coil_alloy, 16),
                         new ComparableStack(ModItems.circuit, 4, ItemEnums.EnumCircuitType.QUANTUM),
                         new OreDictStack(BSCCO.wireDense(), 64),
                         new OreDictStack(BSCCO.wireDense(), 64)));
@@ -315,7 +315,7 @@ public abstract class MixinAssemblyRecipes extends GenericRecipes<GenericRecipe>
                         new ComparableStack(ModItems.motor_bismuth, 1),
                         new OreDictStack(ANY_HARDPLASTIC.ingot(), 8),
                         new ComparableStack(ModItems.circuit, 1, ItemEnums.EnumCircuitType.BISMOID),
-                        new ComparableStack(ModBlocks.fusion_conductor, 24)));
+                        new ComparableStack(ModBlocks.hadron_coil_alloy, 24)));
 
         // rocket parts
         register(new GenericRecipe("ass.mp_thruster_10_kerosene").setup(400, 100).outputItems(new ItemStack(ModItems.mp_thruster_10_kerosene, 1))
