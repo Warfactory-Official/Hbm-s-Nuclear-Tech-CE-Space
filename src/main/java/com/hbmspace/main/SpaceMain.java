@@ -14,6 +14,7 @@ import com.hbmspace.inventory.OreDictManagerSpace;
 import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.items.weapon.ItemCustomMissilePart;
 import com.hbmspace.lib.HBMSpaceSoundHandler;
+import com.hbmspace.packet.PacketRegistry;
 import com.hbmspace.world.PlanetGen;
 import com.hbmspace.world.feature.OreLayer3DSpace;
 import net.minecraft.item.Item;
@@ -90,6 +91,7 @@ public class SpaceMain {
         int i = 0;
         AutoRegistrySpace.registerEntities(i);
         ItemCustomMissilePart.initSpaceThrusters();
+        PacketRegistry.preInit();
 
         ForgeChunkManager.setForcedChunkLoadingCallback(this, new ForgeChunkManager.LoadingCallback() {
 

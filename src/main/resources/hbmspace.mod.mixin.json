@@ -18,7 +18,6 @@
     "hbm.MixinMatDistribution",
     "hbm.MixinModItems",
     "hbm.MixinNTMWorldGenerator",
-    "hbm.MixinPacketDispatcher",
     "hbm.MixinPermaSyncHandler",
     "hbm.recipes.MixinArcWelderRecipes",
     "hbm.recipes.MixinArmorRecipes",
