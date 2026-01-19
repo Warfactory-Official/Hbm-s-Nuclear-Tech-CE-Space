@@ -9,6 +9,8 @@ import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.dim.SolarSystemWorldSavedData;
 import com.hbm.handler.ThreeInts;
 import com.hbm.lib.ForgeDirection;
+import com.hbmspace.entity.missile.EntityRideableRocket;
+import com.hbmspace.items.ItemVOTVdrive;
 import com.hbmspace.tileentity.machine.TileEntityOrbitalStation;
 import com.hbm.util.BufferUtil;
 import io.netty.buffer.ByteBuf;
@@ -56,6 +58,7 @@ public class OrbitalStation {
 	private HashSet<IPropulsion> engines = new HashSet<>();
 
 	public static OrbitalStation clientStation = new OrbitalStation(CelestialBody.getBody(0));
+	public static List<OrbitalStation> orbitingStations = new ArrayList<OrbitalStation>();
 
 	public static final int STATION_SIZE = 1024; // total area for each station
 	public static final int BUFFER_SIZE = 256; // size of the buffer region that drops you out of orbit (preventing seeing other stations)
@@ -192,6 +195,29 @@ public class OrbitalStation {
 		this.state = state;
 		stateTimer = 0;
 		maxStateTimer = timeUntilNext;
+	}
+
+	public boolean recallPod(ItemVOTVdrive.Destination destination) {
+		if(!hasStation) return false;
+		if(destination.body.getBody() != orbiting) return false;
+
+		for(TileEntityOrbitalStation port : ports.values()) {
+			EntityRideableRocket rocket = port.getDocked();
+
+			if(rocket == null || !rocket.isReusable()) continue;
+
+			// ensure the rocket has fuel before sending it off
+			EntityRideableRocket.RocketState state = rocket.getState();
+			if(state != EntityRideableRocket.RocketState.AWAITING && state != EntityRideableRocket.RocketState.LANDED) continue;
+
+			// and make sure it doesn't have a rider!!
+			if(rocket.getRidingEntity() != null) continue;
+
+			rocket.recallPod(destination);
+			return true;
+		}
+
+		return false;
 	}
 	
 	public static void addPropulsion(IPropulsion propulsion) {

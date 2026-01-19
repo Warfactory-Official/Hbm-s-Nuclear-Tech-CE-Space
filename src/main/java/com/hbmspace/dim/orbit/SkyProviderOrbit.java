@@ -35,29 +35,33 @@ public class SkyProviderOrbit extends SkyProviderCelestial {
 		GlStateManager.enableBlend();
 		RenderHelper.disableStandardItemLighting();
 
-		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+		// SRC_ALPHA, ONE_MINUS_SRC_ALPHA, ONE, ZERO
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
-		float celestialAngle = getCelestialAngle(world, partialTicks, station);
-		float celestialPhase = (1 - (celestialAngle + 0.5F) % 1) * 2 - 1;
+		float solarAngle = getCelestialAngle(world, provider.metrics, partialTicks, station);
+		float siderealAngle = (float)SolarSystem.calculateSiderealAngle(world, partialTicks, station.orbiting);
+		float celestialPhase = (1 - (solarAngle + 0.5F) % 1) * 2 - 1;
 
 		float starBrightness = world.getStarBrightness(partialTicks);
 
-		renderStars(partialTicks, world, mc, starBrightness, celestialAngle, orbitalTilt);
+		renderStars(mc, starBrightness, solarAngle + siderealAngle, orbitalTilt);
 
 		GlStateManager.pushMatrix();
 		{
+
 			GlStateManager.rotate(orbitalTilt, 1.0F, 0.0F, 0.0F);
 			GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
-			GlStateManager.rotate(celestialAngle * 360.0F, 1.0F, 0.0F, 0.0F);
+			GlStateManager.rotate(solarAngle * 360.0F, 1.0F, 0.0F, 0.0F);
 
 			// digma balls
-			renderDigamma(partialTicks, world, mc, celestialAngle);
+			renderDigamma(mc, solarAngle);
 
-			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
+			// SRC_ALPHA, ONE, ONE, ZERO
+			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
-			double sunSize = SolarSystem.calculateSunSize(station.orbiting);
+			double sunSize = SolarSystem.calculateSunSize(station.orbiting) * SolarSystem.SUN_RENDER_SCALE;
 			if(station.state != StationState.ORBIT) {
-				double sunTargetSize = SolarSystem.calculateSunSize(station.target);
+				double sunTargetSize = SolarSystem.calculateSunSize(station.target) * SolarSystem.SUN_RENDER_SCALE;
 				sunSize = BobMathUtil.lerp(progress, sunSize, sunTargetSize);
 			}
 			double coronaSize = sunSize * (3 - Library.smoothstep(Math.abs(celestialPhase), 0.7, 0.8));
@@ -65,22 +69,13 @@ public class SkyProviderOrbit extends SkyProviderCelestial {
 			renderSun(partialTicks, world, mc, station.orbiting.getStar(), sunSize, coronaSize, 1, 0);
 
 			CelestialBody orbiting = station.orbiting;
+			if(station.state != StationState.ORBIT && progress > 0.5) orbiting = station.target;
 
-			List<AstroMetric> metrics;
-			if(station.state == StationState.ORBIT) {
-				double altitude = provider.getOrbitalAltitude(station.orbiting);
-				metrics = SolarSystem.calculateMetricsFromSatellite(world, partialTicks, station.orbiting, altitude);
-			} else {
-				double fromAlt = provider.getOrbitalAltitude(station.orbiting);
-				double toAlt = provider.getOrbitalAltitude(station.target);
-				metrics = SolarSystem.calculateMetricsBetweenSatelliteOrbits(world, partialTicks, station.orbiting, station.target, fromAlt, toAlt, progress);
+			renderCelestials(partialTicks, world, mc, provider.metrics, new Vec3d(0, 0, 0), 1, 1, orbiting, SolarSystem.MAX_APPARENT_SIZE_ORBIT);
 
-				if(progress > 0.5) orbiting = station.target;
-			}
-
-			renderCelestials(partialTicks, world, mc, metrics, celestialAngle, null, new Vec3d(0, 0, 0), 1, 1, orbiting, 160);
 		}
 		GlStateManager.popMatrix();
+
 
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.disableBlend();
@@ -92,24 +87,24 @@ public class SkyProviderOrbit extends SkyProviderCelestial {
 	}
 
 	// All angles within are normalized to -180/180
-	private float getCelestialAngle(WorldClient world, float partialTicks, OrbitalStation station) {
-		float celestialAngle = world.getCelestialAngle(partialTicks);
-		if(station.state == StationState.ORBIT) return celestialAngle;
+	private float getCelestialAngle(WorldClient world, List<AstroMetric> metrics, float partialTicks, OrbitalStation station) {
+		float solarAngle = world.getCelestialAngle(partialTicks);
+		if(station.state == StationState.ORBIT) return solarAngle;
 
-		celestialAngle = celestialAngle * 360.0F - 180.0F;
+		solarAngle = solarAngle * 360.0F - 180.0F;
 
 		if(station.state != StationState.ARRIVING) lastBody = station.orbiting;
 
 		double progress = station.getUnscaledProgress(partialTicks);
-		float travelAngle = -(float)SolarSystem.calculateSingleAngle(world, partialTicks, lastBody, station.target);
+		float travelAngle = -(float)SolarSystem.calculateSingleAngle(metrics, lastBody, station.target);
 		travelAngle = MathHelper.wrapDegrees(travelAngle + 90.0F);
 
 		if(station.state == StationState.TRANSFER) {
 			return (travelAngle + 180.0F) / 360.0F;
 		} else if(station.state == StationState.LEAVING) {
-			return ((float)BobMathUtil.clerp(progress, celestialAngle, travelAngle) + 180.0F) / 360.0F;
+			return ((float)BobMathUtil.clerp(progress, solarAngle, travelAngle) + 180.0F) / 360.0F;
 		} else {
-			return ((float)BobMathUtil.clerp(progress, travelAngle, celestialAngle) + 180.0F) / 360.0F;
+			return ((float)BobMathUtil.clerp(progress, travelAngle, solarAngle) + 180.0F) / 360.0F;
 		}
 	}
 	

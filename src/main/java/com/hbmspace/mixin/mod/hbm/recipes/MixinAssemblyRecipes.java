@@ -11,6 +11,7 @@ import com.hbm.inventory.recipes.loader.GenericRecipes;
 import com.hbm.items.ItemEnums;
 import com.hbm.items.ModItems;
 import com.hbm.items.machine.ItemArcElectrode;
+import com.hbm.items.machine.ItemBatteryPack;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.items.ItemEnumsSpace;
 import com.hbmspace.items.ModItemsSpace;
@@ -186,7 +187,7 @@ public abstract class MixinAssemblyRecipes extends GenericRecipes<GenericRecipe>
                         new OreDictStack(ANY_CONCRETE.any(), 4),
                         new OreDictStack(STAINLESS.plate(), 12),
                         new OreDictStack(ANY_PLASTIC.ingot(), 4),
-                        new ComparableStack(ModBlocks.machine_battery, 1),
+                        new ComparableStack(ModItems.battery_pack, 1, ItemBatteryPack.EnumBatteryPack.BATTERY_REDSTONE),
                         new ComparableStack(ModItems.coil_copper, 4)));
         register(new GenericRecipe("ass.transporterrocket").setup(400, 100).outputItems(new ItemStack(ModBlocksSpace.transporter_rocket, 2))
                 .inputItems(

@@ -95,10 +95,6 @@ public class TileEntityOrbitalStationLauncher extends TileEntityOrbStation imple
 
         if(!world.isRemote) {
             // This TE acts almost entirely like a port, except doesn't register itself so nothing actually tries to dock here
-            station = OrbitalStation.getStationFromPosition(pos.getX(), pos.getZ());
-            if(station != null) {
-
-            }
 
 
             // ROCKET CONSTRUCTION //

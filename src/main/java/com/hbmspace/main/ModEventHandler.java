@@ -21,6 +21,7 @@ import com.hbmspace.handler.atmosphere.ChunkAtmosphereManager;
 import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.lib.HBMSpaceSoundHandler;
 import com.hbmspace.lib.ModDamageSourceSpace;
+import com.hbmspace.world.PlanetGen;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockFire;

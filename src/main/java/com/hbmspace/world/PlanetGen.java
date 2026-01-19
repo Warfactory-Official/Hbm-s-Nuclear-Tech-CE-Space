@@ -5,6 +5,7 @@ import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.Ike.WorldGeneratorIke;
 import com.hbmspace.dim.Ike.WorldProviderIke;
 import com.hbmspace.dim.WorldGeneratorCelestial;
+import com.hbmspace.dim.WorldProviderEarth;
 import com.hbmspace.dim.dres.WorldGeneratorDres;
 import com.hbmspace.dim.dres.WorldProviderDres;
 import com.hbmspace.dim.duna.WorldGeneratorDuna;
@@ -70,5 +71,29 @@ public class PlanetGen {
         DimensionManager.registerDimension(dimensionId, dimensionType);
 
         if(dimensionId != SpaceConfig.orbitDimension) spaceDimensions.add(dimensionId);
+    }
+
+    public static void overrideOverworldProvider() {
+        // В 1.12.2 для замены провайдера Overworld нужно перерегистрировать измерение 0
+        // с новым DimensionType. Это должно делаться ДО загрузки мира.
+
+        int dim = 0;
+        if (DimensionManager.isDimensionRegistered(dim)) {
+            DimensionManager.unregisterDimension(dim);
+        }
+
+        // Регистрируем новый тип для Земли. ID типа должен быть уникальным (не 0, так как 0 занят ванильным типом).
+        // Используем, например, -777.
+        int earthTypeId = -777;
+        DimensionType earthType;
+
+        try {
+            earthType = DimensionType.register("earth_custom", "_earth", earthTypeId, WorldProviderEarth.class, true);
+        } catch (Exception e) {
+            earthType = DimensionType.getById(earthTypeId);
+        }
+
+        // Регистрируем измерение 0, используя наш кастомный тип
+        DimensionManager.registerDimension(dim, earthType);
     }
 }

@@ -27,12 +27,19 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.List;
+
 public class WorldProviderOrbit extends WorldProvider {
 
 	// Orbit at an altitude that provides an hour-long realtime orbit (game time is fast so we go slow)
 	// We want a consistent orbital period to prevent orbiting too slow or fast (both for player comfort and feel)
 	private static final float ORBITAL_PERIOD = 7200;
 
+	public List<SolarSystem.AstroMetric> metrics;
+
+	private double eclipseAmount;
+	private float celestialAngle;
+	
 	protected float getOrbitalAltitude(CelestialBody body) {
 		return getAltitudeForPeriod(body.massKg, ORBITAL_PERIOD);
 	}
@@ -66,7 +73,40 @@ public class WorldProviderOrbit extends WorldProvider {
 
 	@Override
 	public void updateWeather() {
-		
+	}
+
+	// This is called once, at the beginning of every frame
+	// so we use this to memoise expensive calcs
+	@SideOnly(Side.CLIENT)
+	protected void updateSky(float partialTicks) {
+		CelestialBody body = CelestialBody.getBody(world);
+		OrbitalStation station = OrbitalStation.clientStation;
+
+		// First fetch the suns true size
+		double sunSize = SolarSystem.calculateSunSize(body);
+
+		double progress = station.getTransferProgress(partialTicks);
+
+		// Get our orrery of bodies, this is cached for reuse in sky rendering
+		if(station.state == OrbitalStation.StationState.ORBIT) {
+			double altitude = getOrbitalAltitude(station.orbiting);
+			metrics = SolarSystem.calculateMetricsFromSatellite(world, partialTicks, station.orbiting, altitude);
+		} else {
+			double fromAlt = getOrbitalAltitude(station.orbiting);
+			double toAlt = getOrbitalAltitude(station.target);
+			metrics = SolarSystem.calculateMetricsBetweenSatelliteOrbits(world, partialTicks, station.orbiting, station.target, fromAlt, toAlt, progress);
+		}
+
+		// Get our sun angle
+		float angle = (float)SolarSystem.calculateSingleAngle(world, partialTicks, metrics, station.orbiting, getOrbitalAltitude(station.orbiting));
+		if(progress > 0) {
+			angle = (float)BobMathUtil.clerp(progress, angle, (float)SolarSystem.calculateSingleAngle(world, partialTicks, metrics, station.target, getOrbitalAltitude(station.target)));
+		}
+
+		celestialAngle = 0.5F - (angle / 360.0F);
+
+		// Get our eclipse amount
+		eclipseAmount = WorldProviderCelestial.getEclipseFactor(metrics, sunSize, SolarSystem.MAX_APPARENT_SIZE_ORBIT);
 	}
 
 	@Override
@@ -78,6 +118,9 @@ public class WorldProviderOrbit extends WorldProvider {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Vec3d getSkyColor(Entity camera, float partialTicks) {
+		// getSkyColor is called first on every frame, so if you want to memoise anything, do it here
+		updateSky(partialTicks);
+
 		return new Vec3d(0, 0, 0);
 	}
 

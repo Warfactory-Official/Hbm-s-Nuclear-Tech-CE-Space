@@ -1,7 +1,6 @@
 package com.hbmspace.dim.tekto;
 
 import com.hbm.blocks.ModBlocks;
-import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.WorldChunkManagerCelestial;
 import com.hbmspace.dim.WorldChunkManagerCelestial.BiomeGenLayers;
@@ -16,6 +15,7 @@ import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.layer.*;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 public class WorldProviderTekto extends WorldProviderCelestial {
 
@@ -38,7 +38,7 @@ public class WorldProviderTekto extends WorldProviderCelestial {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Vec3d getSkyColor(Entity camera, float partialTicks) {
+	public @NotNull Vec3d getSkyColor(@NotNull Entity camera, float partialTicks) {
 		Vec3d ohshit = super.getSkyColor(camera, partialTicks);
 
 		return new Vec3d(ohshit.x , ohshit.y, ohshit.z);

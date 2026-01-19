@@ -1,6 +1,7 @@
 package com.hbmspace.dim;
 
 import com.hbm.inventory.fluid.trait.FluidTraitSimple;
+import com.hbm.util.Tuple;
 import com.hbmspace.capability.HbmLivingPropsSpace;
 import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.orbit.OrbitalStation;
@@ -9,8 +10,8 @@ import com.hbmspace.dim.trait.CBT_Atmosphere.FluidEntry;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbmspace.items.ItemVOTVdrive.Target;
-import com.hbm.render.Shader;
 import com.hbm.util.AstronomyUtil;
+import com.hbmspace.render.shader.ShaderSpace;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.util.ResourceLocation;
@@ -37,6 +38,7 @@ public class CelestialBody {
 
 	public boolean canLand = false; // does this body have an associated dimension and a solid surface?
 
+	// Orbital elements
     public float massKg = 0;
     public float radiusKm = 0;
     public float semiMajorAxisKm = 0; // Distance to the parent body
@@ -52,7 +54,7 @@ public class CelestialBody {
 
 	private int minProcessingLevel = 0; // What level of technology can locate this body? This defines the minimum level, automatically adjusted based on stardar location
 
-	public ResourceLocation texture = null;
+	public ResourceLocation texture;
     public ResourceLocation biomeMask = null;
     public ResourceLocation cityMask = null;
 	public float[] color = new float[] {0.4F, 0.4F, 0.4F}; // When too small to render the texture
@@ -74,10 +76,11 @@ public class CelestialBody {
 	private HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait> traits = new HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait>();
 
 	public String stoneTexture = "stone";
+	public ResourceLocation surfaceTexture;
 	public SolarSystem.Body type;
 
 	@SideOnly(Side.CLIENT)
-	public Shader shader;
+	public ShaderSpace shader;
 
 	public float shaderScale = 1; // If the shader renders the item within the quad (not filling it entirely), scale it up from the true size
 
@@ -106,8 +109,13 @@ public class CelestialBody {
 		return this;
 	}
 
-	public CelestialBody withSemiMajorAxis(float km) {
-		this.semiMajorAxisKm = km;
+	public CelestialBody withOrbitalParameters(float semiMajorAxisKm, float eccentricity, float argumentPeriapsisDegrees, float inclinationDegrees, float ascendingNodeDegrees) {
+		this.semiMajorAxisKm = semiMajorAxisKm;
+		this.semiMinorAxisFactor = (float)Math.sqrt(1 - eccentricity * eccentricity);
+		this.eccentricity = eccentricity;
+		this.argumentPeriapsis = (float)Math.toRadians(argumentPeriapsisDegrees);
+		this.inclination = (float)Math.toRadians(inclinationDegrees);
+		this.ascendingNode = (float)Math.toRadians(ascendingNodeDegrees);
 		return this;
 	}
 
@@ -121,18 +129,29 @@ public class CelestialBody {
 		return this;
 	}
 
-	public CelestialBody withProcessingLevel(int level) {
+	public CelestialBody withMinProcessingLevel(int level) {
 		this.minProcessingLevel = level;
 		return this;
 	}
 
-	public CelestialBody withTexture(String path) {
-		this.texture = new ResourceLocation(path);
+	public CelestialBody withTexture(ResourceLocation location) {
+		this.texture = location;
 		return this;
 	}
 
-	public CelestialBody withBlockTextures(String stone, String sand, String silt, String sravel) {
+	public CelestialBody withCityMask(ResourceLocation location) {
+		this.cityMask = location;
+		return this;
+	}
+
+	public CelestialBody withBiomeMask(ResourceLocation location) {
+		this.biomeMask = location;
+		return this;
+	}
+
+	public CelestialBody withBlockTextures(String stone, String surface) {
 		this.stoneTexture = stone;
+		this.surfaceTexture = new ResourceLocation(surface);
 		return this;
 	}
 
@@ -180,8 +199,13 @@ public class CelestialBody {
 	public CelestialBody withShader(ResourceLocation fragmentShader, float scale) {
 		if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) return this;
 
-		shader = new Shader(fragmentShader);
+		shader = new ShaderSpace(fragmentShader);
 		shaderScale = scale;
+		return this;
+	}
+
+	public CelestialBody withIce(boolean hasIce) {
+		this.hasIce = hasIce;
 		return this;
 	}
 
@@ -288,17 +312,19 @@ public class CelestialBody {
 		setTraits(world, currentTraits);
 	}
 
-	public static void consumeGas(World world, FluidType fluid, double amount) {
+	public static boolean consumeGas(World world, FluidType fluid, double amount) {
 		HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait> currentTraits = getTraits(world);
 
 		CBT_Atmosphere atmosphere = (CBT_Atmosphere) currentTraits.get(CBT_Atmosphere.class);
-		if(atmosphere == null) return;
+		if(atmosphere == null) return false;
 
+		boolean didConsume = false;
 		int emptyIndex = -1;
 		for(int i = 0; i < atmosphere.fluids.size(); i++) {
 			FluidEntry entry = atmosphere.fluids.get(i);
 			if(entry.fluid == fluid) {
 				entry.pressure -= amount / AstronomyUtil.MB_PER_ATM;
+				didConsume = true;
 				emptyIndex = entry.pressure <= 0 ? i : -1;
 				break;
 			}
@@ -314,6 +340,8 @@ public class CelestialBody {
 
 
 		setTraits(world, currentTraits);
+
+		return didConsume;
 	}
 
 	public static void emitGas(World world, FluidType fluid, double amount) {
@@ -346,6 +374,32 @@ public class CelestialBody {
 
 		setTraits(world, currentTraits);
 	}
+
+	/*public static void reactAtmosphere(World world, FluidType product) {
+		HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait> currentTraits = getTraits(world);
+		CBT_Atmosphere atmosphere = (CBT_Atmosphere) currentTraits.get(CBT_Atmosphere.class);
+
+		Tuple.Triplet<AtmoStack, AtmoStack, AtmoStack> recipe = AtmosphereRecipes.getOutput(product);
+
+		AtmoStack reactA = recipe.getY();
+		AtmoStack reactB = recipe.getZ();
+
+		boolean hasA = false, hasB = false;
+		for(CBT_Atmosphere.FluidEntry entry : atmosphere.fluids) {
+			if(entry.fluid == reactA.type && entry.pressure >= reactA.pressure / AstronomyUtil.MB_PER_ATM) hasA = true;
+			if(entry.fluid == reactB.type && entry.pressure >= reactB.pressure / AstronomyUtil.MB_PER_ATM) hasB = true;
+		}
+
+		if(!hasA || !hasB) return;
+
+		FT_Gaseous.capture(world, reactA.type, reactA.pressure);
+		FT_Gaseous.capture(world, reactB.type, reactB.pressure);
+
+
+		FT_Gaseous.release(world, product, 80000); //80000mb baseline
+
+		//System.out.println("Reaction complete: produced " + product.getName() + " (" + 80000 + " mB)");
+	}*/
 
     public static void release(World world, FluidType type, double mB) {
         if(world.isRemote) return;

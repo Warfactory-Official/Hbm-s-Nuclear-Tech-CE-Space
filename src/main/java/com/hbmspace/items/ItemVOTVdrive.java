@@ -31,6 +31,7 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Locale;
@@ -68,7 +69,7 @@ public class ItemVOTVdrive extends ItemEnumMultiSpace<SolarSystem.Body> {
             NBTTagCompound tag = stack.getTagCompound();
             String identifier = tag != null ? tag.getString("stationName") : "";
 
-            if (identifier.equals("")) {
+            if (identifier.isEmpty()) {
                 identifier = "0x" + Integer.toHexString(new ChunkPos(destination.x, destination.z).hashCode()).toUpperCase();
             }
 
@@ -117,6 +118,8 @@ public class ItemVOTVdrive extends ItemEnumMultiSpace<SolarSystem.Body> {
     }
 
     public static Destination getDestination(ItemStack stack) {
+        if(stack == null || stack.isEmpty()) return null;
+
         if (!stack.hasTagCompound()) {
             stack.setTagCompound(new NBTTagCompound());
         }
@@ -222,7 +225,7 @@ public class ItemVOTVdrive extends ItemEnumMultiSpace<SolarSystem.Body> {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public @NotNull ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @NotNull EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
 
         boolean isProcessed = getProcessed(stack);
@@ -235,10 +238,9 @@ public class ItemVOTVdrive extends ItemEnumMultiSpace<SolarSystem.Body> {
 
         ItemStack newStack = stack;
 
-        if (isProcessed && player.getRidingEntity() != null && player.getRidingEntity() instanceof EntityRideableRocket) {
-            EntityRideableRocket rocket = (EntityRideableRocket) player.getRidingEntity();
+        if (isProcessed && player.getRidingEntity() != null && player.getRidingEntity() instanceof EntityRideableRocket rocket) {
 
-            if (rocket.getRocket().stages.size() > 0 || world.provider.getDimension() == SpaceConfig.orbitDimension || rocket.isReusable()) {
+            if (!rocket.getRocket().stages.isEmpty() || world.provider.getDimension() == SpaceConfig.orbitDimension || rocket.isReusable()) {
                 if (rocket.getState() == EntityRideableRocket.RocketState.LANDED || rocket.getState() == EntityRideableRocket.RocketState.AWAITING) {
                     if (rocket.navDrive != null) {
                         newStack = rocket.navDrive;
@@ -262,11 +264,29 @@ public class ItemVOTVdrive extends ItemEnumMultiSpace<SolarSystem.Body> {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public @NotNull EnumActionResult onItemUse(EntityPlayer player, @NotNull World world, @NotNull BlockPos pos, @NotNull EnumHand hand, @NotNull EnumFacing side, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         Destination destination = getDestination(stack);
-        if (destination.body == SolarSystem.Body.ORBIT)
-            return EnumActionResult.FAIL;
+        int x = pos.getX();
+        int z = pos.getZ();
+
+        if(destination.body == SolarSystem.Body.ORBIT) {
+            if(world.provider.getDimension() == SpaceConfig.orbitDimension) return EnumActionResult.PASS;
+
+            if(!world.isRemote) {
+                OrbitalStation station = OrbitalStation.getStation(destination.x, destination.z);
+
+                Destination target = new Destination(CelestialBody.getEnum(world), x, z);
+
+                if(station.recallPod(target)) {
+                    player.sendMessage(new TextComponentString(TextFormatting.YELLOW + "" + TextFormatting.ITALIC + "Recalling drop pod to coordinates: " + x + ", " + z));
+                } else {
+                    player.sendMessage(new TextComponentString(TextFormatting.YELLOW + "" + TextFormatting.ITALIC + "Could not recall drop pod from station!"));
+                }
+            }
+
+            return EnumActionResult.SUCCESS;
+        }
 
         boolean onDestination = world.provider.getDimension() == destination.body.getDimensionId();
         if (!onDestination)

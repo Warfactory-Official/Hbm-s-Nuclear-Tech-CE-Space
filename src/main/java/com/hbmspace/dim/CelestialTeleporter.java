@@ -2,10 +2,7 @@ package com.hbmspace.dim;
 
 import com.hbmspace.entity.missile.EntityRideableRocket;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.BlockPos;
@@ -16,24 +13,27 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 public class CelestialTeleporter extends Teleporter {
 
 	private final WorldServer sourceServer;
 	private final WorldServer targetServer;
 
-	private double x;
+	private final double x;
 	private double y;
-	private double z;
+	private final double z;
 
-	private boolean grounded;
+	private final boolean grounded;
 
-	private EntityPlayerMP playerMP;
+	private Entity entity;
 
-	public CelestialTeleporter(WorldServer sourceServer, WorldServer targetServer, EntityPlayerMP playerMP, double x, double y, double z, boolean grounded) {
+	public CelestialTeleporter(WorldServer sourceServer, WorldServer targetServer, Entity entity, double x, double y, double z, boolean grounded) {
 		super(targetServer);
 		this.sourceServer = sourceServer;
 		this.targetServer = targetServer;
-		this.playerMP = playerMP;
+		this.entity = entity;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -58,58 +58,70 @@ public class CelestialTeleporter extends Teleporter {
 	}
 
 	private void runTeleport() {
-		PlayerList manager = this.playerMP.server.getPlayerList();
+		MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
+		PlayerList manager = mcServer.getPlayerList();
 
-		Entity ridingEntity = this.playerMP.getRidingEntity();
+		// If this entity got teleported with a player rider, switch to the rider!
+		// 1.12.2 supports multiple passengers, usually the driver is at index 0
+		if (!entity.getPassengers().isEmpty() && entity.getPassengers().getFirst() instanceof EntityPlayerMP) {
+			entity = entity.getPassengers().getFirst();
+		}
 
-		this.playerMP.posX = this.x;
-		this.playerMP.posZ = this.z;
+		// Update position before transfer
+		entity.setPosition(x, entity.posY, z);
 
-		manager.transferPlayerToDimension(this.playerMP, this.targetServer.provider.getDimension(), this);
+		if (entity instanceof EntityPlayerMP playerMP) {
+            Entity ridingEntity = playerMP.getRidingEntity();
 
-		if (ridingEntity != null && !ridingEntity.isDead) {
-			NBTTagCompound nbt = new NBTTagCompound();
-			ridingEntity.writeToNBTOptional(nbt);
+			// Transfer player to the new dimension
+			manager.transferPlayerToDimension(playerMP, targetServer.provider.getDimension(), this);
 
-			ridingEntity.setDead();
+			if (ridingEntity != null && !ridingEntity.isDead) {
+				// In 1.12.2, changeDimension handles the cloning, spawning, and removal of the old entity
+				Entity newEntity = ridingEntity.changeDimension(targetServer.provider.getDimension(), this);
 
-			Entity newEntity = EntityList.createEntityFromNBT(nbt, this.targetServer);
+				if (newEntity != null) {
+					newEntity.setPosition(x, newEntity.posY, z);
+
+					// Ensure rocket stickiness
+					if (newEntity instanceof EntityRideableRocket) {
+						((EntityRideableRocket) newEntity).setThrower(playerMP);
+					}
+
+					// Send another packet to the client to make sure they load in correctly!
+					// Using 900 Y as per original 1.7.10 code logic
+					playerMP.connection.setPlayerLocation(x, 900, z, playerMP.rotationYaw, playerMP.rotationPitch);
+
+					// Force remount
+					playerMP.startRiding(newEntity, true);
+				}
+			}
+		} else {
+			// Transfer non-player entity
+			Entity newEntity = entity.changeDimension(targetServer.provider.getDimension(), this);
 			if (newEntity != null) {
-				newEntity.setPosition(this.x, newEntity.posY, this.z);
-				this.targetServer.spawnEntity(newEntity);
-				this.sourceServer.resetUpdateEntityTick();
-				this.targetServer.resetUpdateEntityTick();
-				this.playerMP.startRiding(newEntity, true);
-                if(newEntity instanceof EntityRideableRocket) {
-                    ((EntityRideableRocket) newEntity).setThrower(playerMP);
-                }
-				this.playerMP.setPositionAndUpdate(this.x, 900, this.z);
+				newEntity.setPosition(x, newEntity.posY, z);
 			}
 		}
 	}
 
 	public static void runQueuedTeleport() {
-		if (queuedTeleport == null) return;
-
-		queuedTeleport.runTeleport();
-
-		queuedTeleport = null;
+		CelestialTeleporter teleporter = queue.poll();
+		if (teleporter != null) teleporter.runTeleport();
 	}
 
-	private static CelestialTeleporter queuedTeleport;
+	private static final Queue<CelestialTeleporter> queue = new ArrayDeque<>();
 
-	public static void teleport(EntityPlayer player, int dim, double x, double y, double z, boolean grounded) {
-		if (player.dimension == dim) return;
+	public static void teleport(Entity entity, int dim, double x, double y, double z, boolean grounded) {
+		if (entity.dimension == dim) return; // ignore if we're teleporting to the same place
 
-		MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		if (side == Side.SERVER && server != null) {
-			if (player instanceof EntityPlayerMP playerMP) {
-				WorldServer sourceServer = playerMP.getServerWorld();
-				WorldServer targetServer = server.getWorld(dim);
+		MinecraftServer mcServer = FMLCommonHandler.instance().getMinecraftServerInstance();
+		Side sidex = FMLCommonHandler.instance().getEffectiveSide();
+		if (sidex == Side.SERVER) {
+			WorldServer sourceServer = mcServer.getWorld(entity.dimension);
+			WorldServer targetServer = mcServer.getWorld(dim);
 
-				queuedTeleport = new CelestialTeleporter(sourceServer, targetServer, playerMP, x, y, z, grounded);
-			}
+			queue.add(new CelestialTeleporter(sourceServer, targetServer, entity, x, y, z, grounded));
 		}
 	}
 

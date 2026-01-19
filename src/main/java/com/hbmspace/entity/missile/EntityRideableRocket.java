@@ -8,8 +8,6 @@ import com.hbm.explosion.ExplosionLarge;
 import com.hbm.items.ISatChip;
 import com.hbm.items.weapon.ItemMissile;
 import com.hbm.lib.HBMSoundHandler;
-import com.hbm.main.MainRegistry;
-import com.hbm.packet.PacketDispatcher;
 import com.hbm.saveddata.satellites.Satellite;
 import com.hbm.sound.AudioWrapper;
 import com.hbm.tileentity.IBufPacketReceiver;
@@ -104,6 +102,8 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
 
     private TileEntityOrbitalStation targetPort;
 
+    private ItemVOTVdrive.Destination destinationOverride; // for pod recalls, will ignore the current drive if set
+
     private boolean pendingStageSeparation = false;
     private int stageSeparationDelay = 0;
 
@@ -163,7 +163,7 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
             expendStage = false;
         }
 
-        ItemVOTVdrive.Destination destination = null;
+        ItemVOTVdrive.Destination destination = getDestination();
         if(navDrive != null && navDrive.getItem() instanceof ItemVOTVdrive) {
             destination = ItemVOTVdrive.getDestination(navDrive);
         }
@@ -314,18 +314,7 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
             }
 
             if(state == RocketState.AWAITING && ((rider != null && rider.isJumping) || !canRide())) {
-                ItemVOTVdrive.Target from = CelestialBody.getTarget(world, (int) posX, (int) posZ);
-                ItemVOTVdrive.Target to = getTarget();
-
-                RocketState transitionTo = from.inOrbit ? RocketState.UNDOCKING : RocketState.LAUNCHING;
-
-                targetX = (int) posX - 10000;
-                targetZ = (int) posZ;
-
-                if(getRocket().hasSufficientFuel(from.body, to.body, from.inOrbit, to.inOrbit)) {
-                    setState(transitionTo);
-                }
-
+                attemptLaunch();
                 thrower = rider;
             }
 
@@ -576,6 +565,12 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
         return getRocket().capsule.part == ModItemsSpace.rp_pod_20;
     }
 
+    public void recallPod(ItemVOTVdrive.Destination destination) {
+        thrower = null; // REALLY FUCKED UP SHIT HAPPENING
+        destinationOverride = destination;
+        attemptLaunch();
+    }
+
     @Override
     public void updatePassenger(Entity passenger) {
         double length = getMountedYOffset() + passenger.getYOffset();
@@ -792,8 +787,33 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
     }
 
     public ItemVOTVdrive.Target getTarget() {
+        if(destinationOverride != null) {
+            return new ItemVOTVdrive.Target(destinationOverride.body.getBody(), false, true);
+        }
+
         ItemStack drive = this.dataManager.get(DP_DRIVE);
         return ItemVOTVdrive.getTarget(drive, world);
+    }
+
+    public ItemVOTVdrive.Destination getDestination() {
+        if(destinationOverride != null) return destinationOverride;
+
+        ItemStack drive = this.dataManager.get(DP_DRIVE);
+        return ItemVOTVdrive.getDestination(drive);
+    }
+
+    public void attemptLaunch() {
+        ItemVOTVdrive.Target from = CelestialBody.getTarget(world, (int) posX, (int) posZ);
+        ItemVOTVdrive.Target to = getTarget();
+
+        RocketState transitionTo = from.inOrbit ? RocketState.UNDOCKING : RocketState.LAUNCHING;
+
+        targetX = (int) posX - 10000;
+        targetZ = (int) posZ;
+
+        if(getRocket().hasSufficientFuel(from.body, to.body, from.inOrbit, to.inOrbit)) {
+            setState(transitionTo);
+        }
     }
 
     public void setDrive(ItemStack drive) {
@@ -839,6 +859,13 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
         }
 
         satFreq = nbt.getInteger("freq");
+
+        if(nbt.getBoolean("hasOverride")) {
+            SolarSystem.Body body = CelestialBody.getBody(nbt.getInteger("overrideDim")).getEnum();
+            destinationOverride = new ItemVOTVdrive.Destination(body, nbt.getInteger("overrideX"), nbt.getInteger("overrideZ"));
+        } else {
+            destinationOverride = null;
+        }
     }
 
     @Override
@@ -859,6 +886,13 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
         }
 
         nbt.setInteger("freq", satFreq);
+
+        if(destinationOverride != null) {
+            nbt.setBoolean("hasOverride", true);
+            nbt.setInteger("overrideDim", destinationOverride.body.getDimensionId());
+            nbt.setInteger("overrideX", destinationOverride.x);
+            nbt.setInteger("overrideZ", destinationOverride.z);
+        }
     }
 
     @Override

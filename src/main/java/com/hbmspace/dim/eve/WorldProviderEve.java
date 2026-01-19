@@ -19,6 +19,7 @@ import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.layer.*;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 public class WorldProviderEve extends WorldProviderCelestial {
 
@@ -85,7 +86,7 @@ public class WorldProviderEve extends WorldProviderCelestial {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Vec3d getSkyColor(Entity camera, float partialTicks) {
+	public @NotNull Vec3d getSkyColor(@NotNull Entity camera, float partialTicks) {
 		Vec3d ohshit = super.getSkyColor(camera, partialTicks);
 		float alpha = (flashd <= 0) ? 0.0F : 1.0F - Math.min(1.0F, flashd / 100);
 

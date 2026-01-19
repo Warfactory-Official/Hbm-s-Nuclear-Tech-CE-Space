@@ -165,7 +165,7 @@ public class ChunkAtmosphereHandler {
     }
 
 	public boolean canBreathe(CBT_Atmosphere atmosphere) {
-        return atmosphere != null && (atmosphere.hasFluid(Fluids.AIR, 0.21) || atmosphere.hasFluid(Fluids.OXYGEN, 0.09));
+        return atmosphere != null && (atmosphere.hasFluid(com.hbmspace.inventory.fluid.Fluids.EARTHAIR, 0.21) || atmosphere.hasFluid(Fluids.OXYGEN, 0.09));
 	}
 
 	// Is the air pressure high enough to support liquids
@@ -199,12 +199,12 @@ public class ChunkAtmosphereHandler {
 
 		if(requiresO2) {
 			// Check for an atmosphere and destroy torches if there is insufficient oxygen
-			canExist = !(atmosphere == null || (!atmosphere.hasFluid(Fluids.OXYGEN, 0.09) && !atmosphere.hasFluid(Fluids.AIR, 0.21)));
+			canExist = !(atmosphere == null || (!atmosphere.hasFluid(Fluids.OXYGEN, 0.09) && !atmosphere.hasFluid(com.hbmspace.inventory.fluid.Fluids.EARTHAIR, 0.21)));
 		} else if(requiresPressure) {
 			canExist = hasLiquidPressure(atmosphere);
 		} else if(requiresCO2) {
 			// TODO: Make plants rely on CO2 once CO2 is more readily available (via natural gas most likely)
-			canExist = !(atmosphere == null || (!atmosphere.hasFluid(Fluids.OXYGEN, 0.01) && !atmosphere.hasFluid(Fluids.AIR, 0.1)));
+			canExist = !(atmosphere == null || (!atmosphere.hasFluid(Fluids.OXYGEN, 0.01) && !atmosphere.hasFluid(com.hbmspace.inventory.fluid.Fluids.EARTHAIR, 0.1)));
 		}
 
 		if(canExist) return false;

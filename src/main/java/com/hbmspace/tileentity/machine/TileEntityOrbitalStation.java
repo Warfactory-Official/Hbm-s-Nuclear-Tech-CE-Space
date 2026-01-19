@@ -1,7 +1,7 @@
 package com.hbmspace.tileentity.machine;
 
 import com.hbm.api.fluid.IFluidStandardReceiver;
-import com.hbm.blocks.ModBlocks;
+import com.hbm.inventory.fluid.trait.FT_Rocket;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.entity.missile.EntityRideableRocket;
 import com.hbmspace.handler.RocketStruct;
@@ -10,7 +10,6 @@ import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbmspace.items.weapon.ItemCustomRocket;
 import com.hbm.lib.DirPos;
 import com.hbm.lib.ForgeDirection;
-import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.dim.orbit.OrbitalStation;
@@ -36,7 +35,7 @@ public class TileEntityOrbitalStation extends TileEntityOrbStation implements IF
     private OrbitalStation station;
     private EntityRideableRocket docked;
 
-    private FluidTankNTM[] tanks;
+    private final FluidTankNTM[] tanks;
 
     public boolean isReserved = false;
 
@@ -51,9 +50,8 @@ public class TileEntityOrbitalStation extends TileEntityOrbStation implements IF
 
     public TileEntityOrbitalStation() {
         super(16, true, false);
-        tanks = new FluidTankNTM[2];
-        tanks[0] = new FluidTankNTM(Fluids.HYDROGEN, 16_000);
-        tanks[1] = new FluidTankNTM(Fluids.OXYGEN, 16_000);
+        tanks = new FluidTankNTM[1];
+        tanks[0] = new FluidTankNTM(Fluids.HYDRAZINE, 16_000);
     }
 
     @Override
@@ -149,19 +147,19 @@ public class TileEntityOrbitalStation extends TileEntityOrbStation implements IF
     public DirPos[] getConPos() {
         return new DirPos[] {
                 new DirPos(pos.getX() - 1, pos.getY() + 1, pos.getZ() + 3, ForgeDirection.NORTH),
-                new DirPos(pos.getX() + 0, pos.getY() + 1, pos.getZ() + 3, ForgeDirection.NORTH),
+                new DirPos(pos.getX(), pos.getY() + 1, pos.getZ() + 3, ForgeDirection.NORTH),
                 new DirPos(pos.getX() + 1, pos.getY() + 1, pos.getZ() + 3, ForgeDirection.NORTH),
 
                 new DirPos(pos.getX() - 1, pos.getY() + 1, pos.getZ() - 3, ForgeDirection.SOUTH),
-                new DirPos(pos.getX() + 0, pos.getY() + 1, pos.getZ() - 3, ForgeDirection.SOUTH),
+                new DirPos(pos.getX(), pos.getY() + 1, pos.getZ() - 3, ForgeDirection.SOUTH),
                 new DirPos(pos.getX() + 1, pos.getY() + 1, pos.getZ() - 3, ForgeDirection.SOUTH),
 
                 new DirPos(pos.getX() + 3, pos.getY() + 1, pos.getZ() - 1, ForgeDirection.EAST),
-                new DirPos(pos.getX() + 3, pos.getY() + 1, pos.getZ() + 0, ForgeDirection.EAST),
+                new DirPos(pos.getX() + 3, pos.getY() + 1, pos.getZ(), ForgeDirection.EAST),
                 new DirPos(pos.getX() + 3, pos.getY() + 1, pos.getZ() + 1, ForgeDirection.EAST),
 
                 new DirPos(pos.getX() - 3, pos.getY() + 1, pos.getZ() - 1, ForgeDirection.WEST),
-                new DirPos(pos.getX() - 3, pos.getY() + 1, pos.getZ() + 0, ForgeDirection.WEST),
+                new DirPos(pos.getX() - 3, pos.getY() + 1, pos.getZ(), ForgeDirection.WEST),
                 new DirPos(pos.getX() - 3, pos.getY() + 1, pos.getZ() + 1, ForgeDirection.WEST),
         };
     }
@@ -183,10 +181,10 @@ public class TileEntityOrbitalStation extends TileEntityOrbStation implements IF
 
     public void despawnRocket() {
         if(docked != null) {
-            Stack<ItemStack> itemsToStuff = new Stack<ItemStack>();
+            Stack<ItemStack> itemsToStuff = new Stack<>();
 
             RocketStruct rocket = docked.getRocket();
-            if(rocket.stages.size() > 0) {
+            if(!rocket.stages.isEmpty()) {
                 itemsToStuff.push(ItemCustomRocket.build(docked.getRocket(), true));
             } else {
                 itemsToStuff.push(new ItemStack(rocket.capsule.part));
@@ -217,6 +215,10 @@ public class TileEntityOrbitalStation extends TileEntityOrbStation implements IF
         world.spawnEntity(rocket);
 
         dockRocket(rocket);
+    }
+
+    public EntityRideableRocket getDocked() {
+        return docked;
     }
 
     public boolean hasStoredItems() {
@@ -252,7 +254,12 @@ public class TileEntityOrbitalStation extends TileEntityOrbStation implements IF
     public int getFillRequirement(boolean toOrbit) {
         if(toOrbit) return 500; // Transferring between stations is much cheaper
         int mass = docked != null ? docked.getRocket().getLaunchMass() : 4_000;
-        return SolarSystem.getCostBetween(station.orbiting, station.orbiting, mass, 600_000, 350, false, true);
+
+        FT_Rocket fuelTrait = tanks[0].getTankType().getTrait(FT_Rocket.class);
+        int thrust = fuelTrait != null ? (int)fuelTrait.getThrust() : 600_000;
+        int isp = fuelTrait != null ? fuelTrait.getISP() : 300;
+
+        return SolarSystem.getCostBetween(station.orbiting, station.orbiting, mass, thrust, isp, false, true);
     }
 
     @Override
@@ -320,12 +327,15 @@ public class TileEntityOrbitalStation extends TileEntityOrbStation implements IF
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         for(int i = 0; i < tanks.length; i++) tanks[i].readFromNBT(nbt, "t" + i);
+
+        // Migrate old hydrogen tanks
+        tanks[0].setTankType(Fluids.HYDRAZINE);
     }
 
     AxisAlignedBB bb = null;
 
     @Override
-    public AxisAlignedBB getRenderBoundingBox() {
+    public @NotNull AxisAlignedBB getRenderBoundingBox() {
         if(bb == null) {
             bb = new AxisAlignedBB(
                     pos.getX() - 2,

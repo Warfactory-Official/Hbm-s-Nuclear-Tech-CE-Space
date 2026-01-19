@@ -52,5 +52,6 @@ public class Fluids {
     public static FluidType CONGLOMERA;
     public static FluidType HGAS;
     public static FluidType HALOLIGHT;
+    public static FluidType LITHCARBONATE;
 
 }
