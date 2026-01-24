@@ -21,7 +21,6 @@ import li.cil.oc.api.network.SimpleComponent;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,11 +58,6 @@ public class TileEntityAirPump extends TileEntityMachineBase implements ITickabl
     public TileEntityAirPump() {
         super(1, true, false);
         tank = new FluidTankNTM(Fluids.OXYGEN, 16000);
-    }
-
-    @Override
-    public World getWorld() {
-        return world;
     }
 
     public void spawnParticles() {
