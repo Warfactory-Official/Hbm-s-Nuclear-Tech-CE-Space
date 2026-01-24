@@ -26,7 +26,7 @@ public class MixinArmorRecipes {
         // YOU'RE ON THE INTERNET LOOKING AT
 
         //Feet
-        /*CraftingManager.addRecipeAuto(new ItemStack(ModItemsSpace.flippers, 1), new Object[] { "R R", "R R", 'R', RUBBER.ingot() });
-        CraftingManager.addRecipeAuto(new ItemStack(ModItemsSpace.heavy_boots, 1), new Object[] { "L L", "S S", 'L', Items.LEATHER, 'S', STEEL.ingot() });*/
+        CraftingManager.addRecipeAuto(new ItemStack(ModItemsSpace.flippers, 1), "R R", "R R", 'R', RUBBER.ingot());
+        CraftingManager.addRecipeAuto(new ItemStack(ModItemsSpace.heavy_boots, 1), "L L", "S S", 'L', Items.LEATHER, 'S', STEEL.ingot());
     }
 }

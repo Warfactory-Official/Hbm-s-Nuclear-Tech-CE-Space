@@ -1,12 +1,15 @@
 package com.hbmspace.items;
 
 import com.hbm.blocks.ICustomBlockItem;
+import com.hbm.config.VersatileConfig;
 import com.hbm.items.ItemEnums;
 import com.hbm.items.ModItems;
 import com.hbm.items.armor.ItemModInsert;
 import com.hbm.items.machine.ItemRBMKRod;
+import com.hbm.items.machine.ItemRTGPellet;
 import com.hbm.items.weapon.ItemMissile;
 import com.hbm.main.MainRegistry;
+import com.hbm.util.RTGUtil;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.items.armor.ItemModFlippers;
@@ -18,6 +21,7 @@ import com.hbmspace.items.food.ItemPillSpace;
 import com.hbmspace.items.food.ModItemSeedFood;
 import com.hbmspace.items.machine.ItemRBMKPelletSpace;
 import com.hbmspace.items.machine.ItemRBMKRodSpace;
+import com.hbmspace.items.machine.ItemRTGPelletSpace;
 import com.hbmspace.items.machine.ItemSatelliteSpace;
 import com.hbmspace.items.special.ItemConsumableSpace;
 import com.hbmspace.items.special.ItemMineralOre;
@@ -28,6 +32,7 @@ import com.hbmspace.items.tool.ItemWandTime;
 import com.hbmspace.items.weapon.ItemCustomMissilePart;
 import com.hbmspace.items.weapon.ItemCustomRocket;
 import com.hbmspace.lib.HBMSpaceSoundHandler;
+import com.hbmspace.util.RTGSpaceUtil;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -35,6 +40,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
@@ -195,6 +201,11 @@ public class ModItemsSpace {
     public static final Item nugget_cm_fuel = new ItemBakedSpace("nugget_cm_fuel").setCreativeTab(MainRegistry.partsTab);
     public static final Item nugget_es253 = new ItemBakedSpace("nugget_es253").setCreativeTab(MainRegistry.partsTab);
     public static final Item nugget_cm_mix = new ItemBakedSpace("nugget_cm_mix").setCreativeTab(MainRegistry.partsTab);
+
+    public static final Item pellet_rtg_americium_depleted = new ItemBakedSpace("pellet_rtg_americium_depleted").setCreativeTab(MainRegistry.controlTab);
+    public static final Item pellet_rtg_berkelium = new ItemRTGPelletSpace(20, "pellet_rtg_berkelium").setDecayItem(new ItemStack(pellet_rtg_americium_depleted), (long) (RTGSpaceUtil.getLifespan(13.8F, RTGSpaceUtil.HalfLifeType.LONG, false) * 1.5), 1).setCreativeTab(MainRegistry.controlTab).setMaxStackSize(1);
+    public static final Item pellet_rtg_cf251 = new ItemRTGPelletSpace(VersatileConfig.rtgDecay() ? 600 : 200, "pellet_rtg_cf251").setDecays(ItemEnums.EnumDepletedRTGMaterial.LEAD, (long) (RTGSpaceUtil.getLifespan(1F, RTGSpaceUtil.HalfLifeType.SHORT, false) * 2.5), 1).setCreativeTab(MainRegistry.controlTab);
+    public static final Item pellet_rtg_cf252 = new ItemRTGPelletSpace(VersatileConfig.rtgDecay() ? 600 : 200, "pellet_rtg_cf252").setDecays(ItemEnums.EnumDepletedRTGMaterial.LEAD, (long) (RTGSpaceUtil.getLifespan(1F, RTGSpaceUtil.HalfLifeType.SHORT, false) * 2.5), 1).setCreativeTab(MainRegistry.controlTab);
 
     public static final Item rag_blood = new ItemBakedSpace("rag_blood").setCreativeTab(MainRegistry.partsTab);
     public static final Item ingot_palladium = new ItemCustomLoreSpace("ingot_palladium").setCreativeTab(MainRegistry.partsTab);

@@ -128,6 +128,7 @@ public class ModBlocksSpace {
     public static final Block machine_vacuum_circuit = new MachineVacuumCircuit(Material.IRON, "machine_vacuum_circuit").setHardness(5.0F).setResistance(30.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_alkylation = new MachineAlkylation(Material.IRON, "machine_alkylation").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_solar = new MachineSolar(Material.IRON, "machine_solar").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block air_vent = new BlockAirPump(Material.IRON, "air_vent").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block air_scrubber = new BlockAirScrubber(Material.IRON, "air_scrubber").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     //public static final Block algae_film = new BlockAlgaeFilm(Material.IRON, "algae_film").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block hydrobay = new MachineHydroponic(Material.IRON, "hydrobay").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);

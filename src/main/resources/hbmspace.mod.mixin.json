@@ -13,6 +13,7 @@
   "mixins": [
     "hbm.MixinArmorFSB",
     "hbm.MixinItemModInsert",
+    "hbm.MixinItemRTGPelletAccessor",
     "hbm.MixinDictFrame",
     "hbm.MixinEntityEffectHandler",
     "hbm.MixinFluids",
@@ -30,6 +31,7 @@
     "hbm.recipes.MixinCentrifugeRecipes",
     "hbm.recipes.MixinChemicalPlantRecipes",
     "hbm.recipes.MixinCokerRecipes",
+    "hbm.recipes.MixinConsumableRecipes",
     "hbm.recipes.MixinCraftingManager",
     "hbm.recipes.MixinCrucibleRecipes",
     "hbm.recipes.MixinCrystallizerRecipes",
@@ -40,6 +42,7 @@
     "hbm.recipes.MixinMineralRecipes",
     "hbm.recipes.MixinMixerRecipes",
     "hbm.recipes.MixinPowderRecipes",
+    "hbm.recipes.MixinRodRecipes",
     "hbm.recipes.MixinSerializableRecipe",
     "hbm.recipes.MixinShredderRecipes",
     "hbm.recipes.MixinSmeltingRecipes",

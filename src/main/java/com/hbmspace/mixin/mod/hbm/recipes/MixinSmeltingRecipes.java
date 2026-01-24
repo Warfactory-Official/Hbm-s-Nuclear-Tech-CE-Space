@@ -26,7 +26,7 @@ public class MixinSmeltingRecipes {
         // Oredict doesn't work for vanilla smelting :(
         // space ores fuck yeeeeah
         for(int i = 0; i < SolarSystem.Body.values().length - 1; i++){
-            if(i != 6 && i != 1) {
+            if(i != 1) {
                 GameRegistry.addSmelting(new ItemStack(ModBlocksSpace.ore_iron, 1, i), new ItemStack(Items.IRON_INGOT), 0.7F);
                 GameRegistry.addSmelting(new ItemStack(ModBlocksSpace.ore_gold, 1, i), new ItemStack(Items.GOLD_INGOT), 1.0F);
                 GameRegistry.addSmelting(new ItemStack(ModBlocksSpace.ore_diamond, 1, i), new ItemStack(Items.DIAMOND), 1.0F);
@@ -67,5 +67,12 @@ public class MixinSmeltingRecipes {
         GameRegistry.addSmelting(ModItemsSpace.powder_nickel, new ItemStack(ModItemsSpace.ingot_nickel), 1.0F);
         GameRegistry.addSmelting(ModItemsSpace.powder_zinc, new ItemStack(ModItemsSpace.ingot_zinc), 1.0F);
         GameRegistry.addSmelting(ModItemsSpace.powder_gallium, new ItemStack(ModItemsSpace.ingot_gallium), 1.0F);
+        GameRegistry.addSmelting(ModItemsSpace.powder_rubber, new ItemStack(ModItems.ingot_rubber), 1.0F);
+        GameRegistry.addSmelting(ModItemsSpace.bean_raw, new ItemStack(ModItemsSpace.bean_roast), 1.0F);
+        GameRegistry.addSmelting(ModItemsSpace.flesh_wafer, new ItemStack(ModItemsSpace.grilled_flesh), 1.0F);
+
+        GameRegistry.addSmelting(ModItemsSpace.crystal_nickel, new ItemStack(ModItemsSpace.ingot_nickel, 2), 2.0F);
+        GameRegistry.addSmelting(ModItemsSpace.crystal_niobium, new ItemStack(ModItems.ingot_niobium, 2), 2.0F);
+        GameRegistry.addSmelting(ModItemsSpace.crystal_zinc, new ItemStack(ModItemsSpace.ingot_zinc, 2), 2.0F);
     }
 }

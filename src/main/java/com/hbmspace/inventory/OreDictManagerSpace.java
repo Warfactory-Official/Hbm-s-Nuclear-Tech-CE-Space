@@ -2,6 +2,7 @@ package com.hbmspace.inventory;
 
 import com.hbm.inventory.OreDictManager;
 import com.hbmspace.blocks.BlockEnumsSpace;
+import com.hbmspace.hazard.HazardRegistrySpace;
 import com.hbmspace.items.ItemEnumsSpace;
 
 import static com.hbm.inventory.OreDictManager.DictFrame.fromOne;
@@ -29,9 +30,25 @@ public class OreDictManagerSpace {
     public static final DictFrame GAAS = new DictFrame("GalliumArsenide");
     public static final DictFrame STAINLESS = new DictFrame("StainlessSteel");
 
+    public static final DictFrame BK247 = new DictFrame ("Berkelium247", "Bk247");
+    public static final DictFrame CF251 = new DictFrame ("Californium251", "Cf251");
+    public static final DictFrame CF252 = new DictFrame ("Californium252", "Cf252");
+    public static final DictFrame ES253 = new DictFrame ("Einsteinium253", "Es253");
+    public static final DictFrame ES255 = new DictFrame ("Einsteinium255", "Es255");
+    public static final DictFrame CM242 = new DictFrame ("Curium242", "Cm242");
+    public static final DictFrame CM243 = new DictFrame ("Curium243", "Cm243");
+    public static final DictFrame CM244 = new DictFrame ("Curium244", "Cm244");
+    public static final DictFrame CM245 = new DictFrame ("Curium245", "Cm245");
+    public static final DictFrame CM246 = new DictFrame ("Curium246", "Cm246");
+    public static final DictFrame CM247 = new DictFrame ("Curium247", "Cm247");
+    public static final DictFrame CMRG = new DictFrame ("CuriumRG");
+    public static final DictFrame AMF = new DictFrame("AmericiumFuel");
+    public static final DictFrame CMF = new DictFrame ("CuriumFuel");
 
     public static final DictFrame RICHMAGMA = new DictFrame("RichMagma");
     public static final DictFrame SEMTEX = new DictFrame("Semtex");
+
+    public static final DictFrame CN989 = new DictFrame("Chinesium989", "Cn989");
 
     /*
      * DUST AND GEM ORES
@@ -74,7 +91,7 @@ public class OreDictManagerSpace {
         ((IDictFrameAddon) NB).oreAll(ore_niobium);
         ((IDictFrameAddon) I).oreAll(ore_iodine);
 
-
+        // TODO: neutron type for hazard registry
         ((IDictFrameAddon) NI.ingot(ingot_nickel).dust(powder_nickel).plate(plate_nickel).block(block_nickel)).oreAll(ore_nickel).nugget(nugget_nickel);
         NIM																	.dust(fromOne(chunk_ore, ItemEnumsSpace.EnumChunkType.PENTLANDITE)); // dust selected for compat reasons
         CONGLOMERATE.ore(fromOne(stone_resource, BlockEnumsSpace.EnumStoneType.CONGLOMERATE));
@@ -85,5 +102,19 @@ public class OreDictManagerSpace {
         IRIDIUM		.ingot(ingot_iridium);
         STAINLESS															.ingot(ingot_stainless)			 																	.plate(plate_stainless);
         PENTLANDITE	.crystal(fromOne(chunk_ore, ItemEnumsSpace.EnumChunkType.PENTLANDITE));
+        CM242	.rad(HazardRegistrySpace.cm242)							.nugget(nugget_cm242)		.billet(billet_cm242)		.ingot(ingot_cm242);
+        CM243	.rad(HazardRegistrySpace.cm243)/*.neutron(HazardRegistry.cm243/80f)*/							.nugget(nugget_cm243)		.billet(billet_cm243)		.ingot(ingot_cm243);
+        CM244	.rad(HazardRegistrySpace.cm244)/*.neutron(HazardRegistry.cm244/50f)*/						.nugget(nugget_cm244)		.billet(billet_cm244)		.ingot(ingot_cm244);
+        CM245	.rad(HazardRegistrySpace.cm245)/*.neutron(HazardRegistry.cm245/100f)*/							.nugget(nugget_cm245)		.billet(billet_cm245)		.ingot(ingot_cm245);
+        CM246	.rad(HazardRegistrySpace.cm246)/*.neutron(HazardRegistry.cm246/50f)*/							.nugget(nugget_cm246)		.billet(billet_cm246)		.ingot(ingot_cm246);
+        CM247	.rad(HazardRegistrySpace.cm247)							.nugget(nugget_cm247)		.billet(billet_cm247)		.ingot(ingot_cm247);
+        CMRG    .rad(HazardRegistrySpace.cmrg)/*.neutron(HazardRegistrySpace.cmrg/60f)*/                             .nugget(nugget_cm_mix)         .billet(billet_cm_mix)		.ingot(ingot_cm_mix);
+        CMF    .rad(HazardRegistrySpace.cmf)/*.neutron(HazardRegistry.cmf/120f)*/                             .nugget(nugget_cm_fuel)         .billet(billet_cm_fuel)		.ingot(ingot_cm_fuel);
+        BK247   .rad(HazardRegistrySpace.bk247)							.nugget(nugget_bk247)		.billet(billet_bk247)		.ingot(ingot_bk247);
+        CF251   .rad(HazardRegistrySpace.cf251).hot(2)										.nugget(nugget_cf251)				.billet(billet_cf251)    	.ingot(ingot_cf251);
+        CF252	.rad(HazardRegistrySpace.cf252)/*.neutron(HazardRegistry.cf252/5f).hot(3)*/						.nugget(nugget_cf252)								.billet(billet_cf252)		.ingot(ingot_cf252);
+        ES253	.rad(HazardRegistrySpace.es253)/*.neutron(HazardRegistry.es253/40).hot(4)*/                          .nugget(nugget_es253)	   	.billet(billet_es253)       .ingot(ingot_es253);
+        ES255	.rad(HazardRegistrySpace.es255)																					.ingot(ingot_es255);
+        CN989   .rad(HazardRegistrySpace.cn989)  .hot(4F)                .nugget(nugget_cn989)       .billet(billet_cn989)       .ingot(ingot_cn989)         .dust(powder_cn989)         .plate(plate_cn989);
     }
 }
