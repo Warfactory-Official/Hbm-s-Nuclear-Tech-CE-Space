@@ -11,9 +11,14 @@ import com.hbmspace.blocks.BlockContainerBakeableSpace;
 import com.hbmspace.dim.trait.CBT_Atmosphere;
 import com.hbmspace.handler.atmosphere.IBlockSealable;
 import com.hbmspace.tileentity.machine.TileEntityAirPump;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -31,8 +36,31 @@ import java.util.List;
 
 public class BlockAirPump extends BlockContainerBakeableSpace implements ILookOverlay, IBlockSealable {
 
+    public static final PropertyDirection FACING = BlockHorizontal.FACING;
+
     public BlockAirPump(Material m, String s) {
         super(m, s, BlockBakeFrame.bottomTop("vent_chlorine_seal_side", "vent_chlorine_seal_top", "vent_chlorine_seal_side"));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+    }
+
+    @Override
+    protected @NotNull BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, FACING);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(FACING).getHorizontalIndex();
+    }
+
+    @Override
+    public @NotNull IBlockState getStateFromMeta(int meta) {
+        return this.getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta));
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, @NotNull BlockPos pos, IBlockState state, EntityLivingBase placer, @NotNull ItemStack stack) {
+        world.setBlockState(pos, state.withProperty(FACING, placer.getHorizontalFacing().getOpposite()), 2);
     }
 
     @Override

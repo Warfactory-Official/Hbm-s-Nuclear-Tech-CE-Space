@@ -1,6 +1,17 @@
 armor.canSeal=Can be used as a spacesuit (requires PLSS)
 armor.corrosive=Corrosive atmosphere protection
 armor.mustSeal=Must be used with a fully sealed armor set!
+atmosphere.name=Atmosphere
+atmosphere.noSeal=ROOM UNSEALED
+atmosphere.noTank=EMPTY TANK
+atmosphere.vacuum=Near Vacuum
+atmosphere.noAir=REQUIRES VACUUM
+atmosphere.noVacuum=REQUIRES ATMOSPHERE
+atmosphere.noGravity=REQUIRES ZERO-G
+atmosphere.noOrbit=MUST BE IN ORBIT
+atmosphere.yesOrbit=UNUSABLE IN ORBIT
+atmosphere.engineFacing=WRONG DIRECTION
+atmosphere.recycling=Running on recycled air
 container.cryoDistillator=Cryogenic Distillation Machine
 container.hydrobay=Greenhouse
 container.machineVacuumCircuit=Vacuum

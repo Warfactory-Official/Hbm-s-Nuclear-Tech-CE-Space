@@ -1,6 +1,15 @@
 armor.canSeal=Обеспечивает герметичность (требуется PLSS)
 armor.corrosive=Защищает от коррозийной атмосферы
 armor.mustSeal=Необходимо использовать$с полностью герметичным набором брони!
+atmosphere.name=Статус атмосферы
+atmosphere.noSeal=КОМНАТА НЕГЕРМЕТИЧНА
+atmosphere.noTank=ПУСТОЙ БАК
+atmosphere.vacuum=Отсутствует
+atmosphere.noAir=ТРЕБУЕТСЯ ВАКУУМ
+atmosphere.noVacuum=ТРЕБУЕТСЯ АТМОСФЕРА
+atmosphere.noGravity=ТРЕБУЕТСЯ НЕВЕСОМОСТЬ
+atmosphere.noOrbit=РАБОТАЕТ ТОЛЬКО НА ОРБИТЕ
+atmosphere.engineFacing=НЕВЕРНОЕ НАПРАВЛЕНИЕ
 container.cryoDistillator=Криогенный дистиллятор
 container.hydrobay=Теплица
 container.machineVacuumCircuit=ВПС

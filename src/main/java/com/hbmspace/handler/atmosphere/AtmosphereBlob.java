@@ -23,10 +23,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class AtmosphereBlob implements Runnable {
 	
@@ -42,10 +39,7 @@ public class AtmosphereBlob implements Runnable {
 	protected IAtmosphereProvider handler;
 
 
-	private static ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 16, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>(32));
-	
-	private static HashMap<Block, Boolean> fullBounds = new HashMap<>();
-
+	private static final ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 16, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>(32));
 	
 	private boolean executing;
 	private ThreeInts blockPos;
@@ -54,7 +48,7 @@ public class AtmosphereBlob implements Runnable {
     public boolean runDepress;
     public ForgeDirection depressDir = ForgeDirection.UP;
 
-    private LinkedHashMap<ThreeInts, Integer> plants = new LinkedHashMap<>();
+    private final LinkedHashMap<ThreeInts, Integer> plants = new LinkedHashMap<>();
 
 
 	public AtmosphereBlob(IAtmosphereProvider handler) {
@@ -75,61 +69,44 @@ public class AtmosphereBlob implements Runnable {
 
 		// Prevent loading new chunks, or we violate thread safety!
 		if(world instanceof WorldServer && !((WorldServer) world).getChunkProvider().chunkExists(x >> 4, z >> 4))
-			return true;
+			return true; // Считаем незагруженные чанки стеной
+
 		BlockPos pos = new BlockPos(x, y, z);
-		Block block = world.getBlockState(pos).getBlock();
+		IBlockState state = world.getBlockState(pos);
+		Block block = state.getBlock();
 
-		if(block.isAir(block.getDefaultState(), world, pos)) return false; // Air obviously doesn't seal
-        switch (block) {
-            case BlockFarmland blockFarmland -> {
-                return false;
-            }
-            case BlockFence blockFence -> {
-                return false;
-            }
-            case IBlockSealable iBlockSealable -> {
-                return iBlockSealable.isSealed(world, x, y, z);  // Custom semi-sealables, like doors
-            }
-            case BlockDummyable blockDummyable -> {
-                return false; // Machines can't seal, almost all have gaps
-            }
-            default -> {
-            }
-        }
+		if(block.isAir(state, world, pos)) return false;
 
-        Material material = block.getMaterial(block.getDefaultState());
-		if(material.isLiquid() || !material.isSolid()) return false; // Liquids need to know what pressurized atmosphere they're in to determine evaporation
-		if(material == Material.LEAVES) return false; // Leaves never block air
+		// Быстрые проверки на стандартные полные блоки (оптимизация)
+		if(state.isFullCube() || state.isOpaqueCube()) return true;
 
-		Boolean isFull = fullBounds.get(block);
-		if(isFull != null) return isFull;
+		if (block instanceof BlockFarmland || block instanceof BlockFence || block instanceof BlockDummyable) {
+			return false;
+		}
+		if (block instanceof IBlockSealable) {
+			return ((IBlockSealable) block).isSealed(world, x, y, z);
+		}
+
+		Material material = state.getMaterial();
+		if(material.isLiquid() || !material.isSolid()) return false;
+		if(material == Material.LEAVES) return false;
 
 		AxisAlignedBB bb = null;
 		try {
-			// In the most common case, blocks don't use the passed World, only when they need to check neighbours to modify their bounding box
-			// we just want to check that it attempts to change its bounding box at all, resulting in null if it does so by checking neighbours
-			// anything that modifies its own bounding box safely (like half slabs) will still work as normal
-			bb = block.getCollisionBoundingBox(block.getDefaultState(), null, pos);
-		} catch(Exception _) {}
+			// ВАЖНО: Передаем world, а не null. Многие блоки (заборы, панели, трубы) зависят от соседей.
+			bb = state.getCollisionBoundingBox(world, pos);
+		} catch(Exception ignored) {}
 
 		if(bb == null) {
-			fullBounds.put(block, false);
-			return false; // No collision, can't seal (like lamps)
+			return false; // Нет коллизии - нет герметичности
 		}
 
-		// size * 100 to correct rounding errors
-		int minX = (int) ((bb.minX - x) * 100);
-		int minY = (int) ((bb.minY - y) * 100);
-		int minZ = (int) ((bb.minZ - z) * 100);
-		int maxX = (int) ((bb.maxX - x) * 100);
-		int maxY = (int) ((bb.maxY - y) * 100);
-		int maxZ = (int) ((bb.maxZ - z) * 100);
+		// Проверяем, является ли коллизия полным кубом (с допуском на погрешность float)
+		double eps = 0.001;
 
-		isFull = minX == 0 && minY == 0 && minZ == 0 && maxX == 100 && maxY == 100 && maxZ == 100;
-
-		fullBounds.put(block, isFull);
-
-		return isFull;
+        return (bb.maxX - bb.minX > 1.0 - eps) &&
+                (bb.maxY - bb.minY > 1.0 - eps) &&
+                (bb.maxZ - bb.minZ > 1.0 - eps);
 	}
 	
 	public int getBlobMaxRadius() {
@@ -152,7 +129,7 @@ public class AtmosphereBlob implements Runnable {
     public void produce(int amount) {
         handler.produce(amount);
     }
-	
+
 	/**
 	 * Adds a block position to the blob
 	 */
@@ -164,7 +141,11 @@ public class AtmosphereBlob implements Runnable {
 	 * Recursively checks for contiguous blocks and adds them to the graph
 	 */
 	public void addBlock(ThreeInts blockPos) {
-		if(!this.contains(blockPos) && 
+		boolean alreadyContains;
+		synchronized(graph) {
+			alreadyContains = this.contains(blockPos);
+		}
+		if(!alreadyContains &&
 				(this.graph.size() == 0 || this.contains(blockPos.getPositionAtOffset(ForgeDirection.UP)) || this.contains(blockPos.getPositionAtOffset(ForgeDirection.DOWN)) ||
 						this.contains(blockPos.getPositionAtOffset(ForgeDirection.EAST)) || this.contains(blockPos.getPositionAtOffset(ForgeDirection.WEST)) ||
 						this.contains(blockPos.getPositionAtOffset(ForgeDirection.NORTH)) || this.contains(blockPos.getPositionAtOffset(ForgeDirection.SOUTH)))) {
@@ -176,7 +157,8 @@ public class AtmosphereBlob implements Runnable {
 					try {
 						pool.execute(this);
 					} catch (RejectedExecutionException e) {
-                        MainRegistry.logger.warn("Atmosphere calculation at {} aborted due to oversize queue!", this.getRootPosition());
+						MainRegistry.logger.warn("Atmosphere calculation at {} aborted due to oversize queue!", this.getRootPosition());
+						executing = false;
 					}
 				} else {
 					this.run();
@@ -291,50 +273,55 @@ public class AtmosphereBlob implements Runnable {
 		final int maxSize = this.getBlobMaxRadius();
 		final HashSet<ThreeInts> addableBlocks = new HashSet<>();
 
-		// Breadth first search; non recursive
-		while(!stack.isEmpty()) {
-			ThreeInts stackElement = stack.pop();
-			addableBlocks.add(stackElement);
+		boolean success = true;
 
-			for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				ThreeInts searchNextPosition = stackElement.getPositionAtOffset(dir);
+		try {
+			// Breadth first search; non recursive
+			while(!stack.isEmpty()) {
+				ThreeInts stackElement = stack.pop();
+				addableBlocks.add(stackElement);
 
-				// Don't path areas we have already scanned
-				if(!graph.contains(searchNextPosition) && !addableBlocks.contains(searchNextPosition)) {
+				for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+					ThreeInts searchNextPosition = stackElement.getPositionAtOffset(dir);
 
-					try {
+					boolean alreadyInGraph;
+					synchronized (graph) {
+						alreadyInGraph = graph.contains(searchNextPosition);
+					}
+
+					// Don't path areas we have already scanned
+					if(!alreadyInGraph && !addableBlocks.contains(searchNextPosition)) {
+
 						if(isPositionAllowed(handler.getWorld(), searchNextPosition)) {
 							if(searchNextPosition.getDistanceSquared(this.getRootPosition()) <= maxSize * maxSize) {
 								stack.push(searchNextPosition);
 								addableBlocks.add(searchNextPosition);
 							} else {
-								// Failed to seal, void
-								clearBlob();
-								executing = false;
-								return;
+                                MainRegistry.logger.info("Atmosphere leak at: {}", searchNextPosition);
+								if(runDepress) decompress(blockPos, depressDir);
+								success = false;
+								break;
 							}
 						}
-					} catch (Exception e){
-						// Catches errors with additional information
-                        MainRegistry.logger.info("Error: AtmosphereBlob has failed to form correctly due to an error. \nCurrentBlock: {}\tNextPos: {}\tDir: {}\tStackSize: {}", stackElement, searchNextPosition, dir, stack.size());
-						e.printStackTrace();
-
-						// Failed to seal, void
-						clearBlob();
-						executing = false;
-						return;
 					}
 				}
+
+				if(!success) break;
 			}
+		} catch (Throwable e) {
+			MainRegistry.logger.error("Critical error in AtmosphereBlob thread", e);
+			success = false;
 		}
 
-		//only one instance can editing this at a time because this will not run again b/c "worker" is not null
-		synchronized (graph) {
-			for(ThreeInts addableBlock : addableBlocks) {
-				addSingleBlock(addableBlock);
+		if (success) {
+			synchronized (graph) {
+				for(ThreeInts addableBlock : addableBlocks) {
+					addSingleBlock(addableBlock);
+				}
+				handler.onBlobCreated(this);
 			}
-
-			handler.onBlobCreated(this);
+		} else {
+			clearBlob();
 		}
 
 		executing = false;
