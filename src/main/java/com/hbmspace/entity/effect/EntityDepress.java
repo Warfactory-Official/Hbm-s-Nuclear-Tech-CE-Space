@@ -58,7 +58,7 @@ public class EntityDepress extends Entity {
         super.onUpdate();
 
         ForgeDirection dir = ForgeDirection.getOrientation(getDir());
-
+        // TODO: depress effect (I should generally implement space effects)
         NBTTagCompound data = new NBTTagCompound();
         data.setDouble("posX", posX + world.rand.nextGaussian() * 0.25);
         data.setDouble("posY", posY + world.rand.nextGaussian() * 0.25);
@@ -70,7 +70,7 @@ public class EntityDepress extends Entity {
         data.setDouble("moZ", dir.offsetZ * 0.5 + world.rand.nextGaussian() * 0.25);
         data.setInteger("maxAge", 100 + world.rand.nextInt(20));
         data.setInteger("color", 0xFFFFFF);
-        MainRegistry.proxy.effectNT(data);
+        //MainRegistry.proxy.effectNT(data);
 
         List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(this, new AxisAlignedBB(
                 posX - range, posY - range, posZ - range, posX + range, posY + range, posZ + range));
