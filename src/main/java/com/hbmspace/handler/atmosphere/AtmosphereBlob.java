@@ -1,6 +1,7 @@
 package com.hbmspace.handler.atmosphere;
 
 import com.hbm.blocks.BlockDummyable;
+import com.hbm.blocks.ModBlocks;
 import com.hbm.config.GeneralConfig;
 import com.hbmspace.dim.trait.CBT_Atmosphere;
 import com.hbm.handler.ThreeInts;
@@ -69,15 +70,14 @@ public class AtmosphereBlob implements Runnable {
 
 		// Prevent loading new chunks, or we violate thread safety!
 		if(world instanceof WorldServer && !((WorldServer) world).getChunkProvider().chunkExists(x >> 4, z >> 4))
-			return true; // Считаем незагруженные чанки стеной
+			return true;
 
 		BlockPos pos = new BlockPos(x, y, z);
 		IBlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
-
 		if(block.isAir(state, world, pos)) return false;
+		if(block == ModBlocks.sliding_seal_door) return true; // fuck it, I'll put a temporary bandaid
 
-		// Быстрые проверки на стандартные полные блоки (оптимизация)
 		if(state.isFullCube() || state.isOpaqueCube()) return true;
 
 		if (block instanceof BlockFarmland || block instanceof BlockFence || block instanceof BlockDummyable) {
@@ -93,15 +93,13 @@ public class AtmosphereBlob implements Runnable {
 
 		AxisAlignedBB bb = null;
 		try {
-			// ВАЖНО: Передаем world, а не null. Многие блоки (заборы, панели, трубы) зависят от соседей.
 			bb = state.getCollisionBoundingBox(world, pos);
 		} catch(Exception ignored) {}
 
 		if(bb == null) {
-			return false; // Нет коллизии - нет герметичности
+			return false;
 		}
 
-		// Проверяем, является ли коллизия полным кубом (с допуском на погрешность float)
 		double eps = 0.001;
 
         return (bb.maxX - bb.minX > 1.0 - eps) &&
