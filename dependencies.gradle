@@ -45,6 +45,7 @@ dependencies {
     compileOnly 'mezz:jei:4.29.8'
     implementation 'com.google.guava:guava:31.0.1-jre'
     runtimeOnlyNonPublishable rfg.deobf("curse.maven:ctm-267602:2915363")
+    runtimeOnlyNonPublishable rfg.deobf("curse.maven:lolasm-460609:7267368")
     implementation project.files("libs/NTM-CE.jar")
 }
 

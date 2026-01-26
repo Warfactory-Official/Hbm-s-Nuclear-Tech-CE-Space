@@ -14,6 +14,7 @@ import com.hbmspace.config.WorldConfigSpace;
 import com.hbmspace.dim.CommandSpaceTP;
 import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.inventory.OreDictManagerSpace;
+import com.hbmspace.inventory.recipes.tweakers.RecipeTweaker;
 import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.items.weapon.ItemCustomMissilePart;
 import com.hbmspace.lib.HBMSpaceSoundHandler;
@@ -29,10 +30,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.Logger;
@@ -137,6 +135,8 @@ public class SpaceMain {
 
         PlanetGen.init();
         proxy.postInit(event);
+
+        RecipeTweaker.initRecipeTweakers();
     }
 
     @EventHandler

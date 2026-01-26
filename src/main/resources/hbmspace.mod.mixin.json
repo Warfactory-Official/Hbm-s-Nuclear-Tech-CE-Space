@@ -23,8 +23,6 @@
     "hbm.MixinHbmWorldGen",
     "hbm.MixinNTMWorldGenerator",
     "hbm.MixinPermaSyncHandler",
-    "hbm.recipes.MixinAnvilRecipes",
-    "hbm.recipes.MixinArcWelderRecipes",
     "hbm.recipes.MixinArmorRecipes",
     "hbm.recipes.MixinAssemblyRecipes",
     "hbm.recipes.MixinBlastFurnaceRecipes",

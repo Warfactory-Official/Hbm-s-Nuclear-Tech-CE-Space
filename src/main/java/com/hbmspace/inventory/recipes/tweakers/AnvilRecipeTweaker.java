@@ -1,5 +1,4 @@
-package com.hbmspace.mixin.mod.hbm.recipes;
-
+package com.hbmspace.inventory.recipes.tweakers;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.inventory.OreDictManager;
 import com.hbm.inventory.RecipesCommon;
@@ -7,32 +6,25 @@ import com.hbm.inventory.recipes.anvil.AnvilRecipes;
 import com.hbm.inventory.recipes.anvil.AnvilSmithingRecipe;
 import com.hbm.items.ItemEnums;
 import com.hbm.items.ModItems;
-import com.hbm.items.food.ItemFlask;
 import com.hbmspace.blocks.ModBlocksSpace;
+import com.hbmspace.inventory.OreDictManagerSpace;
 import com.hbmspace.items.ModItemsSpace;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 import java.util.ListIterator;
 
 import static com.hbm.inventory.OreDictManager.*;
-import static com.hbm.inventory.OreDictManager.PETCOKE;
+import static com.hbm.inventory.OreDictManager.KEY_PLANKS;
+import static com.hbm.inventory.OreDictManager.STEEL;
 import static com.hbm.inventory.recipes.anvil.AnvilRecipes.constructionRecipes;
 import static com.hbmspace.inventory.OreDictManagerSpace.NI;
 import static com.hbmspace.inventory.OreDictManagerSpace.STAINLESS;
-import static com.hbmspace.inventory.OreDictManagerSpace.ZI;
 
-@Mixin(value = AnvilRecipes.class, remap = false)
-public abstract class MixinAnvilRecipes {
+public class AnvilRecipeTweaker {
 
-    @Inject(method = "registerSmithing", at = @At("TAIL"))
-    private static void hbm$replaceGunmetalRecipe(CallbackInfo ci) {
+    public static void init() {
         constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.OreDictStack(NI.ingot()), new AnvilRecipes.AnvilOutput(new ItemStack(ModItemsSpace.plate_nickel))).setTier(3));
         constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.OreDictStack(STAINLESS.ingot()), new AnvilRecipes.AnvilOutput(new ItemStack(ModItemsSpace.plate_stainless))).setTier(3));
         constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.OreDictStack(COALCOKE.dust()), new AnvilRecipes.AnvilOutput(new ItemStack(ModItems.coke, 1, ItemEnums.EnumCokeType.COAL.ordinal()))).setTier(3));
@@ -75,29 +67,28 @@ public abstract class MixinAnvilRecipes {
             AnvilSmithingRecipe r = it.next();
             if (r == null || r.tier != 1) continue;
 
-            if (!space$stacksEqual(r.getSimpleOutput(), new ItemStack(ModItems.ingot_gunmetal, 1))) continue;
+            if (!stacksEqual(r.getSimpleOutput(), new ItemStack(ModItems.ingot_gunmetal, 1))) continue;
 
             List<ItemStack> left = r.getLeft();
             List<ItemStack> right = r.getRight();
             if (left == null || right == null || left.isEmpty() || right.isEmpty()) continue;
 
-            boolean direct = space$anyOreMatch(left, cu) && space$anyOreMatch(right, al);
-            boolean mirrored = space$anyOreMatch(left, al) && space$anyOreMatch(right, cu);
+            boolean direct = anyOreMatch(left, cu) && anyOreMatch(right, al);
+            boolean mirrored = anyOreMatch(left, al) && anyOreMatch(right, cu);
 
             if (direct || mirrored) {
                 it.set(new AnvilSmithingRecipe(
                         1,
                         new ItemStack(ModItems.ingot_gunmetal, 1),
-                        new RecipesCommon.OreDictStack(CU.ingot()),
-                        new RecipesCommon.OreDictStack(ZI.ingot())
+                        new RecipesCommon.OreDictStack(OreDictManager.CU.ingot()),
+                        new RecipesCommon.OreDictStack(OreDictManagerSpace.ZI.ingot())
                 ));
                 break;
             }
         }
     }
 
-    @Unique
-    private static boolean space$anyOreMatch(List<ItemStack> stacks, String oreName) {
+    private static boolean anyOreMatch(List<ItemStack> stacks, String oreName) {
         for (ItemStack s : stacks) {
             if (s == null || s.isEmpty()) continue;
             for (int id : OreDictionary.getOreIDs(s)) {
@@ -107,11 +98,9 @@ public abstract class MixinAnvilRecipes {
         return false;
     }
 
-    @Unique
-    private static boolean space$stacksEqual(ItemStack a, ItemStack b) {
+    private static boolean stacksEqual(ItemStack a, ItemStack b) {
         return a != null && b != null && !a.isEmpty() && !b.isEmpty()
                 && a.getItem() == b.getItem()
-                && a.getMetadata() == b.getMetadata()
-                && ItemStack.areItemStackTagsEqual(a, b);
+                && a.getMetadata() == b.getMetadata();
     }
 }

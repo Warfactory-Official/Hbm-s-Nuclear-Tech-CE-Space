@@ -196,12 +196,12 @@ public abstract class MixinAssemblyRecipes extends GenericRecipes<GenericRecipe>
                         new ComparableStack(ModBlocks.crate_iron, 2),
                         new ComparableStack(ModItems.thruster_small, 1),
                         new ComparableStack(ModItemsSpace.circuit, 1, ItemEnumsSpace.EnumCircuitType.AERO)));
-        /*register(new GenericRecipe("ass.gasdock").setup(400, 100).outputItems(new ItemStack(ModBlocksSpace.gas_dock, 1))
+        register(new GenericRecipe("ass.gasdock").setup(400, 100).outputItems(new ItemStack(ModBlocksSpace.gas_dock, 1))
                 .inputItems(
                         new OreDictStack(STEEL.plateWelded(), 5),
                         new OreDictStack(ANY_RUBBER.ingot(), 4),
                         new ComparableStack(ModItems.thruster_small, 1),
-                        new ComparableStack(ModItemsSpace.circuit, 1, ItemEnumsSpace.EnumCircuitType.AVIONICS)));*/
+                        new ComparableStack(ModItemsSpace.circuit, 1, ItemEnumsSpace.EnumCircuitType.AVIONICS)));
         register(new GenericRecipe("ass.stardar").setup(400, 100).outputItems(new ItemStack(ModBlocksSpace.machine_stardar, 1))
                 .inputItems(
                         new ComparableStack(ModItems.motor, 4),
