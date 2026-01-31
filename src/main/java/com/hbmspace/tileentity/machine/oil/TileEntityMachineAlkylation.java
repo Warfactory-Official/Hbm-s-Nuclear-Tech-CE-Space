@@ -33,7 +33,7 @@ public class TileEntityMachineAlkylation extends TileEntityMachineBase implement
         super(11, true, true);
 
         this.tanks = new FluidTankNTM[4];
-        this.tanks[0] = new FluidTankNTM(Fluids.CHLOROMETHANE, 8_000);
+        this.tanks[0] = new FluidTankNTM(com.hbmspace.inventory.fluid.Fluids.CHLOROMETHANE, 8_000);
         this.tanks[1] = new FluidTankNTM(Fluids.NONE, 4_000);
         this.tanks[2] = new FluidTankNTM(Fluids.UNSATURATEDS, 8_000);
         this.tanks[3] = new FluidTankNTM(Fluids.CHLORINE, 8_000);

@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.hbm.inventory.fluid.Fluids.*;
 import static com.hbm.inventory.fluid.Fluids.GAS_COKER;
+
 // Th3_Sl1ze: let's say I'm not gonna touch this until I remember to change private to public in CokerRecipes..
 @Mixin(value = CokerRecipes.class, remap = false)
 public class MixinCokerRecipes {
@@ -25,7 +26,7 @@ public class MixinCokerRecipes {
 
     @Inject(method = "registerDefaults", at = @At("TAIL"))
     public void registerSpace(CallbackInfo ci) {
-        registerRecipe(BROMINE, 1_000, new ItemStack(ModItems.powder_bromine, 1), new FluidStack(GAS, 500));
-        registerRecipe(SCUTTERBLOOD, 16_000, OreDictManager.DictFrame.fromOne(ModItems.coke, ItemEnums.EnumCokeType.PETROLEUM), new FluidStack(GAS_COKER, 1_600));
+        registerRecipe(com.hbmspace.inventory.fluid.Fluids.BROMINE, 1_000, new ItemStack(ModItems.powder_bromine, 1), new FluidStack(GAS, 500));
+        registerRecipe(com.hbmspace.inventory.fluid.Fluids.SCUTTERBLOOD, 16_000, OreDictManager.DictFrame.fromOne(ModItems.coke, ItemEnums.EnumCokeType.PETROLEUM), new FluidStack(GAS_COKER, 1_600));
     }
 }

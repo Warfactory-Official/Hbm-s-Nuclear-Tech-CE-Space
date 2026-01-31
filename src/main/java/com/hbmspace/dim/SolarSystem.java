@@ -1,7 +1,7 @@
 package com.hbmspace.dim;
 
-import com.hbm.inventory.fluid.Fluids;
 import com.hbm.main.MainRegistry;
+import com.hbmspace.inventory.fluid.Fluids;
 import com.hbmspace.util.AstronomyUtil;
 import com.hbm.util.BobMathUtil;
 import com.hbmspace.config.SpaceConfig;
@@ -58,7 +58,7 @@ public class SolarSystem {
 								.withColor(0.408F, 0.298F, 0.553F)
 								.withBlockTextures("hbm:blocks/eve_stone_2", "hbm:blocks/eve_silt")
 								.withMinProcessingLevel(2)
-								.withTraits(new CBT_Atmosphere(Fluids.EVEAIR, 5D), new CBT_Temperature(400), new CBT_Water(Fluids.MERCURY))
+								.withTraits(new CBT_Atmosphere(Fluids.EVEAIR, 5D), new CBT_Temperature(400), new CBT_Water(com.hbm.inventory.fluid.Fluids.MERCURY))
 								.withSatellites(
 
 										new CelestialBody("gilly")
@@ -145,7 +145,7 @@ public class SolarSystem {
 												.withRotationalPeriod(52_981)
 												.withTidalLockingTo("jool")
 												.withMinProcessingLevel(3)
-												.withTraits(new CBT_Atmosphere(com.hbmspace.inventory.fluid.Fluids.EARTHAIR, 0.45D).and(Fluids.XENON, 0.15D), new CBT_Water())
+												.withTraits(new CBT_Atmosphere(com.hbmspace.inventory.fluid.Fluids.EARTHAIR, 0.45D).and(com.hbm.inventory.fluid.Fluids.XENON, 0.15D), new CBT_Water())
 												.withBlockTextures("stone", "hbm:blocks/laythe_silt")
 												.withCityMask(new ResourceLocation("hbm", "textures/misc/space/laythe_mask.png")),
 

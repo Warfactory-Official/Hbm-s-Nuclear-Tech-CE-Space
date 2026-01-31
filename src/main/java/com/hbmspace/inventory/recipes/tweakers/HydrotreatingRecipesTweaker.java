@@ -23,8 +23,8 @@ public class HydrotreatingRecipesTweaker {
 
             recipes.put(com.hbmspace.inventory.fluid.Fluids.CCL, new Tuple.Triplet<>(
                     new FluidStack(Fluids.HYDROGEN, 10, 1),
-                    new FluidStack(Fluids.CHLOROMETHANE, 80),
-                    new FluidStack(Fluids.HCL, 20)
+                    new FluidStack(com.hbmspace.inventory.fluid.Fluids.CHLOROMETHANE, 80),
+                    new FluidStack(com.hbmspace.inventory.fluid.Fluids.HCL, 20)
             ));
 
             recipes.put(com.hbmspace.inventory.fluid.Fluids.CBENZ, new Tuple.Triplet<>(

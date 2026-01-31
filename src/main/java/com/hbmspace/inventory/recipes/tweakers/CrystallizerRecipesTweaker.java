@@ -21,7 +21,7 @@ public class CrystallizerRecipesTweaker {
         FluidStack sulfur = new FluidStack(Fluids.SULFURIC_ACID, 500);
         FluidStack nitric = new FluidStack(Fluids.NITRIC_ACID, 500);
         FluidStack organic = new FluidStack(Fluids.SOLVENT, 500);
-        FluidStack chloric = new FluidStack(Fluids.HCL, 500);
+        FluidStack chloric = new FluidStack(com.hbmspace.inventory.fluid.Fluids.HCL, 500);
         FluidStack schrabidic = new FluidStack(Fluids.SCHRABIDIC, 1000);
 
         registerRecipe(P_RED.ore(),		new CrystallizerRecipes.CrystallizerRecipe(ModItems.crystal_phosphorus, baseTime).prod(0.05F));
@@ -31,7 +31,7 @@ public class CrystallizerRecipesTweaker {
         registerRecipe((new RecipesCommon.ComparableStack(ModBlocksSpace.ore_mineral, 1, OreDictionary.WILDCARD_VALUE)),		new CrystallizerRecipes.CrystallizerRecipe(ModItemsSpace.crystal_mineral, baseTime).prod(0.05F)); //temp
         registerRecipe(new RecipesCommon.ComparableStack(ModItemsSpace.crystal_mineral),	new CrystallizerRecipes.CrystallizerRecipe(ModItems.crystal_diamond, baseTime).prod(0.05F));
 
-        registerRecipe(new RecipesCommon.ComparableStack(ModItemsSpace.saltleaf),	new CrystallizerRecipes.CrystallizerRecipe(ModItems.gem_sodalite, baseTime).setReq(5), new FluidStack(Fluids.SCUTTERBLOOD, 1_000));
+        registerRecipe(new RecipesCommon.ComparableStack(ModItemsSpace.saltleaf),	new CrystallizerRecipes.CrystallizerRecipe(ModItems.gem_sodalite, baseTime).setReq(5), new FluidStack(com.hbmspace.inventory.fluid.Fluids.SCUTTERBLOOD, 1_000));
         registerRecipe(MALACHITE.ingot(), new CrystallizerRecipes.CrystallizerRecipe(ModItems.crystal_copper, baseTime).prod(0.1F), new FluidStack(com.hbmspace.inventory.fluid.Fluids.COPPERSULFATE, 350));
         registerRecipe(new RecipesCommon.ComparableStack(ModItemsSpace.nickel_salts),	new CrystallizerRecipes.CrystallizerRecipe(ModItemsSpace.crystal_nickel, baseTime), nitric);
         registerRecipe(new RecipesCommon.ComparableStack(ModItemsSpace.leaf_rubber),	new CrystallizerRecipes.CrystallizerRecipe(ModItems.ingot_rubber, baseTime).setReq(64), chloric);

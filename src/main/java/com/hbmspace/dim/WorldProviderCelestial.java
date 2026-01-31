@@ -224,11 +224,11 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 			FluidEntry entry = atmosphere.fluids.get(i);
 			Vec3d fluidColor;
 
-			if(entry.fluid == Fluids.EVEAIR) {
+			if(entry.fluid == com.hbmspace.inventory.fluid.Fluids.EVEAIR) {
 				fluidColor = new Vec3d(53F / 255F * sunR, 32F / 255F * sunG, 74F / 255F * sunB);
-			} else if(entry.fluid == Fluids.DUNAAIR || entry.fluid == Fluids.CARBONDIOXIDE) {
+			} else if(entry.fluid == com.hbmspace.inventory.fluid.Fluids.DUNAAIR || entry.fluid == Fluids.CARBONDIOXIDE) {
 				fluidColor = new Vec3d(212F / 255F * sunR, 112F / 255F * sunG, 78F / 255F * sunB);
-			} else if(entry.fluid == com.hbmspace.inventory.fluid.Fluids.EARTHAIR || entry.fluid == Fluids.OXYGEN || entry.fluid == Fluids.NITROGEN) {
+			} else if(entry.fluid == com.hbmspace.inventory.fluid.Fluids.EARTHAIR || entry.fluid == Fluids.OXYGEN || entry.fluid == com.hbmspace.inventory.fluid.Fluids.NITROGEN) {
 				// Default to regular ol' overworld
 				fluidColor = new Vec3d(0.7529412F * sunR, 0.84705883F * sunG, sunB);
 			} else {
@@ -334,11 +334,11 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 			FluidEntry entry = atmosphere.fluids.get(i);
 			Vec3d fluidColor;
 
-			if (entry.fluid == Fluids.EVEAIR) {
+			if (entry.fluid == com.hbmspace.inventory.fluid.Fluids.EVEAIR) {
 				fluidColor = new Vec3d(53F / 255F * sun, 32F / 255F * sun, 74F / 255F * sun);
-			} else if (entry.fluid == Fluids.DUNAAIR || entry.fluid == Fluids.CARBONDIOXIDE) {
+			} else if (entry.fluid == com.hbmspace.inventory.fluid.Fluids.DUNAAIR || entry.fluid == Fluids.CARBONDIOXIDE) {
 				fluidColor = new Vec3d(212F / 255F * sun, 112F / 255F * sun, 78F / 255F * sun);
-			} else if (entry.fluid == com.hbmspace.inventory.fluid.Fluids.EARTHAIR || entry.fluid == Fluids.OXYGEN || entry.fluid == Fluids.NITROGEN) {
+			} else if (entry.fluid == com.hbmspace.inventory.fluid.Fluids.EARTHAIR || entry.fluid == Fluids.OXYGEN || entry.fluid == com.hbmspace.inventory.fluid.Fluids.NITROGEN) {
 				// Default to regular ol' overworld
 				fluidColor = super.getSkyColor(camera, partialTicks);
 			} else {
@@ -431,11 +431,11 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 		// Mars IRL has inverted blue sunsets, which look cool as
 		// So carbon dioxide rich atmospheres will do the same
 		// for now, it's just a swizzle between red and blue
-		if(atmosphere.hasFluid(Fluids.DUNAAIR) || atmosphere.hasFluid(Fluids.CARBONDIOXIDE)) {
+		if(atmosphere.hasFluid(com.hbmspace.inventory.fluid.Fluids.DUNAAIR) || atmosphere.hasFluid(Fluids.CARBONDIOXIDE)) {
 			float tmp = colors[0];
 			colors[0] = colors[2];
 			colors[2] = tmp;
-		} else if (atmosphere.hasFluid(Fluids.EVEAIR)) {
+		} else if (atmosphere.hasFluid(com.hbmspace.inventory.fluid.Fluids.EVEAIR)) {
 			float f2 = 0.4F;
 			float f3 = MathHelper.cos((solarAngle) * (float)Math.PI * 2.0F) - 0.0F;
 			float f4 = -0.0F;
@@ -449,7 +449,7 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 				colors[2] = f5 * f5;
 				colors[3] = f6;
 			}
-		} else if( atmosphere.hasFluid(Fluids.TEKTOAIR) ||  atmosphere.hasFluid(Fluids.JOOLGAS) || atmosphere.hasFluid(Fluids.CHLORINE)) {
+		} else if( atmosphere.hasFluid(com.hbmspace.inventory.fluid.Fluids.TEKTOAIR) ||  atmosphere.hasFluid(com.hbmspace.inventory.fluid.Fluids.JOOLGAS) || atmosphere.hasFluid(Fluids.CHLORINE)) {
 			float tmp = colors[1];
 			colors[1] = colors[2];
 			colors[2] = tmp;
@@ -568,9 +568,9 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 		// Adjust the sun colour based on atmospheric composition
 		for(FluidEntry entry : atmosphere.fluids) {
 			// Chlorines all redden the sun by absorbing blue and green
-			if(entry.fluid == Fluids.TEKTOAIR
+			if(entry.fluid == com.hbmspace.inventory.fluid.Fluids.TEKTOAIR
 					|| entry.fluid == Fluids.CHLORINE
-					|| entry.fluid == Fluids.CHLOROMETHANE
+					|| entry.fluid == com.hbmspace.inventory.fluid.Fluids.CHLOROMETHANE
 					|| entry.fluid == Fluids.RADIOSOLVENT
 					|| entry.fluid == com.hbmspace.inventory.fluid.Fluids.CCL) {
 				float absorption = MathHelper.clamp(1.0F - (float)entry.pressure * 0.5F, 0.0F, 1.0F);

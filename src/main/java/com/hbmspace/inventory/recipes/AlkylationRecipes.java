@@ -22,7 +22,7 @@ public class AlkylationRecipes extends SerializableRecipe {
     @Override
     public void registerDefaults() {
         // Useful halogenation recipes
-        recipes.put(Fluids.CHLOROMETHANE, new Tuple.Triplet<>( // Alkylation via halogenated methane
+        recipes.put(com.hbmspace.inventory.fluid.Fluids.CHLOROMETHANE, new Tuple.Triplet<>( // Alkylation via halogenated methane
                 new FluidStack(Fluids.NONE, 0),
                 new FluidStack(Fluids.UNSATURATEDS, 75),
                 new FluidStack(Fluids.CHLORINE, 25)
@@ -48,13 +48,13 @@ public class AlkylationRecipes extends SerializableRecipe {
         recipes.put(Fluids.XYLENE, new Tuple.Triplet<>(
                 new FluidStack(com.hbmspace.inventory.fluid.Fluids.CCL, 60),
                 new FluidStack(Fluids.REFORMGAS, 100),
-                new FluidStack(Fluids.CHLOROMETHANE, 50)
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.CHLOROMETHANE, 50)
         ));
 
         recipes.put(com.hbmspace.inventory.fluid.Fluids.CHLOROETHANE, new Tuple.Triplet<>(
                 new FluidStack(Fluids.UNSATURATEDS, 60),
                 new FluidStack(com.hbmspace.inventory.fluid.Fluids.CBENZ, 70),
-                new FluidStack(Fluids.CHLOROMETHANE, 10)
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.CHLOROMETHANE, 10)
         ));
 
     }

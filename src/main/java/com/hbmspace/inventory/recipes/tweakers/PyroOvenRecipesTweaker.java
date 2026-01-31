@@ -5,7 +5,7 @@ import com.hbm.inventory.recipes.PyroOvenRecipes;
 
 import java.lang.reflect.Method;
 
-import static com.hbm.inventory.fluid.Fluids.POLYTHYLENE;
+import static com.hbmspace.inventory.fluid.Fluids.POLYTHYLENE;
 
 public class PyroOvenRecipesTweaker {
 

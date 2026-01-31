@@ -2,7 +2,7 @@ package com.hbmspace.mixin.mod.hbm.recipes;
 
 import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.inventory.fluid.FluidType;
-import com.hbm.inventory.fluid.Fluids;
+import com.hbmspace.inventory.fluid.Fluids;
 import com.hbm.inventory.recipes.GasCentrifugeRecipes;
 import com.hbm.items.ModItems;
 import net.minecraft.item.ItemStack;

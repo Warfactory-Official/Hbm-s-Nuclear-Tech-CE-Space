@@ -43,9 +43,9 @@ public class TileEntityMachineCryoDistill extends TileEntityMachineBase implemen
 
         this.tanks = new FluidTankNTM[5];
         this.tanks[0] = new FluidTankNTM(com.hbmspace.inventory.fluid.Fluids.EARTHAIR, 64_000);
-        this.tanks[1] = new FluidTankNTM(Fluids.NITROGEN, 24_000);
+        this.tanks[1] = new FluidTankNTM(com.hbmspace.inventory.fluid.Fluids.NITROGEN, 24_000);
         this.tanks[2] = new FluidTankNTM(Fluids.OXYGEN, 24_000);
-        this.tanks[3] = new FluidTankNTM(Fluids.KRYPTON, 24_000);
+        this.tanks[3] = new FluidTankNTM(com.hbmspace.inventory.fluid.Fluids.KRYPTON, 24_000);
         this.tanks[4] = new FluidTankNTM(Fluids.CARBONDIOXIDE, 24_000);
     }
 

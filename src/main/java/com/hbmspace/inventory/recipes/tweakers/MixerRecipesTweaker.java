@@ -24,44 +24,44 @@ public class MixerRecipesTweaker {
         MixerRecipes.MixerRecipe r;
 
         r = newRecipe(500, 50);
-        r.input1 = new FluidStack(Fluids.MILK, 500);
+        r.input1 = new FluidStack(com.hbmspace.inventory.fluid.Fluids.MILK, 500);
         r.solidInput = new RecipesCommon.ComparableStack(ModItemsSpace.strawberry, 4);
-        register(Fluids.SMILK, r);
+        register(com.hbmspace.inventory.fluid.Fluids.SMILK, r);
 
         r = newRecipe(100, 50);
-        r.input1 = new FluidStack(Fluids.COFFEE, 500);
+        r.input1 = new FluidStack(com.hbmspace.inventory.fluid.Fluids.COFFEE, 500);
         r.solidInput = new RecipesCommon.ComparableStack(ModItemsSpace.powder_coffee, 4);
-        register(Fluids.COFFEE, r);
+        register(com.hbmspace.inventory.fluid.Fluids.COFFEE, r);
 
         r = newRecipe(200, 50);
-        r.input1 = new FluidStack(Fluids.TEA, 500);
+        r.input1 = new FluidStack(com.hbmspace.inventory.fluid.Fluids.TEA, 500);
         r.solidInput = new RecipesCommon.ComparableStack(ModItemsSpace.tea_leaf, 2);
-        register(Fluids.TEA, r);
+        register(com.hbmspace.inventory.fluid.Fluids.TEA, r);
 
         r = newRecipe(1000, 50);
         r.input1 = new FluidStack(Fluids.REFORMGAS, 500);
         r.input2 = new FluidStack(Fluids.SYNGAS, 500);
-        register(Fluids.ELBOWGREASE, r);
+        register(com.hbmspace.inventory.fluid.Fluids.ELBOWGREASE, r);
 
         r = newRecipe(250, 50);
         r.input1 = new FluidStack(Fluids.NITRIC_ACID, 500);
         r.solidInput = new RecipesCommon.ComparableStack(ModItems.nugget_technetium);
-        register(Fluids.HTCO4, r);
+        register(com.hbmspace.inventory.fluid.Fluids.HTCO4, r);
 
         r = newRecipe(500, 50);
         r.input1 = new FluidStack(Fluids.NITRIC_ACID, 500);
         r.solidInput = new RecipesCommon.ComparableStack(ModBlocksSpace.ore_mineral, 1, OreDictionary.WILDCARD_VALUE);
-        register(Fluids.MINSOL, r);
+        register(com.hbmspace.inventory.fluid.Fluids.MINSOL, r);
 
         r = newRecipe(50, 100);
-        r.input1 = new FluidStack(Fluids.HCL, 1400);
+        r.input1 = new FluidStack(com.hbmspace.inventory.fluid.Fluids.HCL, 1400);
         r.solidInput = new RecipesCommon.ComparableStack(ModBlocksSpace.duna_sands, 4);
         register(Fluids.REDMUD, r);
 
         r = newRecipe(750, 50);
-        r.input1 = new FluidStack(Fluids.AMMONIA, 300);
+        r.input1 = new FluidStack(com.hbmspace.inventory.fluid.Fluids.AMMONIA, 300);
         r.input2 = new FluidStack(Fluids.UNSATURATEDS, 500);
-        register(Fluids.DICYANOACETYLENE, r);
+        register(com.hbmspace.inventory.fluid.Fluids.DICYANOACETYLENE, r);
 
         r = newRecipe(450, 30);
         r.input1 = new FluidStack(com.hbmspace.inventory.fluid.Fluids.CHLOROETHANE, 250);
@@ -69,9 +69,9 @@ public class MixerRecipesTweaker {
         register(Fluids.ETHANOL, r);
 
         r = newRecipe(550, 50);
-        r.input1 = new FluidStack(Fluids.HCL, 300);
+        r.input1 = new FluidStack(com.hbmspace.inventory.fluid.Fluids.HCL, 300);
         r.solidInput = new RecipesCommon.ComparableStack(ModItemsSpace.scuttertail);
-        register(Fluids.SCUTTERBLOOD, r);
+        register(com.hbmspace.inventory.fluid.Fluids.SCUTTERBLOOD, r);
 
         r = newRecipe(1000, 70);
         r.input1 = new FluidStack(Fluids.SULFURIC_ACID, 350);
@@ -104,7 +104,7 @@ public class MixerRecipesTweaker {
         register(com.hbmspace.inventory.fluid.Fluids.VINYL, v1, v2, v3);
 
         r = newRecipe(250, 20);
-        r.input1 = new FluidStack(Fluids.HCL, 500);
+        r.input1 = new FluidStack(com.hbmspace.inventory.fluid.Fluids.HCL, 500);
         r.solidInput = new RecipesCommon.ComparableStack(ModItemsSpace.leaf_pet, 32);
         register(com.hbmspace.inventory.fluid.Fluids.CBENZ, r);
     }

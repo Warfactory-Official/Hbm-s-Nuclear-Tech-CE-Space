@@ -46,63 +46,63 @@ public class ChemicalPlantRecipesTweaker {
                 .outputItems(new ItemStack(ModItemsSpace.powder_nickel, 2), new ItemStack(ModItems.powder_copper, 2))
                 .outputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.COPPERSULFATE, 200)));
 
-        recs.register(new GenericRecipe("chem.uraniumbromide").setup(200, 1_000).setIcon(ModItems.fluid_icon, Fluids.URANIUM_BROMIDE.getID())
+        recs.register(new GenericRecipe("chem.uraniumbromide").setup(200, 1_000).setIcon(ModItems.fluid_icon, com.hbmspace.inventory.fluid.Fluids.URANIUM_BROMIDE.getID())
                 .inputItems(new RecipesCommon.OreDictStack(U235.billet(), 1), new RecipesCommon.ComparableStack(ModItems.powder_bromine), new RecipesCommon.OreDictStack(ASBESTOS.ingot(), 1))
                 .inputFluids(new FluidStack(Fluids.HYDROGEN, 4_000))
-                .outputFluids(new FluidStack(Fluids.URANIUM_BROMIDE, 4_000)));
+                .outputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.URANIUM_BROMIDE, 4_000)));
 
-        recs.register(new GenericRecipe("chem.thoriumbromide").setup(200, 1_000).setIcon(ModItems.fluid_icon, Fluids.THORIUM_BROMIDE.getID())
+        recs.register(new GenericRecipe("chem.thoriumbromide").setup(200, 1_000).setIcon(ModItems.fluid_icon, com.hbmspace.inventory.fluid.Fluids.THORIUM_BROMIDE.getID())
                 .inputItems(new RecipesCommon.OreDictStack(TH232.billet(), 1), new RecipesCommon.ComparableStack(ModItems.powder_bromine), new RecipesCommon.OreDictStack(ASBESTOS.ingot(), 1))
                 .inputFluids(new FluidStack(Fluids.HYDROGEN, 4_000))
-                .outputFluids(new FluidStack(Fluids.THORIUM_BROMIDE, 4_000)));
+                .outputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.THORIUM_BROMIDE, 4_000)));
 
         recs.register(new GenericRecipe("chem.hydrazine").setup(250, 1_000).setIcon(ModItems.canister_full, Fluids.HYDRAZINE.getID())
-                .inputFluids(new FluidStack(Fluids.NITRIC_ACID, 2_000), new FluidStack(Fluids.AMMONIA, 1_000))
+                .inputFluids(new FluidStack(Fluids.NITRIC_ACID, 2_000), new FluidStack(com.hbmspace.inventory.fluid.Fluids.AMMONIA, 1_000))
                 .outputFluids(new FluidStack(Fluids.HYDRAZINE, 800)));
 
         recs.register(new GenericRecipe("chem.ammonia").setup(50, 100)
-                .inputFluids(new FluidStack(Fluids.NITROGEN, 600), new FluidStack(Fluids.WATER, 1_000))
-                .outputFluids(new FluidStack(Fluids.AMMONIA, 800)));
+                .inputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.NITROGEN, 600), new FluidStack(Fluids.WATER, 1_000))
+                .outputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.AMMONIA, 800)));
 
-        recs.register(new GenericRecipe("chem.bloodfuel").setup(250, 1_000).setIcon(ModItems.canister_full, Fluids.BLOODGAS.getID())
-                .inputFluids(new FluidStack(Fluids.AMMONIA, 350), new FluidStack(Fluids.BLOOD, 800))
-                .outputFluids(new FluidStack(Fluids.BLOODGAS, 1000)));
+        recs.register(new GenericRecipe("chem.bloodfuel").setup(250, 1_000).setIcon(ModItems.canister_full, com.hbmspace.inventory.fluid.Fluids.BLOODGAS.getID())
+                .inputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.AMMONIA, 350), new FluidStack(Fluids.BLOOD, 800))
+                .outputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.BLOODGAS, 1000)));
 
         recs.register(new GenericRecipe("chem.hcl").setup(50, 100)
                 .inputFluids(new FluidStack(Fluids.HYDROGEN, 500), new FluidStack(Fluids.CHLORINE, 500))
-                .outputFluids(new FluidStack(Fluids.HCL, 1000)));
+                .outputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.HCL, 1000)));
 
         recs.register(new GenericRecipe("chem.ammoniumnitrate").setup(250, 1_000)
-                .inputFluids(new FluidStack(Fluids.AMMONIA, 500), new FluidStack(Fluids.NITROGEN, 1000))
+                .inputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.AMMONIA, 500), new FluidStack(com.hbmspace.inventory.fluid.Fluids.NITROGEN, 1000))
                 .outputItems(new ItemStack(ModItemsSpace.ammonium_nitrate, 4)));
 
         recs.register(new GenericRecipe("chem.nmass").setup(250, 10_000)
                 .inputFluids(new FluidStack(Fluids.SCHRABIDIC, 650), (new FluidStack(Fluids.IONGEL, 800)))
                 .inputItems(new RecipesCommon.ComparableStack(ModItems.pellet_charged, 1), new RecipesCommon.ComparableStack(ModItems.ingot_euphemium, 1))
-                .outputFluids(new FluidStack(Fluids.NMASS, 1000), new FluidStack(Fluids.WASTEGAS, 2000)));
+                .outputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.NMASS, 1000), new FluidStack(Fluids.WASTEGAS, 2000)));
 
         recs.register(new GenericRecipe("chem.masscake").setup(200, 100)
-                .inputFluids(new FluidStack(Fluids.CMILK, 4000), new FluidStack(Fluids.CREAM, 1000)) // why not regular milk? well its because the refined products allow for higher mass cakes while still needing less milk
+                .inputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.CMILK, 4000), new FluidStack(com.hbmspace.inventory.fluid.Fluids.CREAM, 1000)) // why not regular milk? well its because the refined products allow for higher mass cakes while still needing less milk
                 .inputItems(
                         new RecipesCommon.ComparableStack(Items.SUGAR, 8),				// if there is a hole in my logic i will shoot myself
                         new RecipesCommon.ComparableStack(Items.EGG, 4))				//ex: since a cake needs 3 buckets of milk, c-milk is more dense, leading to it being only 4 buckets of condensed milk, thats 1 bucket per cake.
                 .outputItems(new ItemStack(Items.CAKE, 4)));
 
         recs.register(new GenericRecipe("chem.butter").setup(100, 100)
-                .inputFluids(new FluidStack(Fluids.EMILK, 1000))
+                .inputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.EMILK, 1000))
                 .outputItems(new ItemStack(ModItemsSpace.butter)));
         recs.register(new GenericRecipe("chem.strawberryicecream").setup(150, 100)
-                .inputFluids(new FluidStack(Fluids.CREAM, 1000))
+                .inputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.CREAM, 1000))
                 .inputItems(new RecipesCommon.ComparableStack(ModItemsSpace.butter, 2), new RecipesCommon.ComparableStack(Blocks.PACKED_ICE, 1), new RecipesCommon.ComparableStack(ModItemsSpace.strawberry, 4))
                 .outputItems(new ItemStack(ModItemsSpace.s_cream, 4)));
 
         recs.register(new GenericRecipe("chem.minmusicecream").setup(150, 100)
-                .inputFluids(new FluidStack(Fluids.CREAM, 1000))
+                .inputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.CREAM, 1000))
                 .inputItems(new RecipesCommon.ComparableStack(ModItemsSpace.butter, 4), new RecipesCommon.ComparableStack(ModBlocksSpace.minmus_smooth, 2), new RecipesCommon.ComparableStack(ModBlocksSpace.minmus_stone, 2))
                 .outputItems(new ItemStack(ModItemsSpace.min_cream, 4)));
 
         recs.register(new GenericRecipe("chem.minmussmoothstone").setup(200, 1_000)
-                .inputFluids(new FluidStack(Fluids.MILK, 350), new FluidStack(Fluids.EMILK, 250))
+                .inputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.MILK, 350), new FluidStack(com.hbmspace.inventory.fluid.Fluids.EMILK, 250))
                 .inputItems(new RecipesCommon.ComparableStack(Blocks.ICE, 4), new RecipesCommon.ComparableStack(ModItemsSpace.mint_leaves, 2), new RecipesCommon.ComparableStack(ModBlocksSpace.minmus_smooth, 2))
                 .outputItems(new ItemStack(ModBlocksSpace.minmus_smooth, 4)));
         //something about a steam distilation?
@@ -117,7 +117,7 @@ public class ChemicalPlantRecipesTweaker {
                 .outputItems(new ItemStack(ModItemsSpace.ingot_menthol, 15)));
 
         recs.register(new GenericRecipe("chem.mintslice").setup(50, 100)
-                .inputFluids(new FluidStack(Fluids.MILK, 350))
+                .inputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.MILK, 350))
                 .inputItems(new RecipesCommon.ComparableStack(ModItemsSpace.billet_menthol, 3), new RecipesCommon.ComparableStack(ModBlocksSpace.minmus_stone, 1), new RecipesCommon.ComparableStack(Items.SUGAR, 6))
                 .outputItems(new ItemStack(ModItemsSpace.chocolate_mint_billet, 3)));
 
@@ -133,10 +133,10 @@ public class ChemicalPlantRecipesTweaker {
 
         recs.register(new GenericRecipe("chem.chloromethane").setup(50, 1_000)
                 .inputFluids(new FluidStack(Fluids.GAS, 750), new FluidStack(Fluids.CHLORINE, 250))
-                .outputFluids(new FluidStack(Fluids.CHLOROMETHANE, 1000)));
+                .outputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.CHLOROMETHANE, 1000)));
 
         recs.register(new GenericRecipe("chem.nitricacidalt").setupNamed(50, 1_000)
-                .inputFluids(new FluidStack(Fluids.WATER, 500), new FluidStack(Fluids.AMMONIA, 1000))
+                .inputFluids(new FluidStack(Fluids.WATER, 500), new FluidStack(com.hbmspace.inventory.fluid.Fluids.AMMONIA, 1000))
                 .outputFluids(new FluidStack(Fluids.NITRIC_ACID, 1_000)));
 
         // WARNING: NILERED CHEMISTRY ZONE //

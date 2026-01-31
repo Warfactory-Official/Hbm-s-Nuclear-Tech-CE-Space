@@ -6,7 +6,7 @@ import com.hbm.blocks.BlockDummyable;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.SolarSystem;
 import com.hbm.inventory.fluid.FluidType;
-import com.hbm.inventory.fluid.Fluids;
+import com.hbmspace.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.inventory.fluid.trait.FT_Rocket;
 import com.hbm.lib.DirPos;
@@ -88,7 +88,7 @@ public class TileEntityMachineHTR3 extends TileEntityMachineBase implements ITic
             networkPackNT(250);
         } else {
             if(isOn) {
-                speed += 0.05D;
+                speed += 0.05F;
                 if(speed > 1) speed = 1;
 
                 if(soundtime > 18) {
@@ -103,7 +103,7 @@ public class TileEntityMachineHTR3 extends TileEntityMachineBase implements ITic
                     audio.keepAlive();
 
                     {
-                        List<FluidType> types = new ArrayList() {{ add(tanks[0].getTankType()); }};
+                        List<FluidType> types = new ArrayList<>() {{ add(tanks[0].getTankType()); }};
 
                         if(types.contains(Fluids.SUPERHEATED_HYDROGEN)) {
 
@@ -125,9 +125,9 @@ public class TileEntityMachineHTR3 extends TileEntityMachineBase implements ITic
                     }
 
                     {
-                        List<FluidType> types = new ArrayList() {{ add(tanks[0].getTankType()); }};
+                        List<FluidType> types = new ArrayList<>() {{ add(tanks[0].getTankType()); }};
 
-                        if(types.contains(Fluids.GAS_WATZ) || types.contains(Fluids.WASTEGAS) || types.contains(Fluids.GASEOUS_THORIUM_BROMIDE)) {
+                        if(types.contains(Fluids.GAS_WATZ) || types.contains(com.hbm.inventory.fluid.Fluids.WASTEGAS) || types.contains(Fluids.GASEOUS_THORIUM_BROMIDE)) {
 
                             ForgeDirection dir = ForgeDirection.getOrientation(this.getBlockMetadata() - BlockDummyable.offset).getRotation(ForgeDirection.UP);
 
@@ -147,7 +147,7 @@ public class TileEntityMachineHTR3 extends TileEntityMachineBase implements ITic
                     }
 
                     {
-                        List<FluidType> types = new ArrayList() {{ add(tanks[0].getTankType()); }};
+                        List<FluidType> types = new ArrayList<>() {{ add(tanks[0].getTankType()); }};
 
                         if(types.contains(Fluids.GASEOUS_SCHRABIDIUM_BROMIDE)) {
 
@@ -169,7 +169,7 @@ public class TileEntityMachineHTR3 extends TileEntityMachineBase implements ITic
                     }
 
                     {
-                        List<FluidType> types = new ArrayList() {{ add(tanks[0].getTankType()); }};
+                        List<FluidType> types = new ArrayList<>() {{ add(tanks[0].getTankType()); }};
 
                         if(types.contains(Fluids.GASEOUS_URANIUM_BROMIDE) || types.contains(Fluids.GASEOUS_PLUTONIUM_BROMIDE)) {
 
@@ -191,7 +191,7 @@ public class TileEntityMachineHTR3 extends TileEntityMachineBase implements ITic
                     }
                 }
             } else {
-                speed -= 0.05D;
+                speed -= 0.05F;
                 if(speed < 0) speed = 0;
 
                 if(audio != null) {
@@ -207,7 +207,7 @@ public class TileEntityMachineHTR3 extends TileEntityMachineBase implements ITic
     }
 
     private String getContrailType(FluidType type) {
-        if(type == Fluids.GAS_WATZ || type == Fluids.WASTEGAS || type == Fluids.GASEOUS_THORIUM_BROMIDE) return "missileContrailMUD";
+        if(type == Fluids.GAS_WATZ || type == com.hbm.inventory.fluid.Fluids.WASTEGAS || type == Fluids.GASEOUS_THORIUM_BROMIDE) return "missileContrailMUD";
         if(type == Fluids.GASEOUS_SCHRABIDIUM_BROMIDE) return "missileContrailSCH";
         if(type == Fluids.GASEOUS_URANIUM_BROMIDE || type == Fluids.GASEOUS_PLUTONIUM_BROMIDE) return "missileContrailUP";
         return "missileContrail";
@@ -296,7 +296,7 @@ public class TileEntityMachineHTR3 extends TileEntityMachineBase implements ITic
     AxisAlignedBB bb = null;
 
     @Override
-    public AxisAlignedBB getRenderBoundingBox() {
+    public @NotNull AxisAlignedBB getRenderBoundingBox() {
         if(bb == null) bb = new AxisAlignedBB(pos.getX() - 10, pos.getY() - 3, pos.getZ() - 10, pos.getX() + 11, pos.getY() + 4, pos.getZ() + 11);
         return bb;
     }

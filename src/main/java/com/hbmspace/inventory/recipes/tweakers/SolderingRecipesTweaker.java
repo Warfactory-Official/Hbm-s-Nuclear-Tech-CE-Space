@@ -55,7 +55,7 @@ public class SolderingRecipesTweaker {
         ));
 
         recipes.add(new SolderingRecipes.SolderingRecipe(new ItemStack(ModItems.circuit, 1, ItemEnums.EnumCircuitType.BISMOID.ordinal()), 400, 10_000,
-                new FluidStack(Fluids.POLYTHYLENE, 1_000),
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.POLYTHYLENE, 1_000),
                 new RecipesCommon.AStack[] {
                         new RecipesCommon.ComparableStack(ModItems.circuit, 4, ItemEnums.EnumCircuitType.CHIP_BISMOID),
                         new RecipesCommon.ComparableStack(ModItemsSpace.circuit, lbsm ? 1 : 4, ItemEnumsSpace.EnumCircuitType.GASCHIP),
@@ -67,7 +67,7 @@ public class SolderingRecipesTweaker {
         ));
 
         recipes.add(new SolderingRecipes.SolderingRecipe(new ItemStack(ModItems.circuit, 1, ItemEnums.EnumCircuitType.ADVANCED.ordinal()), 300, 1_000,
-                new FluidStack(Fluids.POLYTHYLENE, 250),
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.POLYTHYLENE, 250),
                 new RecipesCommon.AStack[] {
                         new RecipesCommon.ComparableStack(ModItemsSpace.circuit, lbsm ? 1 : 2, ItemEnumsSpace.EnumCircuitType.GASCHIP),
                         new RecipesCommon.ComparableStack(ModItems.circuit, 2, ItemEnums.EnumCircuitType.CAPACITOR)},

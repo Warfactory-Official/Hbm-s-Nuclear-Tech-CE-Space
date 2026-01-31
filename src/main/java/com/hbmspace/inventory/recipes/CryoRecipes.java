@@ -22,59 +22,59 @@ public class CryoRecipes extends SerializableRecipe {
     @Override
     public void registerDefaults() {
         recipes.put(com.hbmspace.inventory.fluid.Fluids.EARTHAIR, new Tuple.Quartet<>(
-                new FluidStack(Fluids.NITROGEN, 60),
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.NITROGEN, 60),
                 new FluidStack(Fluids.OXYGEN, 25),
-                new FluidStack(Fluids.KRYPTON, 10),
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.KRYPTON, 10),
                 new FluidStack(Fluids.CARBONDIOXIDE, 5)
         ));
 
-        recipes.put(Fluids.TEKTOAIR, new Tuple.Quartet<>(
-                new FluidStack(Fluids.CHLOROMETHANE, 55),
+        recipes.put(com.hbmspace.inventory.fluid.Fluids.TEKTOAIR, new Tuple.Quartet<>(
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.CHLOROMETHANE, 55),
                 new FluidStack(Fluids.CHLORINE, 25),
                 new FluidStack(Fluids.GAS, 15),
-                new FluidStack(Fluids.HCL, 5)
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.HCL, 5)
         ));
 
-        recipes.put(Fluids.JOOLGAS, new Tuple.Quartet<>(
+        recipes.put(com.hbmspace.inventory.fluid.Fluids.JOOLGAS, new Tuple.Quartet<>(
                 new FluidStack(Fluids.HELIUM3, 40),
                 new FluidStack(Fluids.HYDROGEN, 30),
                 new FluidStack(Fluids.CHLORINE, 20),
-                new FluidStack(Fluids.NEON, 10)
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.NEON, 10)
         ));
 
-        recipes.put(Fluids.NGAS, new Tuple.Quartet<>(
+        recipes.put(com.hbmspace.inventory.fluid.Fluids.NGAS, new Tuple.Quartet<>(
                 new FluidStack(Fluids.GAS, 45),
-                new FluidStack(Fluids.AMMONIA, 25),
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.AMMONIA, 25),
                 new FluidStack(Fluids.UNSATURATEDS, 15),
                 new FluidStack(Fluids.XENON, 15)
         ));
 
-        recipes.put(Fluids.UGAS, new Tuple.Quartet<>(
+        recipes.put(com.hbmspace.inventory.fluid.Fluids.UGAS, new Tuple.Quartet<>(
                 new FluidStack(Fluids.OXYGEN, 45),
-                new FluidStack(Fluids.NITROGEN, 25),
-                new FluidStack(Fluids.METHANOL, 15),
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.NITROGEN, 25),
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.METHANOL, 15),
                 new FluidStack(Fluids.AROMATICS, 15)
         ));
 
-        recipes.put(Fluids.SARNUSGAS, new Tuple.Quartet<>(
+        recipes.put(com.hbmspace.inventory.fluid.Fluids.SARNUSGAS, new Tuple.Quartet<>(
                 new FluidStack(Fluids.HYDROGEN, 45),
                 new FluidStack(Fluids.HELIUM3, 35),
                 new FluidStack(Fluids.GAS, 15),
-                new FluidStack(Fluids.NITROGEN, 5)
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.NITROGEN, 5)
         ));
 
-        recipes.put(Fluids.EVEAIR, new Tuple.Quartet<>(
-                new FluidStack(Fluids.KMnO4, 40),
+        recipes.put(com.hbmspace.inventory.fluid.Fluids.EVEAIR, new Tuple.Quartet<>(
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.KMnO4, 40),
                 new FluidStack(Fluids.MERCURY, 35),
                 new FluidStack(Fluids.XENON, 15),
-                new FluidStack(Fluids.AMMONIA, 10)
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.AMMONIA, 10)
         ));
 
 
-        recipes.put(Fluids.DUNAAIR, new Tuple.Quartet<>(
+        recipes.put(com.hbmspace.inventory.fluid.Fluids.DUNAAIR, new Tuple.Quartet<>(
                 new FluidStack(Fluids.CARBONDIOXIDE, 70),
-                new FluidStack(Fluids.NITROGEN, 15),
-                new FluidStack(Fluids.ARGON, 10),
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.NITROGEN, 15),
+                new FluidStack(com.hbmspace.inventory.fluid.Fluids.ARGON, 10),
                 new FluidStack(Fluids.OXYGEN, 5)
         ));
 

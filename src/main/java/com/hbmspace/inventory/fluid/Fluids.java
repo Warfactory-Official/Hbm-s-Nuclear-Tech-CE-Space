@@ -54,5 +54,56 @@ public class Fluids {
     public static FluidType HALOLIGHT;
     public static FluidType LITHCARBONATE;
     public static FluidType TCRUDE;
+    public static FluidType ELBOWGREASE;
+    public static FluidType NMASSTETRANOL; //stronger, not suitable for FTL due to its Carbon-Chain content
+    public static FluidType NMASS; //weaker, much more suitable for FTL
+    public static FluidType SCUTTERBLOOD;
+    public static FluidType HTCO4;//we
+    public static FluidType NEON;
+    public static FluidType ARGON;
+    public static FluidType KRYPTON;
+    public static FluidType COFFEE;
+    public static FluidType TEA;
+    public static FluidType HONEY;
+    public static FluidType OLIVEOIL;
+    public static FluidType FLUORINE; //why not
+    public static FluidType DUNAAIR; //yields mostly carbon dioxide with a touch of N2
+    public static FluidType TEKTOAIR; // makes methane, and some hydrocarbons too. literally free... //can be distilled for methane, chlorine, aromatics, or can be cracked for chlorine, unsats, and possibly methanol
+    public static FluidType JOOLGAS;
+    public static FluidType SARNUSGAS;
+    public static FluidType UGAS; //urlum
+    public static FluidType NGAS;//neidon
+    public static FluidType MILK;
+    public static FluidType SMILK;
+    public static FluidType EVEAIR; // when cryogenically distillated, can yield stuff like mercury, that one chemical pu suggested involving something purple i forgot, and possibly iodine
+    public static FluidType KMnO4;
+    public static FluidType CHLOROMETHANE; // halogenated natural gas, used in alkylation
+    public static FluidType METHANOL; //syngas + methane, or + natgas? or just from cracking natgas? requires an OH hydroxyl group (it's an alcohOL)
+    public static FluidType BROMINE; // Aklyl Bromide, cokes into bromide powder and natural gas
+    public static FluidType METHYLENE;
+    public static FluidType POLYTHYLENE; //this is so that you wont need to go through microcrafting hell on circuits //idea is that rubber solution makes these casts that can then be imprinted in the assembly machine without needing to go through the resources to make the circuits one by one, it would be gated behind oil though.
+    public static FluidType HCL;
+    public static FluidType AMMONIA;
+    public static FluidType BLOODGAS;
+    public static FluidType MINSOL;
+    public static FluidType NITROGEN;
+    public static FluidType EMILK; //ghostycore
+    public static FluidType CMILK;
+    public static FluidType CREAM;
+    public static FluidType DICYANOACETYLENE;//DICYANOACETYLENE
+    public static FluidType MORKITE;
+    public static FluidType MORKINE; //gaseous morkite
+    public static FluidType MSLURRY; // Morkite slurry, similar to MINSOL
+    public static FluidType SUPERHEATED_HYDROGEN;
+    public static FluidType URANIUM_BROMIDE;
+    public static FluidType PLUTONIUM_BROMIDE;
+    public static FluidType SCHRABIDIUM_BROMIDE;
+    public static FluidType THORIUM_BROMIDE;
+    public static FluidType GASEOUS_URANIUM_BROMIDE;
+    public static FluidType GASEOUS_PLUTONIUM_BROMIDE;
+    public static FluidType GASEOUS_SCHRABIDIUM_BROMIDE;
+    public static FluidType GASEOUS_THORIUM_BROMIDE;
+    public static FluidType GASEOUS_HYDROGEN;
+    public static FluidType GAS_WATZ;
 
 }

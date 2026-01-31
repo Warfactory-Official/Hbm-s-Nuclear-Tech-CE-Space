@@ -35,7 +35,7 @@ public class TileEntityMachineGasDock extends TileEntityMachineBase implements I
     public TileEntityMachineGasDock() {
         super(0, true, false);
         this.tanks = new FluidTankNTM[3];
-        this.tanks[0] = new FluidTankNTM(Fluids.JOOLGAS, 64_000);
+        this.tanks[0] = new FluidTankNTM(com.hbmspace.inventory.fluid.Fluids.JOOLGAS, 64_000);
         this.tanks[1] = new FluidTankNTM(Fluids.HYDROGEN, 32_000);
         this.tanks[2] = new FluidTankNTM(Fluids.OXYGEN, 32_000);
     }
