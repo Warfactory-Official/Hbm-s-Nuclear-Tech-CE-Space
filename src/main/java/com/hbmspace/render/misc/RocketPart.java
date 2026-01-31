@@ -43,8 +43,167 @@ public class RocketPart extends MissilePart {
         this.renderInventoryModel = false;
         return this;
     }
+    // Th3_Sl1ze: I hate the duplicate registration method but apparently it's the only fix I can see rn
+    public static void registerServerParts() {
+        registerPartServer(ModItemsSpace.sat_war, ItemMissile.PartType.WARHEAD, 7, 5);
+        registerPartServer(ModItemsSpace.sat_dyson_relay, ItemMissile.PartType.WARHEAD, 7, 5);
 
-    public static void registerAllParts() {
+        registerPartServer(ModItemsSpace.rp_capsule_20, ItemMissile.PartType.WARHEAD, 3.5, 2.25);
+        registerPartServer(ModItemsSpace.rp_station_core_20, ItemMissile.PartType.WARHEAD, 7, 5);
+        registerPartServer(ModItemsSpace.rp_pod_20, ItemMissile.PartType.WARHEAD, 3.0, 2.25);
+
+        registerPartServer(ModItems.mp_thruster_10_kerosene, ItemMissile.PartType.THRUSTER, 1, 1);
+        registerPartServer(ModItems.mp_thruster_10_solid, ItemMissile.PartType.THRUSTER, 0.5, 1);
+        registerPartServer(ModItems.mp_thruster_10_xenon, ItemMissile.PartType.THRUSTER, 0.5, 1);
+
+        //
+        registerPartServer(ModItems.mp_thruster_15_kerosene, ItemMissile.PartType.THRUSTER, 1.5, 1.5);
+        registerPartServer(ModItems.mp_thruster_15_kerosene_dual, ItemMissile.PartType.THRUSTER, 1, 1.5);
+        registerPartServer(ModItems.mp_thruster_15_kerosene_triple, ItemMissile.PartType.THRUSTER, 1, 1.5);
+        registerPartServer(ModItems.mp_thruster_15_solid, ItemMissile.PartType.THRUSTER, 0.5, 1);
+        registerPartServer(ModItems.mp_thruster_15_solid_hexdecuple, ItemMissile.PartType.THRUSTER, 0.5, 1);
+        registerPartServer(ModItems.mp_thruster_15_hydrogen, ItemMissile.PartType.THRUSTER, 1.5, 1.5);
+        registerPartServer(ModItems.mp_thruster_15_hydrogen_dual, ItemMissile.PartType.THRUSTER, 1, 1.5);
+        registerPartServer(ModItems.mp_thruster_15_balefire_short, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItems.mp_thruster_15_balefire, ItemMissile.PartType.THRUSTER, 3, 2.5);
+        registerPartServer(ModItems.mp_thruster_15_balefire_large, ItemMissile.PartType.THRUSTER, 3, 2.5);
+        registerPartServer(ModItems.mp_thruster_15_balefire_large_rad, ItemMissile.PartType.THRUSTER, 3, 2.5);
+        //
+        registerPartServer(ModItems.mp_thruster_20_kerosene, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItems.mp_thruster_20_kerosene_dual, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItems.mp_thruster_20_kerosene_triple, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItemsSpace.mp_thruster_20_methalox, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItemsSpace.mp_thruster_20_methalox_dual, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItemsSpace.mp_thruster_20_methalox_triple, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItemsSpace.mp_thruster_20_hydrogen, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItemsSpace.mp_thruster_20_hydrogen_dual, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItemsSpace.mp_thruster_20_hydrogen_triple, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItems.mp_thruster_20_solid, ItemMissile.PartType.THRUSTER, 1, 1.75);
+        registerPartServer(ModItems.mp_thruster_20_solid_multi, ItemMissile.PartType.THRUSTER, 0.5, 1.5);
+        registerPartServer(ModItems.mp_thruster_20_solid_multier, ItemMissile.PartType.THRUSTER, 0.5, 1.5);
+
+        //////
+        registerPartServer(ModItems.mp_stability_10_flat, ItemMissile.PartType.FINS, 0, 2);
+        registerPartServer(ModItems.mp_stability_10_cruise, ItemMissile.PartType.FINS, 0, 3);
+        registerPartServer(ModItems.mp_stability_10_space, ItemMissile.PartType.FINS, 0, 2);
+        registerPartServer(ModItems.mp_stability_15_flat, ItemMissile.PartType.FINS, 0, 3);
+        registerPartServer(ModItems.mp_stability_15_thin, ItemMissile.PartType.FINS, 0, 3);
+        registerPartServer(ModItems.mp_stability_15_soyuz, ItemMissile.PartType.FINS, 0, 3);
+        registerPartServer(ModItemsSpace.rp_legs_20, ItemMissile.PartType.FINS, 2.4, 3);
+        //////
+
+        registerPartServer(ModItems.mp_fuselage_10_kerosene, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_kerosene_camo, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_kerosene_desert, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_kerosene_sky, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_kerosene_insulation, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_kerosene_flames, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_kerosene_sleek, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_kerosene_metal, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_kerosene_taint, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_solid, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_solid_flames, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_solid_insulation, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_solid_sleek, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_solid_soviet_glory, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_solid_cathedral, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_solid_moonlit, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_solid_battery, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_solid_duracell, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_xenon, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_xenon_bhole, ItemMissile.PartType.FUSELAGE, 4, 3);
+        registerPartServer(ModItems.mp_fuselage_10_long_kerosene, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_kerosene_camo, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_kerosene_desert, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_kerosene_sky, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_kerosene_flames, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_kerosene_insulation, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_kerosene_sleek, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_kerosene_metal, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_kerosene_dash, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_kerosene_taint, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_kerosene_vap, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_solid, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_solid_flames, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_solid_insulation, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_solid_sleek, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_solid_soviet_glory, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_solid_bullet, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_long_solid_silvermoonlight, ItemMissile.PartType.FUSELAGE, 7, 5);
+        registerPartServer(ModItems.mp_fuselage_10_15_kerosene, ItemMissile.PartType.FUSELAGE, 9, 5.5);
+        registerPartServer(ModItems.mp_fuselage_10_15_solid, ItemMissile.PartType.FUSELAGE, 9, 5.5);
+        registerPartServer(ModItems.mp_fuselage_10_15_hydrogen, ItemMissile.PartType.FUSELAGE, 9, 5.5);
+        registerPartServer(ModItems.mp_fuselage_10_15_balefire, ItemMissile.PartType.FUSELAGE, 9, 5.5);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene_camo, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene_desert, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene_sky, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene_insulation, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene_metal, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene_decorated, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene_steampunk, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene_polite, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene_blackjack, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene_lambda, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene_minuteman, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene_pip, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene_taint, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_kerosene_yuck, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_solid, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_solid_insulation, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_solid_desh, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_solid_soviet_glory, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_solid_soviet_stank, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_solid_faust, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_solid_silvermoonlight, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_solid_snowy, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_solid_panorama, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_solid_roses, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_solid_mimi, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_hydrogen, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_hydrogen_cathedral, ItemMissile.PartType.FUSELAGE, 10, 6);
+        registerPartServer(ModItems.mp_fuselage_15_balefire, ItemMissile.PartType.FUSELAGE, 10, 6);
+
+        registerPartServer(ModItems.mp_fuselage_15_20_kerosene, ItemMissile.PartType.FUSELAGE, 16, 10);
+        registerPartServer(ModItems.mp_fuselage_15_20_kerosene_magnusson, ItemMissile.PartType.FUSELAGE, 16, 10);
+        registerPartServer(ModItems.mp_fuselage_15_20_solid, ItemMissile.PartType.FUSELAGE, 16, 10);
+
+        registerPartServer(ModItemsSpace.rp_fuselage_20_12_hydrazine, ItemMissile.PartType.FUSELAGE, 10, 8);
+        registerPartServer(ModItemsSpace.rp_fuselage_20_12, ItemMissile.PartType.FUSELAGE, 12, 8);
+        registerPartServer(ModItemsSpace.rp_fuselage_20_6, ItemMissile.PartType.FUSELAGE, 6, 4.5);
+        registerPartServer(ModItemsSpace.rp_fuselage_20_3, ItemMissile.PartType.FUSELAGE, 3, 2.5);
+        registerPartServer(ModItemsSpace.rp_fuselage_20_1, ItemMissile.PartType.FUSELAGE, 1, 1.5);
+
+        registerPartServer(ModItemsSpace.mp_thruster_20_methalox, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItemsSpace.mp_thruster_20_methalox_dual, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItemsSpace.mp_thruster_20_methalox_triple, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItemsSpace.mp_thruster_20_hydrogen, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItemsSpace.mp_thruster_20_hydrogen_dual, ItemMissile.PartType.THRUSTER, 2, 2);
+        registerPartServer(ModItemsSpace.mp_thruster_20_hydrogen_triple, ItemMissile.PartType.THRUSTER, 2, 2);
+
+        //////
+
+        registerPartServer(ModItems.mp_warhead_10_he, ItemMissile.PartType.WARHEAD, 2, 1.5);
+        registerPartServer(ModItems.mp_warhead_10_incendiary, ItemMissile.PartType.WARHEAD, 2.5, 2);
+        registerPartServer(ModItems.mp_warhead_10_buster, ItemMissile.PartType.WARHEAD, 0.5, 1);
+        registerPartServer(ModItems.mp_warhead_10_nuclear, ItemMissile.PartType.WARHEAD, 2, 1.5);
+        registerPartServer(ModItems.mp_warhead_10_nuclear_large, ItemMissile.PartType.WARHEAD, 2.5, 1.5);
+        registerPartServer(ModItems.mp_warhead_10_taint, ItemMissile.PartType.WARHEAD, 2.25, 1.5);
+        registerPartServer(ModItems.mp_warhead_10_cloud, ItemMissile.PartType.WARHEAD, 2.25, 1.5);
+        registerPartServer(ModItems.mp_warhead_15_he, ItemMissile.PartType.WARHEAD, 2, 1.5);
+        registerPartServer(ModItems.mp_warhead_15_incendiary, ItemMissile.PartType.WARHEAD, 2, 1.5);
+        registerPartServer(ModItems.mp_warhead_15_nuclear, ItemMissile.PartType.WARHEAD, 3.5, 2);
+        registerPartServer(ModItems.mp_warhead_15_nuclear_shark, ItemMissile.PartType.WARHEAD, 3.5, 2);
+        registerPartServer(ModItems.mp_warhead_15_thermo, ItemMissile.PartType.WARHEAD, 3.5, 2);
+        registerPartServer(ModItems.mp_warhead_15_volcano, ItemMissile.PartType.WARHEAD, 3.5, 2);
+        registerPartServer(ModItems.mp_warhead_15_boxcar, ItemMissile.PartType.WARHEAD, 2.25, 7.5);
+        registerPartServer(ModItems.mp_warhead_15_n2, ItemMissile.PartType.WARHEAD, 3, 2);
+        registerPartServer(ModItems.mp_warhead_15_balefire, ItemMissile.PartType.WARHEAD, 2.75, 2);
+        registerPartServer(ModItems.mp_warhead_15_mirv, ItemMissile.PartType.WARHEAD, 3, 2);
+        registerPartServer(ModItems.mp_warhead_15_turbine, ItemMissile.PartType.WARHEAD, 2.25, 2);
+    }
+
+    public static void registerClientParts() {
         parts.clear();
 
         registerPart(ModItemsSpace.sat_war, ItemMissile.PartType.WARHEAD, 7, 5, ResourceManager.mp_w_fairing, ResourceManager.mp_w_fairing_tex);
@@ -80,12 +239,12 @@ public class RocketPart extends MissilePart {
         registerPart(ModItems.mp_thruster_20_kerosene, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene, ResourceManager.mp_t_20_kerosene_tex);
         registerPart(ModItems.mp_thruster_20_kerosene_dual, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene_dual, ResourceManager.mp_t_20_kerosene_dual_tex);
         registerPart(ModItems.mp_thruster_20_kerosene_triple, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene_triple, ResourceManager.mp_t_20_kerosene_dual_tex);
-        //registerPart(ModItems.mp_thruster_20_methalox, PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene, ResourceManager.mp_t_20_methalox_tex);
-        //registerPart(ModItems.mp_thruster_20_methalox_dual, PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene_dual, ResourceManager.mp_t_20_methalox_dual_tex);
-        //registerPart(ModItems.mp_thruster_20_methalox_triple, PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene_triple, ResourceManager.mp_t_20_methalox_dual_tex);
-        //registerPart(ModItems.mp_thruster_20_hydrogen, PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene, ResourceManager.mp_t_20_hydrogen_tex);
-        //registerPart(ModItems.mp_thruster_20_hydrogen_dual, PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene_dual, ResourceManager.mp_t_20_hydrogen_dual_tex);
-        //registerPart(ModItems.mp_thruster_20_hydrogen_triple, PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene_triple, ResourceManager.mp_t_20_hydrogen_dual_tex);
+        registerPart(ModItemsSpace.mp_thruster_20_methalox, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene, ResourceManagerSpace.mp_t_20_methalox_tex);
+        registerPart(ModItemsSpace.mp_thruster_20_methalox_dual, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene_dual, ResourceManagerSpace.mp_t_20_methalox_dual_tex);
+        registerPart(ModItemsSpace.mp_thruster_20_methalox_triple, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene_triple, ResourceManagerSpace.mp_t_20_methalox_dual_tex);
+        registerPart(ModItemsSpace.mp_thruster_20_hydrogen, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene, ResourceManagerSpace.mp_t_20_hydrogen_tex);
+        registerPart(ModItemsSpace.mp_thruster_20_hydrogen_dual, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene_dual, ResourceManagerSpace.mp_t_20_hydrogen_dual_tex);
+        registerPart(ModItemsSpace.mp_thruster_20_hydrogen_triple, ItemMissile.PartType.THRUSTER, 2, 2, ResourceManager.mp_t_20_kerosene_triple, ResourceManagerSpace.mp_t_20_hydrogen_dual_tex);
         registerPart(ModItems.mp_thruster_20_solid, ItemMissile.PartType.THRUSTER, 1, 1.75, ResourceManager.mp_t_20_solid, ResourceManager.mp_t_20_solid_tex);
         registerPart(ModItems.mp_thruster_20_solid_multi, ItemMissile.PartType.THRUSTER, 0.5, 1.5, ResourceManager.mp_t_20_solid_multi, ResourceManager.mp_t_20_solid_multi_tex);
         registerPart(ModItems.mp_thruster_20_solid_multier, ItemMissile.PartType.THRUSTER, 0.5, 1.5, ResourceManager.mp_t_20_solid_multi, ResourceManager.mp_t_20_solid_multier_tex);
@@ -219,6 +378,11 @@ public class RocketPart extends MissilePart {
         registerPart(ModItems.mp_warhead_15_balefire, ItemMissile.PartType.WARHEAD, 2.75, 2, ResourceManager.mp_w_15_balefire, ResourceManager.mp_w_15_balefire_tex);
         registerPart(ModItems.mp_warhead_15_mirv, ItemMissile.PartType.WARHEAD, 3, 2, ResourceManager.mp_w_15_mirv, ResourceManager.mp_w_15_mirv_tex);
         registerPart(ModItems.mp_warhead_15_turbine, ItemMissile.PartType.WARHEAD, 2.25, 2, ResourceManager.mp_w_15_turbine, ResourceManager.mp_w_15_turbine_tex);
+    }
+
+    private static void registerPartServer(Item item, ItemMissile.PartType type, double height, double guiheight) {
+        RocketPart part = new RocketPart(item, type, height, guiheight, null, null);
+        parts.put(item.hashCode(), part);
     }
 
     public static RocketPart registerPart(Item item, ItemMissile.PartType type, double height, double guiheight, IModelCustom model, ResourceLocation texture) {

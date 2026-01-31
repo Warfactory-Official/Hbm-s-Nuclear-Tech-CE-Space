@@ -71,7 +71,7 @@ public class ClientProxy extends ServerProxy {
 
     @Override
     public void registerMissileItems(IRegistry<ModelResourceLocation, IBakedModel> reg) {
-        RocketPart.registerAllParts();
+        RocketPart.registerClientParts();
 
         RocketPart.parts.values().forEach(part -> registerItemRenderer(part.part, new ItemRenderMissilePart(part), reg));
     }

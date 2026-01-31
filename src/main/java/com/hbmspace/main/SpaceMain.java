@@ -21,6 +21,7 @@ import com.hbmspace.items.weapon.ItemCustomMissilePart;
 import com.hbmspace.lib.HBMSpaceSoundHandler;
 import com.hbmspace.packet.PacketRegistry;
 import com.hbmspace.potion.HbmPotion;
+import com.hbmspace.render.misc.RocketPart;
 import com.hbmspace.world.PlanetGen;
 import com.hbmspace.world.feature.OreLayer3DSpace;
 import net.minecraft.item.Item;
@@ -34,6 +35,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
@@ -137,6 +139,7 @@ public class SpaceMain {
 
         PlanetGen.init();
         proxy.postInit(event);
+        if(event.getSide() == Side.SERVER) RocketPart.registerServerParts(); // fuck me, parts were registered on client but NOT on server
 
         RecipeTweakerManager.initRecipeTweakers();
     }
