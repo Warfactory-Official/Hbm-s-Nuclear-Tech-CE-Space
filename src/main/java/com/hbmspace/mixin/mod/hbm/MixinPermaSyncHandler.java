@@ -10,11 +10,13 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -32,11 +34,23 @@ public class MixinPermaSyncHandler {
             buf.writeBoolean(true);
 
             SolarSystemWorldSavedData solarSystemData = SolarSystemWorldSavedData.get(world);
-            for(CelestialBody body : CelestialBody.getAllBodies()) {
+            Collection<CelestialBody> allBodies = CelestialBody.getAllBodies();
+            buf.writeInt(allBodies.size());
+
+            for(CelestialBody body : allBodies) {
+                ByteBufUtils.writeUTF8String(buf, body.name);
+
                 HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait> traits = solarSystemData.getTraits(body.name);
                 if(traits != null) {
-                    buf.writeBoolean(true); // Has traits marker (since we can have an empty list)
-                    buf.writeInt(traits.size());
+                    buf.writeBoolean(true);
+
+                    int writeCount = 0;
+                    for(int i = 0; i < CelestialBodyTrait.traitList.size(); i++) {
+                        if(traits.containsKey(CelestialBodyTrait.traitList.get(i))) {
+                            writeCount++;
+                        }
+                    }
+                    buf.writeInt(writeCount);
 
                     for(int i = 0; i < CelestialBodyTrait.traitList.size(); i++) {
                         Class<? extends CelestialBodyTrait> traitClass = CelestialBodyTrait.traitList.get(i);
@@ -76,19 +90,24 @@ public class MixinPermaSyncHandler {
             try {
                 HashMap<String, HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait>> traitMap = new HashMap<>();
 
-                for(CelestialBody body : CelestialBody.getAllBodies()) {
+                int bodyCount = buf.readInt();
+                for(int bodyIdx = 0; bodyIdx < bodyCount; bodyIdx++) {
+                    String bodyName = ByteBufUtils.readUTF8String(buf);
+
                     if(buf.readBoolean()) {
                         HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait> traits = new HashMap<>();
 
                         int cbtSize = buf.readInt();
                         for(int i = 0; i < cbtSize; i++) {
-                            CelestialBodyTrait trait = CelestialBodyTrait.traitList.get(buf.readInt()).newInstance();
-                            trait.readFromBytes(buf);
-
-                            traits.put(trait.getClass(), trait);
+                            int traitId = buf.readInt();
+                            if(traitId >= 0 && traitId < CelestialBodyTrait.traitList.size()) {
+                                CelestialBodyTrait trait = CelestialBodyTrait.traitList.get(traitId).newInstance();
+                                trait.readFromBytes(buf);
+                                traits.put(trait.getClass(), trait);
+                            }
                         }
 
-                        traitMap.put(body.name, traits);
+                        traitMap.put(bodyName, traits);
                     }
                 }
 
@@ -109,8 +128,13 @@ public class MixinPermaSyncHandler {
     @Inject(method = "readPacket", at = @At(value = "INVOKE", target = "Lcom/hbm/saveddata/satellites/SatelliteSavedData;setClientSats(Lit/unimi/dsi/fastutil/ints/Int2ObjectOpenHashMap;)V", shift = At.Shift.AFTER))
     private static void afterSatelliteRead(ByteBuf buf, World world, EntityPlayer player, CallbackInfo ci) {
         /// TIME OF DAY ///
-        if(buf.readBoolean() && world.provider instanceof WorldProviderCelestial) {
-            ((WorldProviderCelestial) world.provider).deserialize(buf);
+        boolean hasTimeData = buf.readBoolean();
+        if(hasTimeData) {
+            if(world.provider instanceof WorldProviderCelestial) {
+                ((WorldProviderCelestial) world.provider).deserialize(buf);
+            } else {
+                buf.readLong();
+            }
         }
         /// TIME OF DAY ///
     }
