@@ -1,14 +1,10 @@
 package com.hbmspace.inventory.recipes.tweakers;
 
-import com.hbm.blocks.ModBlocks;
 import com.hbm.inventory.RecipesCommon;
 import com.hbm.inventory.fluid.FluidStack;
-import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
-import com.hbm.inventory.recipes.HydrotreatingRecipes;
 import com.hbm.inventory.recipes.LiquefactionRecipes;
 import com.hbm.items.ModItems;
-import com.hbm.util.Tuple;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.items.ModItemsSpace;
 import net.minecraft.init.Blocks;
@@ -23,6 +19,7 @@ import static com.hbmspace.inventory.OreDictManagerSpace.KEY_STONE;
 public class LiquefactionRecipesTweaker {
 
     public static void init() {
+        if(RecipeTweakerManager.isModified(LiquefactionRecipes.class)) return;
         try {
             Field recipesField = LiquefactionRecipes.class.getDeclaredField("recipes");
             recipesField.setAccessible(true);

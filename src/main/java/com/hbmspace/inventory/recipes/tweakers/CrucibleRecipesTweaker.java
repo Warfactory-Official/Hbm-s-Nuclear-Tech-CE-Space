@@ -13,6 +13,7 @@ import static com.hbm.inventory.recipes.CrucibleRecipes.recipes;
 public class CrucibleRecipesTweaker {
 
     public static void init() {
+        if(RecipeTweakerManager.isModified(CrucibleRecipes.class)) return;
         int n = MaterialShapes.NUGGET.q(1);
         int i = MaterialShapes.INGOT.q(1);
         recipes.add(new CrucibleRecipes.CrucibleRecipe(18, "crucible.hsss", 12, new ItemStack(ModItems.ingot_dura_steel))

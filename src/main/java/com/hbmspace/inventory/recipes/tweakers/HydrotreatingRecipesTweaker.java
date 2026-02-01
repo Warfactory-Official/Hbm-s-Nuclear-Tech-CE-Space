@@ -9,10 +9,10 @@ import com.hbm.util.Tuple;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-
 public class HydrotreatingRecipesTweaker {
 
     public static void init() {
+        if(RecipeTweakerManager.isModified(HydrotreatingRecipes.class)) return;
         try {
             Field recipesField = HydrotreatingRecipes.class.getDeclaredField("recipes");
             recipesField.setAccessible(true);

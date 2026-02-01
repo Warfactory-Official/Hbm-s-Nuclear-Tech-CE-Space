@@ -4,10 +4,10 @@ import com.hbm.items.ModItems;
 import com.hbm.items.machine.ItemWatzPellet;
 import com.hbm.util.Function;
 import net.minecraftforge.common.util.EnumHelper;
+import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-// Th3_Sl1ze: for now, it works only with watz pellet types. Though, I may generify it to add more entries to other enums I need..
+
 public class EnumAddonWatzTypes {
 
     public static ItemWatzPellet.EnumWatzType PU241;
@@ -24,6 +24,18 @@ public class EnumAddonWatzTypes {
             int.class, int.class, double.class, double.class, double.class,
             Function.class, Function.class, Function.class
     };
+
+    private static final Unsafe UNSAFE;
+
+    static {
+        try {
+            Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            UNSAFE = (Unsafe) unsafeField.get(null);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get Unsafe instance", e);
+        }
+    }
 
     public static void init() {
         PU241 = addWatzType("PU241", 0x78817E, 394240, 1950D, 25D, 0.0025D,
@@ -84,10 +96,8 @@ public class EnumAddonWatzTypes {
             ItemWatzPellet.EnumWatzType[] newValues = ItemWatzPellet.EnumWatzType.values();
 
             Field theEnumField = findFieldInHierarchy(ItemWatzPellet.class, "theEnum");
-            makeFieldAccessible(theEnumField);
-
-            theEnumField.set(ModItems.watz_pellet, newValues);
-            theEnumField.set(ModItems.watz_pellet_depleted, newValues);
+            setFieldValueUnsafe(theEnumField, ModItems.watz_pellet, newValues);
+            setFieldValueUnsafe(theEnumField, ModItems.watz_pellet_depleted, newValues);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,24 +114,23 @@ public class EnumAddonWatzTypes {
         }
         throw new NoSuchFieldException("Could not find field: " + fieldName);
     }
+    // Th3_Sl1ze: Mov, afair you had an unsafe wrapper or smth like that
+    // Could use it, but I sincerely don't know how to do that without ai slop
+    private static void setFieldValueUnsafe(Field field, Object target, Object value) {
+        long offset = UNSAFE.objectFieldOffset(field);
+        UNSAFE.putObject(target, offset, value);
+    }
 
-    private static void makeFieldAccessible(Field field) throws Exception {
-        field.setAccessible(true);
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+    private static void setStaticFieldValueUnsafe(Field field, Object value) {
+        Object base = UNSAFE.staticFieldBase(field);
+        long offset = UNSAFE.staticFieldOffset(field);
+        UNSAFE.putObject(base, offset, value);
     }
 
     private static void updateValuesArray() {
         try {
             Field valuesField = ItemWatzPellet.EnumWatzType.class.getDeclaredField("VALUES");
-            valuesField.setAccessible(true);
-
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            modifiersField.setInt(valuesField, valuesField.getModifiers() & ~Modifier.FINAL);
-
-            valuesField.set(null, ItemWatzPellet.EnumWatzType.values());
+            setStaticFieldValueUnsafe(valuesField, ItemWatzPellet.EnumWatzType.values());
         } catch (Exception e) {
             e.printStackTrace();
         }

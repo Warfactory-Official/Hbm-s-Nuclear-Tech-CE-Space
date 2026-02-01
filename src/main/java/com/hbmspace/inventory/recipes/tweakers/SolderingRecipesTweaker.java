@@ -32,6 +32,7 @@ public class SolderingRecipesTweaker {
     }
 
     public static void init() {
+        if(RecipeTweakerManager.isModified(SolderingRecipes.class)) return;
         boolean lbsm = GeneralConfig.enableLBSM && GeneralConfig.enableLBSMSimpleCrafting;
         boolean no528 = !GeneralConfig.enable528;
 

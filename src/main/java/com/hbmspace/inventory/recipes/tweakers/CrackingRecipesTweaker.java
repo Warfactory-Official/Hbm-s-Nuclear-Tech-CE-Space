@@ -2,6 +2,7 @@ package com.hbmspace.inventory.recipes.tweakers;
 
 import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.inventory.fluid.Fluids;
+import com.hbm.inventory.recipes.CrackingRecipes;
 import com.hbm.util.Tuple;
 
 import static com.hbm.inventory.recipes.CrackingRecipes.cracking;
@@ -15,6 +16,7 @@ public class CrackingRecipesTweaker {
     public static final int diesel_crack_petro = 30;
 
     public static void init() {
+        if(RecipeTweakerManager.isModified(CrackingRecipes.class)) return;
         cracking.put(Fluids.OIL_DS,					new Tuple.Pair<>(new FluidStack(Fluids.CRACKOIL_DS,		oil_crack_oil),		new FluidStack(Fluids.PETROLEUM,	oil_crack_petro)));
         cracking.put(Fluids.DIESEL_REFORM,			new Tuple.Pair<>(new FluidStack(Fluids.KEROSENE_REFORM,	diesel_crack_kero),	new FluidStack(Fluids.PETROLEUM,	diesel_crack_petro)));
         cracking.put(Fluids.DIESEL_CRACK_REFORM,	new Tuple.Pair<>(new FluidStack(Fluids.KEROSENE_REFORM,	diesel_crack_kero),	new FluidStack(Fluids.PETROLEUM,	diesel_crack_petro)));

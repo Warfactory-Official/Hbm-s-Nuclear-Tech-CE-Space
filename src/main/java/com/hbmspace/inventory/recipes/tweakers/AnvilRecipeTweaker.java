@@ -4,6 +4,7 @@ import com.hbm.inventory.OreDictManager;
 import com.hbm.inventory.RecipesCommon;
 import com.hbm.inventory.recipes.anvil.AnvilRecipes;
 import com.hbm.inventory.recipes.anvil.AnvilSmithingRecipe;
+import com.hbm.inventory.recipes.loader.SerializableRecipe;
 import com.hbm.items.ItemEnums;
 import com.hbm.items.ModItems;
 import com.hbmspace.blocks.ModBlocksSpace;
@@ -25,6 +26,11 @@ import static com.hbmspace.inventory.OreDictManagerSpace.STAINLESS;
 public class AnvilRecipeTweaker {
 
     public static void init() {
+        for (SerializableRecipe handler : SerializableRecipe.recipeHandlers) {
+            if (handler instanceof AnvilRecipes && handler.modified) {
+                return;
+            }
+        }
         constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.OreDictStack(NI.ingot()), new AnvilRecipes.AnvilOutput(new ItemStack(ModItemsSpace.plate_nickel))).setTier(3));
         constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.OreDictStack(STAINLESS.ingot()), new AnvilRecipes.AnvilOutput(new ItemStack(ModItemsSpace.plate_stainless))).setTier(3));
         constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.OreDictStack(COALCOKE.dust()), new AnvilRecipes.AnvilOutput(new ItemStack(ModItems.coke, 1, ItemEnums.EnumCokeType.COAL.ordinal()))).setTier(3));

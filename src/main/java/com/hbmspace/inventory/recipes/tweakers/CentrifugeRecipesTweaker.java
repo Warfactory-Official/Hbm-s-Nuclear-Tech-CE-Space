@@ -2,6 +2,7 @@ package com.hbmspace.inventory.recipes.tweakers;
 
 import com.hbm.inventory.RecipesCommon;
 import com.hbm.inventory.material.Mats;
+import com.hbm.inventory.recipes.CentrifugeRecipes;
 import com.hbm.items.ModItems;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.inventory.materials.MatsSpace;
@@ -18,6 +19,7 @@ import static com.hbmspace.inventory.OreDictManagerSpace.NI;
 public class CentrifugeRecipesTweaker {
 
     public static void init() {
+        if(RecipeTweakerManager.isModified(CentrifugeRecipes.class)) return;
         recipes.put(new RecipesCommon.OreDictStack(NI.ore()), new ItemStack[] {
                 new ItemStack(ModItemsSpace.chunk_ore, 2, ItemEnumsSpace.EnumChunkType.PENTLANDITE.ordinal()),
                 new ItemStack(ModItems.sulfur, 1),

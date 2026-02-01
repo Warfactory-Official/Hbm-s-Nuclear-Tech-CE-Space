@@ -1,5 +1,8 @@
 package com.hbmspace.inventory.recipes.tweakers;
 
+import com.hbm.inventory.recipes.CentrifugeRecipes;
+import com.hbm.inventory.recipes.loader.SerializableRecipe;
+
 public class RecipeTweakerManager {
 
     public static void initRecipeTweakers() {
@@ -29,5 +32,14 @@ public class RecipeTweakerManager {
         ShredderRecipesTweaker.init();
         SolderingRecipesTweaker.init();
         SolidificationRecipesTweaker.init();
+    }
+
+    public static boolean isModified(Class<? extends SerializableRecipe> recipeClass) {
+        for (SerializableRecipe handler : SerializableRecipe.recipeHandlers) {
+            if (recipeClass.isInstance(handler)) {
+                return handler.modified;
+            }
+        }
+        return false;
     }
 }

@@ -19,6 +19,7 @@ import static com.hbmspace.inventory.OreDictManagerSpace.NIM;
 public class MixerRecipesTweaker {
 
     public static void init() {
+        if(RecipeTweakerManager.isModified(MixerRecipes.class)) return;
         // TODO replace a few recipes, should find them in 1.7 upstream
         // Also remind me to change protected to public, because that's fucking atrocious
         MixerRecipes.MixerRecipe r;

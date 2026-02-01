@@ -20,6 +20,7 @@ import java.util.List;
 public class ShredderRecipesTweaker {
 
     public static void init() {
+        if(RecipeTweakerManager.isModified(ShredderRecipes.class)) return;
         ShredderRecipes.removeRecipe(new ItemStack(ModBlocks.ore_nether_fire));
         ShredderRecipes.removeRecipe(new ItemStack(Blocks.STONE));
         // TODO

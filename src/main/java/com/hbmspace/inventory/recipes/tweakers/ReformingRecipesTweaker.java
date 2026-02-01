@@ -12,6 +12,7 @@ import java.util.HashMap;
 public class ReformingRecipesTweaker {
 
     public static void init() {
+        if(RecipeTweakerManager.isModified(ReformingRecipes.class)) return;
         try {
             Field recipesField = ReformingRecipes.class.getDeclaredField("recipes");
             recipesField.setAccessible(true);

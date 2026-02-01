@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 public class PUREXRecipesTweaker {
 
     public static void init(){
+        if(RecipeTweakerManager.isModified(PUREXRecipes.class)) return;
 
         long watzPower = 10_000;
 

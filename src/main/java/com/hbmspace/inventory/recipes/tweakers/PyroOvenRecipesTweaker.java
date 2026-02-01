@@ -10,6 +10,7 @@ import static com.hbmspace.inventory.fluid.Fluids.POLYTHYLENE;
 public class PyroOvenRecipesTweaker {
 
     public static void init() {
+        if(RecipeTweakerManager.isModified(PyroOvenRecipes.class)) return;
         try {
             Method m = PyroOvenRecipes.class.getDeclaredMethod("registerSFAuto", FluidType.class);
             m.setAccessible(true);

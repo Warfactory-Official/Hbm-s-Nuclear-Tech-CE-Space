@@ -25,6 +25,9 @@ public class ChemicalPlantRecipesTweaker {
     
     public static void init() {
         ChemicalPlantRecipes recs = ChemicalPlantRecipes.INSTANCE;
+        if (recs.modified) {
+            return;
+        }
         recs.removeRecipeByName("chem.oxygen");
         recs.removeRecipeByName("chem.xenon");
         recs.removeRecipeByName("chem.xenonoxy");

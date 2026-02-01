@@ -17,6 +17,7 @@ import static com.hbmspace.inventory.OreDictManagerSpace.ZI;
 public class CrystallizerRecipesTweaker {
 
     public static void init() {
+        if(RecipeTweakerManager.isModified(CrystallizerRecipes.class)) return;
         final int baseTime = 600;
         FluidStack sulfur = new FluidStack(Fluids.SULFURIC_ACID, 500);
         FluidStack nitric = new FluidStack(Fluids.NITRIC_ACID, 500);

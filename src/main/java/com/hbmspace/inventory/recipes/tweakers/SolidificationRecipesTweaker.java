@@ -19,6 +19,7 @@ import static com.hbmspace.inventory.fluid.Fluids.VINYL;
 public class SolidificationRecipesTweaker {
 
     public static void init() {
+        if(RecipeTweakerManager.isModified(SolidificationRecipes.class)) return;
         try {
             Method m = SolidificationRecipes.class.getDeclaredMethod("registerRecipe", FluidType.class, int.class, Item.class);
             Method m1 = SolidificationRecipes.class.getDeclaredMethod("registerRecipe", FluidType.class, int.class, Block.class);
