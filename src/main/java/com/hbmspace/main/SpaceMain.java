@@ -81,6 +81,7 @@ public class SpaceMain {
 
         CapabilityManager.INSTANCE.register(HbmLivingCapabilitySpace.IEntityHbmProps.class, new HbmLivingCapabilitySpace.EntityHbmPropsStorage(), HbmLivingCapabilitySpace.EntityHbmProps.FACTORY);
 
+        OreDictManagerSpace.registerGroups();
         SolarSystem.init();
         HbmPotion.init();
         EnumAddonWatzTypes.init();

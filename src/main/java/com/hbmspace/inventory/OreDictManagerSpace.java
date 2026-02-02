@@ -6,7 +6,9 @@ import com.hbmspace.blocks.BlockEnumsSpace;
 import com.hbmspace.hazard.HazardRegistrySpace;
 import com.hbmspace.items.enums.ItemEnumsSpace;
 
+import static com.hbm.inventory.OreDictManager.DictFrame.fromAll;
 import static com.hbm.inventory.OreDictManager.DictFrame.fromOne;
+import static com.hbm.inventory.material.MaterialShapes.DUST;
 import static com.hbmspace.blocks.ModBlocksSpace.*;
 import static com.hbmspace.items.ModItemsSpace.*;
 import static com.hbm.inventory.OreDictManager.*;
@@ -58,7 +60,10 @@ public class OreDictManagerSpace {
     public static final DictFrame CONGLOMERATE  = new DictFrame("Conglomerate");
     public static final DictFrame PENTLANDITE = new DictFrame("Pentlandite");
 
-    public static void registerOres(){
+    public static void registerGroups() {
+        ANY_COAL_COKE.addPrefix(DUST, true);
+    }
+    public static void registerOres() {
 
         /*
          * STANDARD OREDICTS WHICH ARE PRESENT IN THE ORIGINAL NTM
@@ -106,6 +111,7 @@ public class OreDictManagerSpace {
         COALCOKE.dust(fromOne(powder_coke, ItemEnums.EnumCokeType.COAL));
         PETCOKE.dust(fromOne(powder_coke, ItemEnums.EnumCokeType.PETROLEUM));
         LIGCOKE.dust(fromOne(powder_coke, ItemEnums.EnumCokeType.LIGNITE));
+        ANY_COKE.dust(fromAll(powder_coke, ItemEnums.EnumCokeType.class));
         CM242	.rad(HazardRegistrySpace.cm242)							.nugget(nugget_cm242)		.billet(billet_cm242)		.ingot(ingot_cm242);
         CM243	.rad(HazardRegistrySpace.cm243)/*.neutron(HazardRegistry.cm243/80f)*/							.nugget(nugget_cm243)		.billet(billet_cm243)		.ingot(ingot_cm243);
         CM244	.rad(HazardRegistrySpace.cm244)/*.neutron(HazardRegistry.cm244/50f)*/						.nugget(nugget_cm244)		.billet(billet_cm244)		.ingot(ingot_cm244);
