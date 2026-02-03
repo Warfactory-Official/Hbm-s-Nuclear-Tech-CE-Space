@@ -15,13 +15,13 @@ public class OutgasserRecipesTweaker {
     public static void init() {
         if(RecipeTweakerManager.isModified(OutgasserRecipes.class)) return;
         /* cobalt to cobalt-60 */
-        recipes.put(new RecipesCommon.OreDictStack(CO.ingot()),		new Tuple.Pair<>(new ItemStack(ModItems.ingot_co60), null));
-        recipes.put(new RecipesCommon.OreDictStack(CO.nugget()),		new Tuple.Pair<>(new ItemStack(ModItems.nugget_co60), null));
-        recipes.put(new RecipesCommon.OreDictStack(CO.dust()),		new Tuple.Pair<>(new ItemStack(ModItems.powder_co60), null));
+        recipes.put(new RecipesCommon.OreDictStack(CO.ingot()),		new OutgasserRecipes.OutgasserRecipe(new ItemStack(ModItems.ingot_co60), null));
+        recipes.put(new RecipesCommon.OreDictStack(CO.nugget()),		new OutgasserRecipes.OutgasserRecipe(new ItemStack(ModItems.nugget_co60), null));
+        recipes.put(new RecipesCommon.OreDictStack(CO.dust()),		new OutgasserRecipes.OutgasserRecipe(new ItemStack(ModItems.powder_co60), null));
 
         /* bismuth to polonium */
-        recipes.put(new RecipesCommon.OreDictStack(BI.ingot()),		new Tuple.Pair<>(new ItemStack(ModItems.ingot_polonium), null));
-        recipes.put(new RecipesCommon.OreDictStack(BI.nugget()),		new Tuple.Pair<>(new ItemStack(ModItems.nugget_polonium), null));
-        recipes.put(new RecipesCommon.OreDictStack(BI.dust()),		new Tuple.Pair<>(new ItemStack(ModItems.powder_polonium), null));
+        recipes.put(new RecipesCommon.OreDictStack(BI.ingot()),		new OutgasserRecipes.OutgasserRecipe(new ItemStack(ModItems.ingot_polonium), null));
+        recipes.put(new RecipesCommon.OreDictStack(BI.nugget()),		new OutgasserRecipes.OutgasserRecipe(new ItemStack(ModItems.nugget_polonium), null));
+        recipes.put(new RecipesCommon.OreDictStack(BI.dust()),		new OutgasserRecipes.OutgasserRecipe(new ItemStack(ModItems.powder_polonium), null));
     }
 }
