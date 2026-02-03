@@ -8,6 +8,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 
+import java.util.Arrays;
+
 @Mixin(value = NTMWorldGenerator.class, remap = false)
 public class MixinNTMWorldGenerator {
 
@@ -22,6 +24,9 @@ public class MixinNTMWorldGenerator {
             require = 1
     )
     private static void hbmspace$registerMeteorDungeonInSpaceDims(int dimensionId, SpawnCondition spawn) {
-        NBTStructure.registerStructure(spawn, PlanetGen.getSpaceDimensions());
+        int[] spaceDims = PlanetGen.getSpaceDimensions();
+        int[] dims = Arrays.copyOf(spaceDims, spaceDims.length + 1);
+        dims[dims.length - 1] = 0;
+        NBTStructure.registerStructure(spawn, dims);
     }
 }
