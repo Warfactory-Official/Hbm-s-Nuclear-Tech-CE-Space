@@ -5,8 +5,8 @@ import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.inventory.fluid.trait.FT_Flammable;
 import com.hbm.lib.Library;
+import com.hbm.tileentity.machine.rbmk.RBMKColumn;
 import com.hbm.tileentity.machine.rbmk.TileEntityRBMKBase;
-import com.hbm.tileentity.machine.rbmk.TileEntityRBMKConsole;
 import com.hbm.util.ParticleUtil;
 import com.hbmspace.interfaces.AutoRegister;
 import net.minecraft.entity.Entity;
@@ -117,8 +117,8 @@ public class TileEntityRBMKBurner extends TileEntityRBMKBase implements IFluidSt
     }
 
     @Override
-    public TileEntityRBMKConsole.ColumnType getConsoleType() {
-        return TileEntityRBMKConsole.ColumnType.BLANK; // temporary solution TODO remake it
+    public RBMKColumn.ColumnType getConsoleType() {
+        return RBMKColumn.ColumnType.BLANK; // temporary solution TODO remake it
     }
 
 
