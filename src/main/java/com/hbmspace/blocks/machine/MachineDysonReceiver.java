@@ -59,16 +59,16 @@ public class MachineDysonReceiver extends BlockDummyableSpace implements ILookOv
             ItemStack heldStack = player.getHeldItem(hand);
 
             if (!heldStack.isEmpty() && heldStack.getItem() == ModItems.sat_chip) {
-                if (!receiver.inventory.getStackInSlot(1).isEmpty())
+                if (!receiver.inventory.getStackInSlot(0).isEmpty())
                     return false;
 
-                receiver.inventory.setStackInSlot(1, heldStack.copy());
+                receiver.inventory.setStackInSlot(0, heldStack.copy());
                 heldStack.setCount(0);
                 world.playSound(null, pos, HBMSoundHandler.upgradePlug,
                         SoundCategory.BLOCKS, 1.0F, 1.0F);
-            } else if (heldStack.isEmpty() && !receiver.inventory.getStackInSlot(1).isEmpty()) {
-                if (player.inventory.addItemStackToInventory(receiver.inventory.getStackInSlot(1).copy())) {
-                    receiver.inventory.setStackInSlot(1, ItemStack.EMPTY);
+            } else if (heldStack.isEmpty() && !receiver.inventory.getStackInSlot(0).isEmpty()) {
+                if (player.inventory.addItemStackToInventory(receiver.inventory.getStackInSlot(0).copy())) {
+                    receiver.inventory.setStackInSlot(0, ItemStack.EMPTY);
                     receiver.markDirty();
                     world.playSound(null, pos, HBMSoundHandler.upgradePlug,
                             SoundCategory.BLOCKS, 1.0F, 1.0F);
