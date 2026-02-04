@@ -14,6 +14,7 @@ import com.hbm.packet.toclient.AuxParticlePacketNT;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.util.BobMathUtil;
 import com.hbm.util.CrucibleUtil;
+import com.hbm.util.MutableVec3d;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.interfaces.AutoRegister;
 import com.hbmspace.inventory.materials.MatsSpace;
@@ -98,7 +99,7 @@ public class TileEntityMachineMagma extends TileEntityMachineBase implements ITi
             if(!liquids.isEmpty()) {
                 ForgeDirection dir = ForgeDirection.getOrientation(this.getBlockMetadata() - 10);
 
-                Vec3d impact = new Vec3d(0, 0, 0);
+                MutableVec3d impact = new MutableVec3d(0, 0, 0);
                 Mats.MaterialStack didPour = CrucibleUtil.pourFullStack(world, pos.getX() + 0.5D + dir.offsetX * 3.875D, pos.getY() + 1.25D, pos.getZ() + 0.5D + dir.offsetZ * 3.875D, 6, true, liquids, MaterialShapes.INGOT.q(1), impact);
 
                 if(didPour != null) {
