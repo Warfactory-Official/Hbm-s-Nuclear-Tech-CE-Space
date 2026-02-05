@@ -111,7 +111,7 @@ public class OreDictManagerSpace {
         COALCOKE.dust(fromOne(powder_coke, ItemEnums.EnumCokeType.COAL));
         PETCOKE.dust(fromOne(powder_coke, ItemEnums.EnumCokeType.PETROLEUM));
         LIGCOKE.dust(fromOne(powder_coke, ItemEnums.EnumCokeType.LIGNITE));
-        ANY_COKE.dust(fromAll(powder_coke, ItemEnums.EnumCokeType.class));
+        ANY_COKE.dust(fromAll(powder_coke, ItemEnums.EnumCokeType.VALUES));
         CM242	.rad(HazardRegistrySpace.cm242)							.nugget(nugget_cm242)		.billet(billet_cm242)		.ingot(ingot_cm242);
         CM243	.rad(HazardRegistrySpace.cm243)/*.neutron(HazardRegistry.cm243/80f)*/							.nugget(nugget_cm243)		.billet(billet_cm243)		.ingot(ingot_cm243);
         CM244	.rad(HazardRegistrySpace.cm244)/*.neutron(HazardRegistry.cm244/50f)*/						.nugget(nugget_cm244)		.billet(billet_cm244)		.ingot(ingot_cm244);

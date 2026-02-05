@@ -27,10 +27,10 @@ public class ItemModOxy extends ItemArmorModSpace implements IFillableItem {
 
     // Quite similar to JetpackBase, but with a few crucial differences meaning we can't subclass
 
-    private FluidType fuel;
-    private int maxFuel;
-    private int rate;
-    private int consumption;
+    private final FluidType fuel;
+    private final int maxFuel;
+    private final int rate;
+    private final int consumption;
 
     private AudioWrapper audioBreathing;
 
@@ -42,7 +42,6 @@ public class ItemModOxy extends ItemArmorModSpace implements IFillableItem {
         fuel = Fluids.OXYGEN;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> list, ITooltipFlag flagIn) {
         list.add(TextFormatting.LIGHT_PURPLE + fuel.getLocalizedName() + ": " + getFuel(stack) + "mB / " + this.maxFuel + "mB");

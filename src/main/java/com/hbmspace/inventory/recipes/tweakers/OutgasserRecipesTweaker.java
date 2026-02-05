@@ -3,7 +3,6 @@ package com.hbmspace.inventory.recipes.tweakers;
 import com.hbm.inventory.RecipesCommon;
 import com.hbm.inventory.recipes.OutgasserRecipes;
 import com.hbm.items.ModItems;
-import com.hbm.util.Tuple;
 import net.minecraft.item.ItemStack;
 
 import static com.hbm.inventory.OreDictManager.BI;

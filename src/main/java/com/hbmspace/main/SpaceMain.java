@@ -13,6 +13,7 @@ import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.config.WorldConfigSpace;
 import com.hbmspace.dim.CommandSpaceTP;
 import com.hbmspace.dim.SolarSystem;
+import com.hbmspace.handler.registires.ModItemsReplaceHandler;
 import com.hbmspace.inventory.OreDictManagerSpace;
 import com.hbmspace.inventory.recipes.tweakers.RecipeTweakerManager;
 import com.hbmspace.items.ModItemsSpace;
@@ -66,10 +67,7 @@ public class SpaceMain {
     @SubscribeEvent
     public static void onRegisterItems(RegistryEvent.Register<Item> event) {
         ModItemsSpace.swapStackSizes(event);
-        if (ModItemsSpace.insert_cmb instanceof IHaveCorrosionProtAccessor cmb_corprot) cmb_corprot.withCorrosionProtection();
-        ModItems.ALL_ITEMS.remove(ModItemsSpace.insert_cmb);
-        ModItemsSpace.ALL_ITEMS.add(ModItemsSpace.insert_cmb);
-        event.getRegistry().register(ModItemsSpace.insert_cmb);
+        ModItemsReplaceHandler.initReplacings(event);
     }
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {

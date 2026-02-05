@@ -12,6 +12,7 @@ public abstract class MixinArmorFSB implements ICanSealAccessor {
     private boolean canSeal;
 
     @Unique
+    @Override
     public ArmorFSB setSealed(boolean canSeal) {
         this.canSeal = canSeal;
         return (ArmorFSB) (Object) this;

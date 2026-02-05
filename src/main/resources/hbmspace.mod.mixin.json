@@ -19,7 +19,6 @@
     "hbm.MixinFluids",
     "hbm.MixinMainRegistry",
     "hbm.MixinMatDistribution",
-    "hbm.MixinModItems",
     "hbm.MixinHbmWorldGen",
     "hbm.MixinNTMWorldGenerator",
     "hbm.MixinPermaSyncHandler",
