@@ -15,8 +15,10 @@ public class RecipeTweakerManager {
         CrackingRecipesTweaker.init();
         CrucibleRecipesTweaker.init();
         CrystallizerRecipesTweaker.init();
+        CyclotronRecipesTweaker.init();
         ElectrolyserFluidRecipesTweaker.init();
         FractionRecipesTweaker.init();
+        HadronRecipesTweaker.init();
         HydrotreatingRecipesTweaker.init();
         LiquefactionRecipesTweaker.init();
         MagicRecipesTweaker.init();

@@ -65,7 +65,7 @@ public class CraftingManagerTweaker extends CraftingManager {
         add1To9Pair(ModItemsSpace.ingot_hafnium, ModItemsSpace.nugget_hafnium);
         RecipeUtil.removeAllByOutput(new ItemStack(ModBlocks.block_lanthanium), CraftingManager.hack);
         add1To9Pair(ModBlocksSpace.block_osmiridium, ModItems.ingot_osmiridium);
-        //add1To9Pair(ModBlocksSpace.bf_log, ModItemsSpace.woodemium_briquette);
+        add1To9Pair(ModBlocksSpace.bf_log, ModItemsSpace.woodemium_briquette);
         addMineralSet(ModItemsSpace.nugget_lanthanium, ModItems.ingot_lanthanium, ModBlocks.block_lanthanium);
 
         add1To9Pair(ModItemsSpace.ingot_bk247, ModItemsSpace.nugget_bk247);// TODO: ACTINIDE NUGGETS

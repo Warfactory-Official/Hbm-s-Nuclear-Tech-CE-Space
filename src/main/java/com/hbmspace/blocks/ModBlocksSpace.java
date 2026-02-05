@@ -107,6 +107,11 @@ public class ModBlocksSpace {
     public static final Block vinyl_planks = new BlockBakeBaseSpace(Material.WOOD, "vinyl_planks").setSoundType(SoundType.WOOD).setCreativeTab(MainRegistry.blockTab).setHardness(1.0F).setResistance(1.0F);
     public static final Block pvc_planks = new BlockBakeBaseSpace(Material.WOOD, "pvc_planks").setSoundType(SoundType.WOOD).setCreativeTab(MainRegistry.blockTab).setHardness(1.0F).setResistance(1.0F);
 
+    public static final Block lattice_log = new BlockLogNT("lattice_log", "rad_log_side", "rad_log_top").setSoundType(SoundType.WOOD).setCreativeTab(MainRegistry.blockTab).setHardness(0.5F).setResistance(2.5F);
+    public static final Block bf_log = new BlockLogNT("bf_log", "bf_log_side", "bf_log_top").setSoundType(SoundType.WOOD).setCreativeTab(MainRegistry.blockTab).setHardness(0.5F).setResistance(2.5F);
+    public static final Block primed_log = new BlockLogNT("primed_log", "primed_log_side", "primed_log_top").setSoundType(SoundType.WOOD).setCreativeTab(MainRegistry.blockTab).setHardness(0.5F).setResistance(2.5F);
+    public static final Block eu_log = new BlockLogNT("eu_log", "eu_log_side", "eu_log_top").setSoundType(SoundType.WOOD).setCreativeTab(MainRegistry.blockTab).setHardness(0.5F).setResistance(2.5F);
+
     public static final Block flesh_block = new MeltedFlesh(Material.SNOW, "flesh_block", "flesh_block").setSoundType(SoundType.GROUND).setCreativeTab(MainRegistry.blockTab).setHardness(0.1F).setLightOpacity(0);
     public static final Block charred_flesh_block = new MeltedFlesh(Material.SNOW, "charred_flesh_block", "charred_flesh_block").setSoundType(SoundType.GROUND).setCreativeTab(MainRegistry.blockTab).setHardness(0.1F).setLightOpacity(0);
     public static final Block carbonized_flesh_block = new MeltedFlesh(Material.SNOW, "carbonized_flesh_block", "carbonized_flesh_block").setSoundType(SoundType.GROUND).setCreativeTab(MainRegistry.blockTab).setHardness(0.1F).setLightOpacity(0);

@@ -179,7 +179,7 @@ public class ModItemsSpace {
     public static final Item nugget_lanthanium = new ItemBakedSpace("nugget_lanthanium").setCreativeTab(MainRegistry.partsTab);
     public static final Item powder_coke = new ItemEnumMultiSpace<>("powder_coke", ItemEnums.EnumCokeType.VALUES, true, true).setCreativeTab(MainRegistry.partsTab);
     public static final Item s_cream	= new ItemLemonSpace(8, 1.0F, false, "s_cream", "ice_cream_s").setCreativeTab(MainRegistry.consumableTab);
-    public static final Item woodemium_briquette = new ItemBakedSpace("woodemium_briquette", "briquette_woodemium").setCreativeTab(MainRegistry.partsTab);
+    public static final Item woodemium_briquette = new ItemBakedSpace("woodemium_briquette", "briquette_woodemium").setCreativeTab(MainRegistry.partsTab); // TODO: ITER crafting recipe
     public static final Item ingot_cn989 = new ItemCustomLoreSpace("ingot_cn989").setRarity(EnumRarity.EPIC).setCreativeTab(MainRegistry.partsTab);
     public static final Item nugget_cn989 = new ItemCustomLoreSpace("nugget_cn989").setRarity(EnumRarity.EPIC).setCreativeTab(MainRegistry.partsTab);
     public static final Item billet_cn989 = new ItemCustomLoreSpace("billet_cn989").setRarity(EnumRarity.EPIC).setCreativeTab(MainRegistry.partsTab);
