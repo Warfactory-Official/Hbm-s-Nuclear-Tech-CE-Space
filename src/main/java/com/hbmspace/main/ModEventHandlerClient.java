@@ -25,6 +25,7 @@ import com.hbmspace.dim.WorldProviderCelestial;
 import com.hbmspace.dim.orbit.WorldProviderOrbit;
 import com.hbmspace.dim.trait.CBT_War;
 import com.hbmspace.dim.trait.CelestialBodyTrait;
+import com.hbmspace.entity.missile.EntityRideableRocket;
 import com.hbmspace.inventory.materials.MatsSpace;
 import com.hbmspace.items.IDynamicModelsSpace;
 import com.hbmspace.items.ModItemsSpace;
@@ -352,8 +353,27 @@ public class ModEventHandlerClient {
             }
         }
     }
-    // TODO this won't help at all, need to mixin the EntityRenderer... kill me
-    /*@SubscribeEvent
+
+    private static boolean wasRiding;
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onRenderRidingPlayerPre(RenderPlayerEvent.Pre event) {
+        wasRiding = event.getEntityPlayer().getRidingEntity() instanceof EntityRideableRocket;
+        if(!wasRiding) return;
+
+        GlStateManager.pushMatrix();
+
+        GlStateManager.rotate(-event.getEntityPlayer().getRidingEntity().rotationPitch, 0, 0, 1);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onRenderRidingPlayerPost(RenderPlayerEvent.Post event) {
+        if(!wasRiding) return;
+
+        GlStateManager.popMatrix();
+    }
+
+    @SubscribeEvent
     public static void onRenderTickPre(TickEvent.RenderTickEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayer player = mc.player;
@@ -363,6 +383,6 @@ public class ModEventHandlerClient {
         } else {
             mc.entityRenderer.thirdPersonDistance = 4.0F;
         }
-    }*/
+    }
 
 }

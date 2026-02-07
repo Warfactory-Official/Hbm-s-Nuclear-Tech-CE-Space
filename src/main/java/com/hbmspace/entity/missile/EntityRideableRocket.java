@@ -513,13 +513,13 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
 
                 if(station.getUnscaledProgress(0) > 0.2) {
                     if(decoupleTimer == 0) {
-                        AudioWrapper decouple = SpaceMain.proxy.getLoopedSound(HBMSpaceSoundHandler.rocketStage, SoundCategory.PLAYERS, (float)posX, (float)posY, (float)posZ, 0.5F, 250.0F, 0.9F + world.rand.nextFloat() * 0.2F, 40);
+                        AudioWrapper decouple = SpaceMain.proxy.getLoopedSound(HBMSpaceSoundHandler.rocketStage, SoundCategory.PLAYERS, (float)posX, (float)posY, (float)posZ, 0.5F, 250.0F, 0.9F + world.rand.nextFloat() * 0.2F, 24);
                         decouple.setDoesRepeat(false);
                         decouple.startSound();
                     }
 
                     if(decoupleTimer == 100 && getRocket().stages.size() > 1) {
-                        AudioWrapper decouple = SpaceMain.proxy.getLoopedSound(HBMSpaceSoundHandler.rocketStage, SoundCategory.PLAYERS, (float)posX, (float)posY, (float)posZ, 0.5F, 250.0F, 0.9F + world.rand.nextFloat() * 0.2F, 40);
+                        AudioWrapper decouple = SpaceMain.proxy.getLoopedSound(HBMSpaceSoundHandler.rocketStage, SoundCategory.PLAYERS, (float)posX, (float)posY, (float)posZ, 0.5F, 250.0F, 0.9F + world.rand.nextFloat() * 0.2F, 24);
                         decouple.setDoesRepeat(false);
                         decouple.startSound();
                     } else if(decoupleTimer > 100) {
@@ -573,7 +573,8 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
 
     @Override
     public void updatePassenger(Entity passenger) {
-        double length = getMountedYOffset() + passenger.getYOffset();
+        double offset = lastState == RocketState.TRANSFER ? 1.62D : 0;
+        double length = getMountedYOffset() + passenger.getYOffset() - offset;
         Vec3d target = BobMathUtil.getDirectionFromAxisAngle(rotationPitch - 90.0F, 180.0F - rotationYaw, length);
         passenger.setPosition(posX + target.x, posY + target.y, posZ + target.z);
     }

@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "target": "@env(DEFAULT)",
   "client": [
+    "MixinEntityRenderer"
   ],
   "mixins": [
   ],
