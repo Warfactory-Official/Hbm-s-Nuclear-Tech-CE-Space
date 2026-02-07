@@ -26,7 +26,7 @@ public abstract class MixinFluids {
     @Unique
     private static FluidType space$createFixed(String name, int color, int p, int f, int r, EnumSymbol symbol, int id) {
         FluidType fluid = new FluidType(name, color, p, f, r, symbol, name.toLowerCase(java.util.Locale.US), 0xFFFFFF, id, null);
-        fluid.customFluid = false; // since otherwise I won't be able to render corresponding textures for tanks
+        fluid.renderWithTint = false; // since otherwise I won't be able to render corresponding textures for tanks
 
         return fluid;
     }
