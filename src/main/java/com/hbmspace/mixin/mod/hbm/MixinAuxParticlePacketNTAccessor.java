@@ -12,6 +12,6 @@ public interface MixinAuxParticlePacketNTAccessor {
     //i believe? technically you can use add AT then use a plain GETFIELD in bytecode; but it's just unnecessary
     //and an @Accessor is just cleaner
     //btw MethodHandleHelper also works, but it has classloading side effect
-    @Accessor("nbt")
+    @Accessor(value = "nbt", remap = false)
     NBTTagCompound getNbt();
 }

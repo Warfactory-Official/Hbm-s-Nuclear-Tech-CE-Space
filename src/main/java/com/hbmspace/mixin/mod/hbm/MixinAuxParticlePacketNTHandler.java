@@ -17,7 +17,7 @@ public class MixinAuxParticlePacketNTHandler {
 
     // mlbv: yes you can inject more precisely or choose to inject effectNT to avoid duplicated work, but this is the
     // most robust approach and makes it impossible for jvmdg to mess with it
-    @Inject(method = "Lcom/hbm/packet/toclient/AuxParticlePacketNT$Handler;onMessage(Lcom/hbm/packet/toclient/AuxParticlePacketNT;Lnet/minecraftforge/fml/common/network/simpleimpl/MessageContext;)Lnet/minecraftforge/fml/common/network/simpleimpl/IMessage;", at = @At("HEAD"))
+    @Inject(method = "Lcom/hbm/packet/toclient/AuxParticlePacketNT$Handler;onMessage(Lcom/hbm/packet/toclient/AuxParticlePacketNT;Lnet/minecraftforge/fml/common/network/simpleimpl/MessageContext;)Lnet/minecraftforge/fml/common/network/simpleimpl/IMessage;", at = @At("HEAD"), remap = false, cancellable = true)
     private void onMessageFirst(AuxParticlePacketNT m, MessageContext ctx, CallbackInfoReturnable<IMessage> cir) {
         NBTTagCompound nbt = ((MixinAuxParticlePacketNTAccessor) m).getNbt();
         if (nbt != null && SpaceParticleHandler.test(nbt)) {
