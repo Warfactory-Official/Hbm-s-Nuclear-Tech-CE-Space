@@ -2,11 +2,14 @@ package com.hbmspace.main;
 
 import com.hbm.items.RBMKItemRenderers;
 import com.hbm.main.client.NTMClientRegistry;
+import com.hbm.particle.helper.ParticleCreators;
 import com.hbm.render.item.ItemRenderMissilePart;
 import com.hbm.render.tileentity.RenderRBMKLid;
 import com.hbm.sound.AudioWrapper;
 import com.hbm.sound.AudioWrapperClient;
 import com.hbmspace.blocks.ModBlocksSpace;
+import com.hbmspace.particle.ParticleGlow;
+import com.hbmspace.particle.ParticleRocketFlameSpace;
 import com.hbmspace.render.misc.RocketPart;
 import com.hbmspace.render.tileentity.IItemRendererProviderSpace;
 import com.hbmspace.sound.AudioWrapperClientSpace;
@@ -15,21 +18,28 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.IRegistry;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
+import java.awt.*;
 import java.io.File;
+import java.util.Random;
 
 public class ClientProxy extends ServerProxy {
 
@@ -106,5 +116,52 @@ public class ClientProxy extends ServerProxy {
         audio.updateRange(range);
         audio.setKeepAlive(keepAlive);
         return audio;
+    }
+
+    @Override
+    public void effectNT(NBTTagCompound data) {
+        World world = Minecraft.getMinecraft().world;
+        if (world == null)
+            return;
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        Random rand = world.rand;
+        String type = data.getString("type");
+        double x = data.getDouble("posX");
+        double y = data.getDouble("posY");
+        double z = data.getDouble("posZ");
+
+        if (ParticleCreators.particleCreators.containsKey(type)) {
+            ParticleCreators.particleCreators.get(type).makeParticle(world, player,
+                    Minecraft.getMinecraft().renderEngine, rand, x, y, z, data);
+            return;
+        }
+        switch (type) {
+            case "flare" -> {
+                double mX = data.getDouble("mX");
+                double mY = data.getDouble("mY");
+                double mZ = data.getDouble("mZ");
+                float scale = data.getFloat("scale");
+                ParticleGlow particle = new ParticleGlow(world, x, y, z, mX, mY, mZ, scale);
+                Minecraft.getMinecraft().effectRenderer.addEffect(particle);
+            }
+            case "depress" -> {
+
+                if(player == null || new Vec3d(player.posX - x, player.posY - y, player.posZ - z).length() > 350) return;
+
+                float scale = data.hasKey("scale") ? data.getFloat("scale") : 1F;
+                double mX = data.getDouble("moX");
+                double mY = data.getDouble("moY");
+                double mZ = data.getDouble("moZ");
+
+                ParticleRocketFlameSpace fx = new ParticleRocketFlameSpace(world, x, y, z).setScale(scale);
+                fx.setMotion(mX, mY, mZ);
+                if(data.hasKey("maxAge")) fx.setMaxAge(data.getInteger("maxAge"));
+                if(data.hasKey("color")) {
+                    Color color = new Color(data.getInteger("color"));
+                    fx.setRBGColorF(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F);
+                }
+                Minecraft.getMinecraft().effectRenderer.addEffect(fx);
+            }
+        }
     }
 }

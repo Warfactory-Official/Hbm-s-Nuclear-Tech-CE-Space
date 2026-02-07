@@ -118,7 +118,7 @@ public class TileEntityRBMKBurner extends TileEntityRBMKBase implements IFluidSt
 
     @Override
     public RBMKColumn.ColumnType getConsoleType() {
-        return RBMKColumn.ColumnType.BLANK; // temporary solution TODO remake it
+        return RBMKColumn.ColumnType.BLANK;
     }
 
 

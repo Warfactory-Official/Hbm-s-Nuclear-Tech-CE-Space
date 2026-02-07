@@ -11,7 +11,7 @@ import java.util.ListIterator;
 public class RotaryFurnaceRecipesTweaker {
 
     public static void init() {
-        if(RecipeTweakerManager.isModified(RotaryFurnaceRecipes.class)) return;
+        if (RecipeTweakerManager.isModified(RotaryFurnaceRecipes.class)) return;
         final String cu = OreDictManager.CU.ingot();
         final String al = OreDictManager.AL.ingot();
 

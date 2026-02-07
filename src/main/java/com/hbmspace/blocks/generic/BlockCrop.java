@@ -1,12 +1,15 @@
 package com.hbmspace.blocks.generic;
 
 import com.google.common.collect.ImmutableMap;
+import com.hbm.items.ItemEnums;
+import com.hbm.items.ModItems;
 import com.hbm.main.MainRegistry;
 import com.hbm.render.block.BlockBakeFrame;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.dim.trait.CBT_Atmosphere;
 import com.hbmspace.handler.atmosphere.IPlantableBreathing;
 import com.hbmspace.items.IDynamicModelsSpace;
+import com.hbmspace.items.ModItemsSpace;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
 import net.minecraft.block.IGrowable;
@@ -15,13 +18,10 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.model.ModelRotation;
-import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
@@ -34,7 +34,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -58,7 +57,7 @@ public class BlockCrop extends BlockBush implements IGrowable, IPlantableBreathi
 
     public final boolean canHydro;
 
-    private String textureBase;
+    private final String textureBase;
 
     @SideOnly(Side.CLIENT)
     private BlockBakeFrame[] cropFrames;
@@ -109,26 +108,25 @@ public class BlockCrop extends BlockBush implements IGrowable, IPlantableBreathi
 
     @Override
     public @NotNull Item getItemDropped(@NotNull IBlockState state, @NotNull Random rand, int fortune) {
-        // TODO
-        /*if (this == ModBlocks.crop_strawberry) {
-            return ModItems.strawberry;
+        if (this == ModBlocksSpace.crop_strawberry) {
+            return ModItemsSpace.strawberry;
         }
 
-        if (this == ModBlocks.crop_mint) {
-            return ModItems.mint_leaves;
+        if (this == ModBlocksSpace.crop_mint) {
+            return ModItemsSpace.mint_leaves;
         }
 
-        if (this == ModBlocks.crop_coffee) {
-            return ModItems.bean_raw;
+        if (this == ModBlocksSpace.crop_coffee) {
+            return ModItemsSpace.bean_raw;
         }
 
-        if (this == ModBlocks.crop_tea) {
-            return state.getValue(AGE) >= 7 ? ModItems.tea_leaf : ModItems.teaseeds;
+        if (this == ModBlocksSpace.crop_tea) {
+            return state.getValue(AGE) >= 7 ? ModItemsSpace.tea_leaf : ModItemsSpace.teaseeds;
         }
 
-        if (this == ModBlocks.crop_paraffin) {
-            return ModItems.paraffin_seeds;
-        }*/
+        if (this == ModBlocksSpace.crop_paraffin) {
+            return ModItemsSpace.paraffin_seeds;
+        }
 
         return Item.getItemFromBlock(this);
     }
@@ -197,28 +195,26 @@ public class BlockCrop extends BlockBush implements IGrowable, IPlantableBreathi
     @Override
     public void getDrops(@NotNull NonNullList<ItemStack> drops, @NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull IBlockState state, int fortune) {
         super.getDrops(drops, world, pos, state, fortune);
-        // TODO
-        /*
         int age = state.getValue(AGE);
         if (age < 7) return;
         World w = (world instanceof World) ? (World) world : null;
         Random rand = (w != null) ? w.rand : new Random();
-        if (this == ModBlocks.crop_tea) {
+        if (this == ModBlocksSpace.crop_tea) {
             for (int i = 0; i < 3 + fortune; ++i) {
                 if (rand.nextInt(15) <= age) {
-                    drops.add(new ItemStack(ModItems.teaseeds, 1, 0));
+                    drops.add(new ItemStack(ModItemsSpace.teaseeds, 1, 0));
                 }
             }
         }
 
-        if (this == ModBlocks.crop_paraffin) {
+        if (this == ModBlocksSpace.crop_paraffin) {
             for (int i = 0; i < 3 + fortune; ++i) {
                 if (rand.nextInt(15) <= age) {
-                    drops.add(new ItemStack(ModItems.paraffin_seeds));
+                    drops.add(new ItemStack(ModItemsSpace.paraffin_seeds));
                     drops.add(new ItemStack(ModItems.oil_tar, 1, ItemEnums.EnumTarType.WAX.ordinal()));
                 }
             }
-        }*/
+        }
     }
 
     @Override
@@ -306,12 +302,6 @@ public class BlockCrop extends BlockBush implements IGrowable, IPlantableBreathi
 
                 ModelResourceLocation worldLoc = new ModelResourceLocation(Objects.requireNonNull(this.getRegistryName()), "age=" + age);
                 event.getModelRegistry().putObject(worldLoc, baked[age]);
-            }
-
-            String base = this.textureBase;
-            if (base == null || base.isEmpty()) {
-                ResourceLocation rl = this.getRegistryName();
-                base = (rl != null) ? rl.getPath() : "missing_texture";
             }
 
             ModelResourceLocation invLoc = new ModelResourceLocation(Objects.requireNonNull(this.getRegistryName()), "inventory");

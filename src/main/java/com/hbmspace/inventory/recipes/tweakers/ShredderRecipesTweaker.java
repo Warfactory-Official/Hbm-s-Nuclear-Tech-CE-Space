@@ -8,8 +8,8 @@ import com.hbm.items.ModItems;
 import com.hbmspace.blocks.BlockEnumsSpace;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.inventory.OreDictManagerSpace;
-import com.hbmspace.items.enums.ItemEnumsSpace;
 import com.hbmspace.items.ModItemsSpace;
+import com.hbmspace.items.enums.ItemEnumsSpace;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -20,7 +20,7 @@ import java.util.List;
 public class ShredderRecipesTweaker {
 
     public static void init() {
-        if(RecipeTweakerManager.isModified(ShredderRecipes.class)) return;
+        if (RecipeTweakerManager.isModified(ShredderRecipes.class)) return;
         ShredderRecipes.removeRecipe(new ItemStack(ModBlocks.ore_nether_fire));
         ShredderRecipes.removeRecipe(new ItemStack(Blocks.STONE));
         // TODO
@@ -40,7 +40,7 @@ public class ShredderRecipesTweaker {
 
         ShredderRecipes.setRecipe(new ItemStack(ModBlocksSpace.ore_mineral, 1, OreDictionary.WILDCARD_VALUE), new ItemStack(ModItemsSpace.mineral_dust, 1)); // it was deserved
 
-        ShredderRecipes.setRecipe(ModItemsSpace.bean_roast,  new ItemStack(ModItemsSpace.powder_coffee, 1));
+        ShredderRecipes.setRecipe(ModItemsSpace.bean_roast, new ItemStack(ModItemsSpace.powder_coffee, 1));
 
         ShredderRecipes.setRecipe(OreDictManager.DictFrame.fromOne(ModBlocks.stone_resource, BlockEnums.EnumStoneType.LIMESTONE), new ItemStack(ModItems.powder_calcium, 4));
         ShredderRecipes.setRecipe(OreDictManager.DictFrame.fromOne(ModBlocksSpace.stone_resource, BlockEnumsSpace.EnumStoneType.CALCIUM), new ItemStack(ModItems.powder_calcium, 6));
@@ -56,9 +56,9 @@ public class ShredderRecipesTweaker {
         List<ItemStack> cobbles = OreDictionary.getOres(OreDictManager.KEY_COBBLESTONE);
         List<ItemStack> sands = OreDictionary.getOres(OreDictManager.KEY_SAND);
 
-        for(ItemStack stone : stones) ShredderRecipes.setRecipe(stone, new ItemStack(Blocks.GRAVEL, 1));
-        for(ItemStack cobble : cobbles) ShredderRecipes.setRecipe(cobble, new ItemStack(Blocks.GRAVEL, 1));
-        for(ItemStack sand : sands) ShredderRecipes.setRecipe(sand, new ItemStack(ModItems.dust, 2));
+        for (ItemStack stone : stones) ShredderRecipes.setRecipe(stone, new ItemStack(Blocks.GRAVEL, 1));
+        for (ItemStack cobble : cobbles) ShredderRecipes.setRecipe(cobble, new ItemStack(Blocks.GRAVEL, 1));
+        for (ItemStack sand : sands) ShredderRecipes.setRecipe(sand, new ItemStack(ModItems.dust, 2));
 
         ShredderRecipes.setRecipe(ModItemsSpace.crystal_nickel, new ItemStack(ModItemsSpace.powder_nickel, 3));
         ShredderRecipes.setRecipe(ModItemsSpace.crystal_niobium, new ItemStack(ModItems.powder_niobium, 3));

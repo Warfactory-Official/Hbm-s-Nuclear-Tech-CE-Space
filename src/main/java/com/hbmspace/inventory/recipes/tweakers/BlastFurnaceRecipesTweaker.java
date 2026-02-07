@@ -11,7 +11,7 @@ import static com.hbmspace.inventory.OreDictManagerSpace.NI;
 public class BlastFurnaceRecipesTweaker {
 
     public static void init() {
-        if(RecipeTweakerManager.isModified(BlastFurnaceRecipes.class)) return;
-        addRecipe(NI,			STEEL,										new ItemStack(ModItemsSpace.ingot_stainless, 2));
+        if (RecipeTweakerManager.isModified(BlastFurnaceRecipes.class)) return;
+        addRecipe(NI, STEEL, new ItemStack(ModItemsSpace.ingot_stainless, 2));
     }
 }

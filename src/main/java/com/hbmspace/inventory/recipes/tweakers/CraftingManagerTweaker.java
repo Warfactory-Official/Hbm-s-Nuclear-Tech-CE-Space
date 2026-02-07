@@ -10,24 +10,22 @@ import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.material.MaterialShapes;
 import com.hbm.items.ItemEnums;
 import com.hbm.items.ModItems;
-import com.hbm.items.machine.ItemWatzPellet;
 import com.hbm.items.tool.ItemConveyorWand;
 import com.hbm.main.CraftingManager;
 import com.hbmspace.blocks.ModBlocksSpace;
-import com.hbmspace.items.enums.EnumAddonWatzTypes;
-import com.hbmspace.items.enums.ItemEnumsSpace;
+import com.hbmspace.enums.EnumAddonWatzTypes;
 import com.hbmspace.items.ModItemsSpace;
+import com.hbmspace.items.enums.ItemEnumsSpace;
 import com.hbmspace.util.RecipeUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import static com.hbm.crafting.MineralRecipes.*;
+import static com.hbm.crafting.MineralRecipes.addBilletToIngot;
 import static com.hbm.crafting.RodRecipes.addPellet;
 import static com.hbm.inventory.OreDictManager.*;
 import static com.hbmspace.inventory.OreDictManagerSpace.*;
-import static com.hbmspace.inventory.OreDictManagerSpace.NI;
 
 public class CraftingManagerTweaker extends CraftingManager {
 
@@ -86,20 +84,20 @@ public class CraftingManagerTweaker extends CraftingManager {
         add1To9Pair(ModItemsSpace.ingot_cm_mix, ModItemsSpace.nugget_cm_mix);
         add1To9Pair(ModItemsSpace.ingot_menthol, ModItemsSpace.nugget_menthol);
 
-        MineralRecipes.addBillet(ModItemsSpace.billet_gaas,					ModItemsSpace.ingot_gaas,				ModItemsSpace.nugget_gaas);
-        MineralRecipes.addBillet(ModItemsSpace.billet_bk247,				ModItemsSpace.ingot_bk247,				ModItemsSpace.nugget_bk247, BK247.all(MaterialShapes.NUGGET));
-        MineralRecipes.addBillet(ModItemsSpace.billet_cf251,				ModItemsSpace.ingot_cf251,				ModItemsSpace.nugget_cf251, CF251.all(MaterialShapes.NUGGET));
-        MineralRecipes.addBillet(ModItemsSpace.billet_cf252,				ModItemsSpace.ingot_cf252,				ModItemsSpace.nugget_cf252, CF252.all(MaterialShapes.NUGGET));
-        MineralRecipes.addBillet(ModItemsSpace.billet_es253,				ModItemsSpace.ingot_es253,				ModItemsSpace.nugget_es253, ES253.all(MaterialShapes.NUGGET));
-        MineralRecipes.addBillet(ModItemsSpace.billet_cm242,				ModItemsSpace.ingot_cm242,				ModItemsSpace.nugget_cm242, CM242.all(MaterialShapes.NUGGET));
-        MineralRecipes.addBillet(ModItemsSpace.billet_cm243,				ModItemsSpace.ingot_cm243,				ModItemsSpace.nugget_cm243, CM243.all(MaterialShapes.NUGGET));
-        MineralRecipes.addBillet(ModItemsSpace.billet_cm244,				ModItemsSpace.ingot_cm244,				ModItemsSpace.nugget_cm244, CM244.all(MaterialShapes.NUGGET));
-        MineralRecipes.addBillet(ModItemsSpace.billet_cm245,				ModItemsSpace.ingot_cm245,				ModItemsSpace.nugget_cm245, CM245.all(MaterialShapes.NUGGET));
-        MineralRecipes.addBillet(ModItemsSpace.billet_cm246,				ModItemsSpace.ingot_cm246,				ModItemsSpace.nugget_cm246, CM246.all(MaterialShapes.NUGGET));
-        MineralRecipes.addBillet(ModItemsSpace.billet_cm247,				ModItemsSpace.ingot_cm247,				ModItemsSpace.nugget_cm247, CM247.all(MaterialShapes.NUGGET));
-        MineralRecipes.addBillet(ModItemsSpace.billet_cm_mix,				ModItemsSpace.ingot_cm_mix,				ModItemsSpace.nugget_cm_mix);
-        MineralRecipes.addBillet(ModItemsSpace.billet_cm_fuel,		ModItemsSpace.ingot_cm_fuel,	ModItemsSpace.nugget_cm_fuel);
-        MineralRecipes.addBillet(ModItemsSpace.billet_menthol,				ModItemsSpace.ingot_menthol,				ModItemsSpace.nugget_menthol);
+        MineralRecipes.addBillet(ModItemsSpace.billet_gaas, ModItemsSpace.ingot_gaas, ModItemsSpace.nugget_gaas);
+        MineralRecipes.addBillet(ModItemsSpace.billet_bk247, ModItemsSpace.ingot_bk247, ModItemsSpace.nugget_bk247, BK247.all(MaterialShapes.NUGGET));
+        MineralRecipes.addBillet(ModItemsSpace.billet_cf251, ModItemsSpace.ingot_cf251, ModItemsSpace.nugget_cf251, CF251.all(MaterialShapes.NUGGET));
+        MineralRecipes.addBillet(ModItemsSpace.billet_cf252, ModItemsSpace.ingot_cf252, ModItemsSpace.nugget_cf252, CF252.all(MaterialShapes.NUGGET));
+        MineralRecipes.addBillet(ModItemsSpace.billet_es253, ModItemsSpace.ingot_es253, ModItemsSpace.nugget_es253, ES253.all(MaterialShapes.NUGGET));
+        MineralRecipes.addBillet(ModItemsSpace.billet_cm242, ModItemsSpace.ingot_cm242, ModItemsSpace.nugget_cm242, CM242.all(MaterialShapes.NUGGET));
+        MineralRecipes.addBillet(ModItemsSpace.billet_cm243, ModItemsSpace.ingot_cm243, ModItemsSpace.nugget_cm243, CM243.all(MaterialShapes.NUGGET));
+        MineralRecipes.addBillet(ModItemsSpace.billet_cm244, ModItemsSpace.ingot_cm244, ModItemsSpace.nugget_cm244, CM244.all(MaterialShapes.NUGGET));
+        MineralRecipes.addBillet(ModItemsSpace.billet_cm245, ModItemsSpace.ingot_cm245, ModItemsSpace.nugget_cm245, CM245.all(MaterialShapes.NUGGET));
+        MineralRecipes.addBillet(ModItemsSpace.billet_cm246, ModItemsSpace.ingot_cm246, ModItemsSpace.nugget_cm246, CM246.all(MaterialShapes.NUGGET));
+        MineralRecipes.addBillet(ModItemsSpace.billet_cm247, ModItemsSpace.ingot_cm247, ModItemsSpace.nugget_cm247, CM247.all(MaterialShapes.NUGGET));
+        MineralRecipes.addBillet(ModItemsSpace.billet_cm_mix, ModItemsSpace.ingot_cm_mix, ModItemsSpace.nugget_cm_mix);
+        MineralRecipes.addBillet(ModItemsSpace.billet_cm_fuel, ModItemsSpace.ingot_cm_fuel, ModItemsSpace.nugget_cm_fuel);
+        MineralRecipes.addBillet(ModItemsSpace.billet_menthol, ModItemsSpace.ingot_menthol, ModItemsSpace.nugget_menthol);
 
 
         addRecipeAutoOreShapeless(new ItemStack(ModItemsSpace.billet_bk247, 1), "nuggetBerkelium247", "nuggetBerkelium247", "nuggetBerkelium247", "nuggetBerkelium247", "nuggetBerkelium247", "nuggetBerkelium247");
@@ -110,7 +108,7 @@ public class CraftingManagerTweaker extends CraftingManager {
         addRecipeAutoOreShapeless(new ItemStack(ModItemsSpace.billet_cm_mix, 1), "nuggetCm244", "nuggetCm244", "nuggetCm245", "nuggetCm245", "nuggetCm245", "nuggetCm245");
         addRecipeAutoOreShapeless(new ItemStack(ModItemsSpace.billet_cm_mix, 1), "tinyCm244", "tinyCm244", "tinyCm245", "tinyCm245", "tinyCm245", "tinyCm245");
 
-        addBilletToIngot(ModItemsSpace.billet_red_copper,	ModItems.ingot_red_copper);
+        addBilletToIngot(ModItemsSpace.billet_red_copper, ModItems.ingot_red_copper);
 
         addRecipeAutoOreShapeless(new ItemStack(ModItemsSpace.pellet_rtg_berkelium), ModItemsSpace.billet_bk247, ModItemsSpace.billet_bk247, ModItemsSpace.billet_bk247, NI.plate());
         addRecipeAutoOreShapeless(new ItemStack(ModItemsSpace.pellet_rtg_cf251), ModItemsSpace.billet_cf251, ModItemsSpace.billet_cf251, ModItemsSpace.billet_cf251, NI.plate());
@@ -138,15 +136,15 @@ public class CraftingManagerTweaker extends CraftingManager {
         RodRecipes.addRBMKRod(ModItemsSpace.billet_cm_fuel, ModItemsSpace.rbmk_fuel_lecm);
         RodRecipes.addRBMKRod(CMRG, ModItemsSpace.rbmk_fuel_mecm);
         RodRecipes.addRBMKRod(CM245, ModItemsSpace.rbmk_fuel_hecm);
-        addPellet(PU241,							EnumAddonWatzTypes.PU241);
-        addPellet(AMF,								EnumAddonWatzTypes.AMF);
-        addPellet(AMRG,								EnumAddonWatzTypes.AMRG);
-        addPellet(CMRG,								EnumAddonWatzTypes.CMRG);
-        addPellet(CMF,								EnumAddonWatzTypes.CMF);
-        addPellet(BK247,							EnumAddonWatzTypes.BK247);
-        addPellet(CF252,							EnumAddonWatzTypes.CF252);
-        addPellet(CF251,							EnumAddonWatzTypes.CF251);
-        addPellet(ES253,							EnumAddonWatzTypes.ES253);
+        addPellet(PU241, EnumAddonWatzTypes.PU241);
+        addPellet(AMF, EnumAddonWatzTypes.AMF);
+        addPellet(AMRG, EnumAddonWatzTypes.AMRG);
+        addPellet(CMRG, EnumAddonWatzTypes.CMRG);
+        addPellet(CMF, EnumAddonWatzTypes.CMF);
+        addPellet(BK247, EnumAddonWatzTypes.BK247);
+        addPellet(CF252, EnumAddonWatzTypes.CF252);
+        addPellet(CF251, EnumAddonWatzTypes.CF251);
+        addPellet(ES253, EnumAddonWatzTypes.ES253);
         CraftingManager.addShapelessAuto(new ItemStack(ModItems.rbmk_fuel_drx, 1), ModItems.rbmk_fuel_balefire, ModItems.particle_digamma);
 
         /* CraftingManager */
@@ -168,28 +166,28 @@ public class CraftingManagerTweaker extends CraftingManager {
         addRecipeAuto(DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.GASCHIP), "I", "S", "W", 'I', ModItems.plate_polymer, 'S', DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.GAAS), 'W', GOLD.wireFine());
         addRecipeAuto(DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.HFCHIP), "I", "S", "W", 'I', ModItemsSpace.nugget_hafnium, 'S', DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.GASCHIP), 'W', GOLD.wireFine());
         addRecipeAuto(DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.MOLYCHIP), "I", "S", "W", 'I', ModItems.powder_molysite, 'S', MINGRADE.billet(), 'W', GOLD.wireFine());
-        addRecipeAuto(new ItemStack(ModItemsSpace.turbine_syngas, 1),"BBB", "BSB", "BBB", 'B', ModItemsSpace.blade_syngas, 'S', STAINLESS.ingot() );
+        addRecipeAuto(new ItemStack(ModItemsSpace.turbine_syngas, 1), "BBB", "BSB", "BBB", 'B', ModItemsSpace.blade_syngas, 'S', STAINLESS.ingot());
         addShapelessAuto(new ItemStack(ModItemsSpace.cmug_empty, 1), Items.CLAY_BALL);
         addRecipeAuto(new ItemStack(ModItemsSpace.glass_empty, 1), "G G", "GGG", " G ", 'G', Blocks.GLASS);
         addShapelessAuto(new ItemStack(ModItemsSpace.teacup_empty, 1), Items.CLAY_BALL, ModItems.powder_calcium);
-        addRecipeAuto(new ItemStack(ModItemsSpace.stick_vinyl, 3),"L", "L", 'L', ModBlocksSpace.vinyl_planks );
-        addRecipeAuto(new ItemStack(ModItemsSpace.stick_pvc, 3),"L", "L", 'L', ModBlocksSpace.pvc_planks );
+        addRecipeAuto(new ItemStack(ModItemsSpace.stick_vinyl, 3), "L", "L", 'L', ModBlocksSpace.vinyl_planks);
+        addRecipeAuto(new ItemStack(ModItemsSpace.stick_pvc, 3), "L", "L", 'L', ModBlocksSpace.pvc_planks);
         addShapelessAuto(new ItemStack(ModBlocksSpace.vinyl_planks, 4), new ItemStack(ModBlocksSpace.vinyl_log));
         addShapelessAuto(new ItemStack(ModBlocksSpace.pvc_planks, 4), new ItemStack(ModBlocksSpace.pvc_log));
-        addRecipeAuto(new ItemStack(Items.PAPER, 3),"LL", 'L', ModBlocksSpace.vinyl_planks );
+        addRecipeAuto(new ItemStack(Items.PAPER, 3), "LL", 'L', ModBlocksSpace.vinyl_planks);
         //addRecipeAuto(new ItemStack(ModBlocksSpace.det_salt, 1), "PIP", "DCD", "PIP", 'P', ModItems.ingot_cobalt, 'D', ModItemsSpace.billet_gaas, 'C', ModBlocks.det_nuke, 'I', Mats.MAT_TCALLOY.make(ModItems.plate_cast));
         addRecipeAuto(new ItemStack(ModItemsSpace.lox_tank, 1), " S ", "BKB", " S ", 'S', STEEL.plate(), 'B', STEEL.bolt(), 'K', Fluids.OXYGEN.getDict(1000));
 
         addRecipeAuto(new ItemStack(ModItemsSpace.beryllium_mirror), "BBN", "BNB", "NBB", 'B', BE.billet(), 'N', ND.wireDense());
         addRecipeAuto(new ItemStack(ModBlocksSpace.air_vent), "IGI", "ICI", "IDI", 'I', IRON.plate(), 'G', Blocks.IRON_BARS, 'C', ModItems.tank_steel, 'D', Blocks.DISPENSER);
-        addRecipeAuto(new ItemStack(ModItemsSpace.powder_wd2004, 1),"PPP", "PCP", "PPP", 'P', ModItemsSpace.powder_wd2004_tiny, 'C', ModItems.powder_dineutronium );
+        addRecipeAuto(new ItemStack(ModItemsSpace.powder_wd2004, 1), "PPP", "PCP", "PPP", 'P', ModItemsSpace.powder_wd2004_tiny, 'C', ModItems.powder_dineutronium);
         addShapelessAuto(new ItemStack(ModBlocks.pink_log), new ItemStack(ModItemsSpace.powder_wd2004, 10), KEY_LOG);
         addRecipeAuto(new ItemStack(ModItemsSpace.plate_nickel, 4), "##", "##", '#', NI.ingot());
         addRecipeAuto(new ItemStack(ModItemsSpace.plate_stainless, 4), "##", "##", '#', STAINLESS.ingot());
         //addRecipeAuto(new ItemStack(ModItemsSpace.fence_gate, 1),"II", "II", "II", 'I', ModBlocks.fence_metal );
         //addRecipeAuto(new ItemStack(ModItems.laser_crystal_iron, 1),"QGQ", "CSC", "QGQ", 'Q', ModBlocks.glass_quartz, 'G', GAAS.ingot(), 'C', ModItems.crystal_iron, 'S', ModItems.egg_balefire_shard);
 
-        if(!GeneralConfig.enable528) {
+        if (!GeneralConfig.enable528) {
             addRecipeAuto(new ItemStack(ModBlocksSpace.rbmk_burner, 1), "IGI", "NCN", "IGI", 'C', ModBlocks.rbmk_blank, 'I', ModBlocks.fluid_duct_neo, 'G', ModItems.tank_steel, 'N', ModItemsSpace.plate_nickel);
         }
 

@@ -1,13 +1,8 @@
-package com.hbmspace.items.enums;
+package com.hbmspace.enums;
 
 import com.hbm.items.ModItems;
 import com.hbm.items.machine.ItemWatzPellet;
 import com.hbm.util.Function;
-import net.minecraftforge.common.util.EnumHelper;
-
-import java.lang.reflect.Field;
-
-import static com.hbm.lib.internal.UnsafeHolder.U;
 
 public class EnumAddonWatzTypes {
 
@@ -72,55 +67,13 @@ public class EnumAddonWatzTypes {
                 new Function.FunctionSqrt(7.0D / 27.7D).withOff(10D * 10D),
                 null);
 
-        updateValuesArray();
-        updateItemEnumFields();
+        EnumAddonTypes.updateStaticValuesField(ItemWatzPellet.EnumWatzType.class, "VALUES");
+        EnumAddonTypes.updateInstanceField(ItemWatzPellet.EnumWatzType.class,
+                ItemWatzPellet.class, "theEnum",
+                ModItems.watz_pellet, ModItems.watz_pellet_depleted);
     }
 
     private static ItemWatzPellet.EnumWatzType addWatzType(String name, Object... params) {
-        return EnumHelper.addEnum(ItemWatzPellet.EnumWatzType.class, name, PARAM_TYPES, params);
-    }
-
-    private static void updateItemEnumFields() {
-        try {
-            ItemWatzPellet.EnumWatzType[] newValues = ItemWatzPellet.EnumWatzType.values();
-
-            Field theEnumField = findFieldInHierarchy(ItemWatzPellet.class, "theEnum");
-            setFieldValueUnsafe(theEnumField, ModItems.watz_pellet, newValues);
-            setFieldValueUnsafe(theEnumField, ModItems.watz_pellet_depleted, newValues);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static Field findFieldInHierarchy(Class<?> clazz, String fieldName) throws NoSuchFieldException {
-        for (Class<?> c = clazz; c != null; c = c.getSuperclass()) {
-            try {
-                return c.getDeclaredField(fieldName);
-            } catch (NoSuchFieldException e) {
-                // Continue to superclass
-            }
-        }
-        throw new NoSuchFieldException("Could not find field: " + fieldName);
-    }
-
-    private static void setFieldValueUnsafe(Field field, Object target, Object value) {
-        long offset = U.objectFieldOffset(field);
-        U.putReference(target, offset, value);
-    }
-
-    private static void setStaticFieldValueUnsafe(Field field, Object value) {
-        Object base = U.staticFieldBase(field);
-        long offset = U.staticFieldOffset(field);
-        U.putReference(base, offset, value);
-    }
-
-    private static void updateValuesArray() {
-        try {
-            Field valuesField = ItemWatzPellet.EnumWatzType.class.getDeclaredField("VALUES");
-            setStaticFieldValueUnsafe(valuesField, ItemWatzPellet.EnumWatzType.values());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        return EnumAddonTypes.addEnum(ItemWatzPellet.EnumWatzType.class, name, PARAM_TYPES, params);
     }
 }

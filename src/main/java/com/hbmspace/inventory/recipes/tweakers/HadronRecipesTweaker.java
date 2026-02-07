@@ -6,9 +6,11 @@ import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.items.ModItemsSpace;
 import net.minecraft.item.ItemStack;
 
+import static com.hbm.inventory.recipes.HadronRecipes.recipes;
+
 public class HadronRecipesTweaker {
     public static void init() {
-        HadronRecipes.getRecipes().add(new HadronRecipes.HadronRecipe(
+        recipes.add(new HadronRecipes.HadronRecipe(
                 new ItemStack(ModBlocksSpace.eu_log, 5),
                 new ItemStack(ModItems.particle_digamma),
                 1000000,

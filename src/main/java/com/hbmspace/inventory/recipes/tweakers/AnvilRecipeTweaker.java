@@ -1,4 +1,5 @@
 package com.hbmspace.inventory.recipes.tweakers;
+
 import com.hbm.blocks.ModBlocks;
 import com.hbm.inventory.OreDictManager;
 import com.hbm.inventory.RecipesCommon;
@@ -17,8 +18,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 import static com.hbm.inventory.OreDictManager.*;
-import static com.hbm.inventory.OreDictManager.KEY_PLANKS;
-import static com.hbm.inventory.OreDictManager.STEEL;
 import static com.hbm.inventory.recipes.anvil.AnvilRecipes.constructionRecipes;
 import static com.hbmspace.inventory.OreDictManagerSpace.NI;
 import static com.hbmspace.inventory.OreDictManagerSpace.STAINLESS;
@@ -38,7 +37,7 @@ public class AnvilRecipeTweaker {
         constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.OreDictStack(PETCOKE.dust()), new AnvilRecipes.AnvilOutput(new ItemStack(ModItems.coke, 1, ItemEnums.EnumCokeType.PETROLEUM.ordinal()))).setTier(3));
         constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.OreDictStack(STAINLESS.ingot(), 1), new AnvilRecipes.AnvilOutput(new ItemStack(ModBlocksSpace.deco_stainless, 4))).setTier(1).setOverlay(AnvilRecipes.OverlayType.CONSTRUCTION));
         constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(
-                new RecipesCommon.AStack[] {
+                new RecipesCommon.AStack[]{
                         new RecipesCommon.OreDictStack(KEY_PLANKS, 6),
                         new RecipesCommon.OreDictStack(STEEL.plate(), 8),
                         new RecipesCommon.ComparableStack(ModItems.circuit, 1, ItemEnums.EnumCircuitType.ANALOG),
@@ -65,7 +64,7 @@ public class AnvilRecipeTweaker {
         /*constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(
                 new RecipesCommon.AStack[] {new RecipesCommon.ComparableStack(ModBlocks.glass_quartz, 3), new RecipesCommon.ComparableStack(ModItems.pill_herbal, 2), new RecipesCommon.ComparableStack(ModItems.powder_magic, 2)},
                 new AnvilRecipes.AnvilOutput(new ItemStack(ModItems.flask_infusion, 1, ItemFlask.EnumInfusion.NITAN.ordinal()))).setTier(2));*/
-        constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.ComparableStack(ModBlocksSpace.deco_stainless, 4), new AnvilRecipes.AnvilOutput[] {new AnvilRecipes.AnvilOutput(new ItemStack(ModItemsSpace.ingot_stainless, 1))}).setTier(1));
+        constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.ComparableStack(ModBlocksSpace.deco_stainless, 4), new AnvilRecipes.AnvilOutput[]{new AnvilRecipes.AnvilOutput(new ItemStack(ModItemsSpace.ingot_stainless, 1))}).setTier(1));
         final String cu = OreDictManager.CU.ingot();
         final String al = OreDictManager.AL.ingot();
 

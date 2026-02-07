@@ -6,8 +6,8 @@ import com.hbm.items.ItemEnums;
 import com.hbm.items.ModItems;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.dim.SolarSystem;
-import com.hbmspace.items.enums.ItemEnumsSpace;
 import com.hbmspace.items.ModItemsSpace;
+import com.hbmspace.items.enums.ItemEnumsSpace;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -19,8 +19,8 @@ public class SmeltingRecipesTweaker {
     public static void init() {
         // Oredict doesn't work for vanilla smelting :(
         // space ores fuck yeeeeah
-        for(int i = 0; i < SolarSystem.Body.values().length - 1; i++){
-            if(i != 1) {
+        for (int i = 0; i < SolarSystem.Body.values().length - 1; i++) {
+            if (i != 1) {
                 GameRegistry.addSmelting(new ItemStack(ModBlocksSpace.ore_iron, 1, i), new ItemStack(Items.IRON_INGOT), 0.7F);
                 GameRegistry.addSmelting(new ItemStack(ModBlocksSpace.ore_gold, 1, i), new ItemStack(Items.GOLD_INGOT), 1.0F);
                 GameRegistry.addSmelting(new ItemStack(ModBlocksSpace.ore_diamond, 1, i), new ItemStack(Items.DIAMOND), 1.0F);

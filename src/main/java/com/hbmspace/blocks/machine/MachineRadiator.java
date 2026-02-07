@@ -3,8 +3,12 @@ package com.hbmspace.blocks.machine;
 import com.hbm.blocks.ILookOverlay;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.TileEntityProxyCombo;
+import com.hbm.util.BobMathUtil;
 import com.hbm.util.I18nUtil;
+import com.hbmspace.api.tile.IVacuumOptimised;
 import com.hbmspace.blocks.BlockDummyableSpace;
+import com.hbmspace.dim.CelestialBody;
+import com.hbmspace.dim.trait.CBT_Atmosphere;
 import com.hbmspace.tileentity.machine.TileEntityRadiator;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
@@ -73,13 +77,12 @@ public class MachineRadiator extends BlockDummyableSpace implements ILookOverlay
             return;
 
         List<String> text = new ArrayList<>();
-        // TODO
-        /*if(!tower.vacuumOptimised) {
+        if(!((IVacuumOptimised) tower).isVacuumOptimised()) {
             CBT_Atmosphere atmosphere = CelestialBody.getTrait(world, CBT_Atmosphere.class);
             if(CelestialBody.inOrbit(world) || atmosphere == null || atmosphere.getPressure() < 0.01) {
                 text.add("&[" + (BobMathUtil.getBlink() ? 0xff0000 : 0xffff00) + "&]! ! ! " + I18nUtil.resolveKey("atmosphere.noVacuum") + " ! ! !");
             }
-        }*/
+        }
 
         for(int i = 0; i < tower.tanks.length; i++)
             text.add((i < 1 ? (TextFormatting.GREEN + "-> ") : (TextFormatting.RED + "<- ")) + TextFormatting.RESET + tower.tanks[i].getTankType().getLocalizedName() + ": " + tower.tanks[i].getFill() + "/" + tower.tanks[i].getMaxFill() + "mB");

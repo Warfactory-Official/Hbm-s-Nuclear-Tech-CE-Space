@@ -10,6 +10,7 @@ import com.hbm.lib.HBMSoundHandler;
 import com.hbm.lib.Library;
 import com.hbm.main.MainRegistry;
 import com.hbm.sound.AudioWrapper;
+import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.tileentity.ISpaceGuiProvider;
 import com.hbm.tileentity.IPersistentNBT;
 import com.hbm.tileentity.TileEntityMachineBase;
@@ -179,8 +180,7 @@ public class TileEntityMachineDischarger extends TileEntityMachineBase implement
                 inventory.setStackInSlot(0, new ItemStack(ModItems.ingot_titanium));
             } else if (consumedItem == ModItems.ingot_schrabidium) {
                 power += Gen * 2;
-                // TODO
-                //inventory.setStackInSlot(0, new ItemStack(ModItems.ingot_hafnium));
+                inventory.setStackInSlot(0, new ItemStack(ModItemsSpace.ingot_hafnium));
             } else if (consumedItem == ModItems.ingot_electronium) {
                 power += Gen * 4;
                 inventory.setStackInSlot(0, new ItemStack(ModItems.ingot_dineutronium));

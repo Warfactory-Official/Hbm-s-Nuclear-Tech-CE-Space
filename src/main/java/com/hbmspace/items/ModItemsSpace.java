@@ -10,6 +10,7 @@ import com.hbm.items.weapon.ItemMissile;
 import com.hbm.main.MainRegistry;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.dim.SolarSystem;
+import com.hbmspace.enums.EnumAddonRBMKRodTypes;
 import com.hbmspace.items.armor.ItemModFlippers;
 import com.hbmspace.items.armor.ItemModHeavyBoots;
 import com.hbmspace.items.armor.ItemModOxy;
@@ -228,29 +229,27 @@ public class ModItemsSpace {
 				.setFunction(ItemRBMKRod.EnumBurnFunc.LINEAR)
 				.setHeat(2D)
 				.setMeltingPoint(2993);
-    // TODO: somehow implement slow_linear function and cf_slope depletion function
-    // for now I'll leave it as it is
     public static final ItemRBMKRodSpace rbmk_fuel_lecm = (ItemRBMKRodSpace) new ItemRBMKRodSpace(rbmk_pellet_lecm, "rbmk_fuel_lecm")
 				.setYield(30000000D)
 				.setStats(20, 5)
-				.setFunction(ItemRBMKRod.EnumBurnFunc.LINEAR)
-				.setDepletionFunction(ItemRBMKRod.EnumDepleteFunc.RAISING_SLOPE)
+				.setFunction(EnumAddonRBMKRodTypes.SLOW_LINEAR)
+				.setDepletionFunction(EnumAddonRBMKRodTypes.CF_SLOPE)
 				.setHeat(1.25D)
 				.setMeltingPoint(1340)
 				.setDiffusion(0.4D);
     public static final ItemRBMKRodSpace rbmk_fuel_mecm = (ItemRBMKRodSpace) new ItemRBMKRodSpace(rbmk_pellet_mecm, "rbmk_fuel_mecm")
 				.setYield(27000000D)
 				.setStats(30, 10)
-				.setFunction(ItemRBMKRod.EnumBurnFunc.LINEAR)
-				.setDepletionFunction(ItemRBMKRod.EnumDepleteFunc.RAISING_SLOPE)
+				.setFunction(EnumAddonRBMKRodTypes.SLOW_LINEAR)
+				.setDepletionFunction(EnumAddonRBMKRodTypes.CF_SLOPE)
 				.setHeat(1.25D)
 				.setMeltingPoint(1720)
 				.setDiffusion(0.3D);
     public static final ItemRBMKRodSpace rbmk_fuel_hecm = (ItemRBMKRodSpace) new ItemRBMKRodSpace(rbmk_pellet_hecm, "rbmk_fuel_hecm")
 				.setYield(24000000D)
 				.setStats(60, 25)
-				.setFunction(ItemRBMKRod.EnumBurnFunc.LINEAR)
-				.setDepletionFunction(ItemRBMKRod.EnumDepleteFunc.RAISING_SLOPE)
+				.setFunction(EnumAddonRBMKRodTypes.SLOW_LINEAR)
+				.setDepletionFunction(EnumAddonRBMKRodTypes.CF_SLOPE)
 				.setHeat(1.3D)
 				.setMeltingPoint(1880)
 				.setDiffusion(0.3D);

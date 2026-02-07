@@ -260,7 +260,6 @@ public class RocketPart extends MissilePart {
         registerPart(ModItems.mp_stability_15_thin, ItemMissile.PartType.FINS, 0, 3, ResourceManager.mp_s_15_thin, ResourceManager.mp_s_15_thin_tex);
         registerPart(ModItems.mp_stability_15_soyuz, ItemMissile.PartType.FINS, 0, 3, ResourceManager.mp_s_15_soyuz, ResourceManager.mp_s_15_soyuz_tex);
         //
-        // TODO move rp_legs_20 to space
         registerPart(ModItemsSpace.rp_legs_20, ItemMissile.PartType.FINS, 2.4, 3, ResourceManagerSpace.rp_s_20_leggy, ResourceManager.universal).withDeployed(ResourceManagerSpace.rp_s_20_leggy_deployed);
 
         //////

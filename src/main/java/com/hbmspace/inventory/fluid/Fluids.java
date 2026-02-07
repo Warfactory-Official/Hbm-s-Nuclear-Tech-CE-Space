@@ -105,5 +105,6 @@ public class Fluids {
     public static FluidType GASEOUS_THORIUM_BROMIDE;
     public static FluidType GASEOUS_HYDROGEN;
     public static FluidType GAS_WATZ;
+    public static FluidType LITHYDRO;
 
 }

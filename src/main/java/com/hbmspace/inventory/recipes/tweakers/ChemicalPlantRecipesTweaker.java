@@ -4,9 +4,7 @@ import com.hbm.config.GeneralConfig;
 import com.hbm.inventory.RecipesCommon;
 import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.inventory.fluid.Fluids;
-import com.hbm.inventory.recipes.AssemblyMachineRecipes;
 import com.hbm.inventory.recipes.ChemicalPlantRecipes;
-import com.hbm.inventory.recipes.ChemplantRecipes;
 import com.hbm.inventory.recipes.loader.GenericRecipe;
 import com.hbm.items.ModItems;
 import com.hbmspace.blocks.ModBlocksSpace;
@@ -16,13 +14,10 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 import static com.hbm.inventory.OreDictManager.*;
-import static com.hbm.inventory.OreDictManager.ANY_PLASTIC;
-import static com.hbm.inventory.OreDictManager.ASBESTOS;
-import static com.hbm.inventory.OreDictManager.TH232;
 import static com.hbmspace.inventory.OreDictManagerSpace.ZI;
 
 public class ChemicalPlantRecipesTweaker {
-    
+
     public static void init() {
         ChemicalPlantRecipes recs = ChemicalPlantRecipes.INSTANCE;
         if (recs.modified) {
@@ -87,8 +82,8 @@ public class ChemicalPlantRecipesTweaker {
         recs.register(new GenericRecipe("chem.masscake").setup(200, 100)
                 .inputFluids(new FluidStack(com.hbmspace.inventory.fluid.Fluids.CMILK, 4000), new FluidStack(com.hbmspace.inventory.fluid.Fluids.CREAM, 1000)) // why not regular milk? well its because the refined products allow for higher mass cakes while still needing less milk
                 .inputItems(
-                        new RecipesCommon.ComparableStack(Items.SUGAR, 8),				// if there is a hole in my logic i will shoot myself
-                        new RecipesCommon.ComparableStack(Items.EGG, 4))				//ex: since a cake needs 3 buckets of milk, c-milk is more dense, leading to it being only 4 buckets of condensed milk, thats 1 bucket per cake.
+                        new RecipesCommon.ComparableStack(Items.SUGAR, 8),                // if there is a hole in my logic i will shoot myself
+                        new RecipesCommon.ComparableStack(Items.EGG, 4))                //ex: since a cake needs 3 buckets of milk, c-milk is more dense, leading to it being only 4 buckets of condensed milk, thats 1 bucket per cake.
                 .outputItems(new ItemStack(Items.CAKE, 4)));
 
         recs.register(new GenericRecipe("chem.butter").setup(100, 100)

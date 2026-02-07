@@ -1,6 +1,5 @@
 package com.hbmspace.inventory.recipes.tweakers;
 
-import com.hbm.inventory.recipes.CentrifugeRecipes;
 import com.hbm.inventory.recipes.loader.SerializableRecipe;
 
 public class RecipeTweakerManager {

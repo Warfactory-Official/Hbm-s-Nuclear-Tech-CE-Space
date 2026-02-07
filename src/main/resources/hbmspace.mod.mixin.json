@@ -10,7 +10,8 @@
     "hbm.MixinItemModInsertClient",
     "hbm.MixinBlockNTMOre",
     "hbm.MixinAuxParticlePacketNTAccessor",
-    "hbm.MixinAuxParticlePacketNTHandler"
+    "hbm.MixinAuxParticlePacketNTHandler",
+    "hbm.items.MixinItemRBMKRodClient"
   ],
   "mixins": [
     "hbm.MixinArmorFSB",
@@ -24,10 +25,13 @@
     "hbm.MixinHbmWorldGen",
     "hbm.MixinNTMWorldGenerator",
     "hbm.MixinPermaSyncHandler",
+    "hbm.block.MixinBlockPedestal",
+    "hbm.items.MixinItemRBMKRod",
     "hbm.recipes.MixinCokerRecipes",
     "hbm.recipes.MixinGasCentrifugeRecipes",
     "hbm.recipes.MixinGasCentrifugeRecipes_PseudoFluidType",
-    "hbm.recipes.MixinSerializableRecipe"
+    "hbm.recipes.MixinSerializableRecipe",
+    "hbm.tileentities.MixinTileEntityCondenser"
   ],
   "server": [],
   "setSourceFile": true,

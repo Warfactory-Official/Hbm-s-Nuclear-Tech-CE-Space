@@ -6,19 +6,19 @@ import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.recipes.PUREXRecipes;
 import com.hbm.inventory.recipes.loader.GenericRecipe;
 import com.hbm.items.ModItems;
+import com.hbmspace.enums.EnumAddonWatzTypes;
 import com.hbmspace.items.ModItemsSpace;
-import com.hbmspace.items.enums.EnumAddonWatzTypes;
 import net.minecraft.item.ItemStack;
 
 public class PUREXRecipesTweaker {
 
-    public static void init(){
-        if(RecipeTweakerManager.isModified(PUREXRecipes.class)) return;
+    public static void init() {
+        if (RecipeTweakerManager.isModified(PUREXRecipes.class)) return;
 
         long watzPower = 10_000;
 
         String autoWatz = "autoswitch.watz";
-        
+
         PUREXRecipes recs = PUREXRecipes.INSTANCE;
         recs.register(new GenericRecipe("purex.watzpu241").setup(60, watzPower).setNameWrapper("purex.recycle").setGroup(autoWatz, recs)
                 .inputItems(new RecipesCommon.ComparableStack(ModItems.watz_pellet_depleted, 1, EnumAddonWatzTypes.PU241))

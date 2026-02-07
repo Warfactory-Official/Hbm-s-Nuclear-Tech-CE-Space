@@ -30,6 +30,7 @@ import com.hbmspace.inventory.materials.MatsSpace;
 import com.hbmspace.items.IDynamicModelsSpace;
 import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.lib.HBMSpaceSoundHandler;
+import com.hbmspace.particle.ParticleGlow;
 import com.hbmspace.render.tileentity.IItemRendererProviderSpace;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneOre;
@@ -235,6 +236,7 @@ public class ModEventHandlerClient {
     @SubscribeEvent
     public static void onTextureStitch(TextureStitchEvent.Pre event) {
         TextureMap map = event.getMap();
+        ParticleGlow.particleFlare = event.getMap().registerSprite(new ResourceLocation("hbm", "particle/yelflare"));
 
         for (NTMMaterial mat : MatsSpace.SPACE_MATERIALS) {
             if (mat.smeltable == NTMMaterial.SmeltingBehavior.SMELTABLE

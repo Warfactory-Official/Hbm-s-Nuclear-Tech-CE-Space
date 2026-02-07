@@ -13,7 +13,7 @@ import static com.hbm.inventory.recipes.CrucibleRecipes.recipes;
 public class CrucibleRecipesTweaker {
 
     public static void init() {
-        if(RecipeTweakerManager.isModified(CrucibleRecipes.class)) return;
+        if (RecipeTweakerManager.isModified(CrucibleRecipes.class)) return;
         int n = MaterialShapes.NUGGET.q(1);
         int i = MaterialShapes.INGOT.q(1);
         recipes.add(new CrucibleRecipes.CrucibleRecipe(18, "crucible.hsss", 12, new ItemStack(ModItems.ingot_dura_steel))
@@ -21,7 +21,7 @@ public class CrucibleRecipesTweaker {
                 .outputs(new Mats.MaterialStack(Mats.MAT_DURA, i * 2)));
 
         recipes.add(new CrucibleRecipes.CrucibleRecipe(19, "crucible.arse", 9, new ItemStack(ModItemsSpace.ingot_gaas))
-                .inputs(new Mats.MaterialStack(MatsSpace.MAT_GALLIUM, n * 6), new Mats.MaterialStack(Mats.MAT_ARSENIC, n * 3 ))
+                .inputs(new Mats.MaterialStack(MatsSpace.MAT_GALLIUM, n * 6), new Mats.MaterialStack(Mats.MAT_ARSENIC, n * 3))
                 .outputs(new Mats.MaterialStack(MatsSpace.MAT_GAAS, i)));
 
         recipes.add(new CrucibleRecipes.CrucibleRecipe(20, "crucible.stainless", 2, new ItemStack(ModItemsSpace.ingot_stainless))

@@ -1,12 +1,10 @@
 package com.hbmspace.world.feature;
 
 import com.google.common.base.Predicate;
+import com.hbm.blocks.generic.BlockStalagmite;
 import com.hbm.inventory.RecipesCommon;
-import com.hbm.world.WorldUtil;
-import com.hbm.world.feature.OreCave;
 import com.hbmspace.dim.WorldProviderCelestial;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockStone;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -23,7 +21,7 @@ import java.util.Random;
 public class OreCaveSpace {
 
     private NoiseGeneratorPerlin noise;
-    private RecipesCommon.MetaBlock ore;
+    private final RecipesCommon.MetaBlock ore;
     /** The number that is being deducted flat from the result of the perlin noise before all other processing. Increase this to make strata rarer. */
     private double threshold = 2D;
     /** The mulitplier for the remaining bit after the threshold has been deducted. Increase to make strata wavier. */
@@ -79,7 +77,7 @@ public class OreCaveSpace {
     }
 
     public OreCaveSpace setBlockOverride(Block override) {
-        this.override = override;
+        OreCaveSpace.override = override;
         return this;
     }
 
@@ -114,7 +112,7 @@ public class OreCaveSpace {
         }
 
         if (this.noise == null) {
-            this.noise = new NoiseGeneratorPerlin(new Random(world.getSeed() + (ore.getID() * 31) + yLevel), 2);
+            this.noise = new NoiseGeneratorPerlin(new Random(world.getSeed() + (ore.getID() * 31L) + yLevel), 2);
         }
         // Apparently getChunkPos doesn't work here at all..
         int cX = event.getPos().getX();
@@ -152,8 +150,7 @@ public class OreCaveSpace {
                                 IBlockState neighborState = world.getBlockState(npos);
                                 Block neighborBlock = neighborState.getBlock();
 
-                                if (neighborState.getMaterial() == Material.AIR) {
-                                    // || neighborBlock instanceof BlockStalagmite) { // TODO: stalagmites
+                                if (neighborState.getMaterial() == Material.AIR || neighborBlock instanceof BlockStalagmite) {
                                     shouldGen = true;
                                 }
 
@@ -163,8 +160,8 @@ public class OreCaveSpace {
                                 if (fluid != null) {
                                     switch (dir) {
                                         case UP:
-                                            /*if (neighborState.getMaterial() != Material.AIR && !(neighborBlock instanceof BlockStalagmite))
-                                                canGenFluid = false;*/
+                                            if (neighborState.getMaterial() != Material.AIR && !(neighborBlock instanceof BlockStalagmite))
+                                                canGenFluid = false;
                                             break;
                                         case DOWN:
                                             if (!neighborBlock.isNormalCube(neighborState, world, npos))

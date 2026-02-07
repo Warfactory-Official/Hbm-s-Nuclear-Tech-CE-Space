@@ -1,6 +1,5 @@
 package com.hbmspace.util;
 
-// TODO: mov or norwood, remind me to remove astronomyutil from CE-main
 public class AstronomyUtil {
 
     // the G in G*M1*M2/r

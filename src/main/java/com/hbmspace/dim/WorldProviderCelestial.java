@@ -735,7 +735,7 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 		if(phase >= 8) return 0;
 		return phase;
 	}
-	// TODO: implement that in BlockPedestal.. gosh fucking mixins mixins mixins mixins mixins
+
 	public boolean isEclipse() {
 		CelestialBody body = CelestialBody.getBody(world);
 

@@ -9,6 +9,7 @@ import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.IConfigurableMachine;
 import com.hbm.tileentity.machine.TileEntityCondenser;
+import com.hbmspace.api.tile.IVacuumOptimised;
 import com.hbmspace.interfaces.AutoRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -28,8 +29,7 @@ public class TileEntityRadiator extends TileEntityCondenser {
         tanks = new FluidTankNTM[2];
         tanks[0] = new FluidTankNTM(Fluids.SPENTSTEAM, inputTankSize);
         tanks[1] = new FluidTankNTM(Fluids.WATER, outputTankSize);
-        // TODO
-        //vacuumOptimised = true;
+        ((IVacuumOptimised) this).setVacuumOptimised(true);
     }
 
     @Override
