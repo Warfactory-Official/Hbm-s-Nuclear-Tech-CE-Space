@@ -8,7 +8,9 @@
   "client": [
     "hbm.MixinArmorFSBClient",
     "hbm.MixinItemModInsertClient",
-    "hbm.MixinBlockNTMOre"
+    "hbm.MixinBlockNTMOre",
+    "hbm.MixinAuxParticlePacketNTAccessor",
+    "hbm.MixinAuxParticlePacketNTHandler"
   ],
   "mixins": [
     "hbm.MixinArmorFSB",
