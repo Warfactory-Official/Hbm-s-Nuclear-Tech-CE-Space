@@ -4,7 +4,6 @@ import com.hbm.blocks.ILookOverlay;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.handler.RocketStruct;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
-import com.hbm.items.ModItems;
 import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.items.weapon.ItemCustomRocket;
 import com.hbm.lib.ForgeDirection;
@@ -133,7 +132,7 @@ public class BlockOrbitalStation extends BlockDummyableSpace implements IBlockSe
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void printHook(RenderGameOverlayEvent.Pre event, World world, int x, int y, int z) {
+    public void printHook(RenderGameOverlayEvent.Pre event, World world, BlockPos pos) {
         if(!CelestialBody.inOrbit(world)) {
             List<String> text = new ArrayList<>();
             text.add("&[" + (BobMathUtil.getBlink() ? 0xff0000 : 0xffff00) + "&]! ! ! " + I18nUtil.resolveKey("atmosphere.noOrbit") + " ! ! !");
@@ -141,12 +140,12 @@ public class BlockOrbitalStation extends BlockDummyableSpace implements IBlockSe
             return;
         }
 
-        int[] posC = this.findCore(world, x, y, z);
+        int[] posC = this.findCore(world, pos.getX(), pos.getY(), pos.getZ());
 
         if(posC == null)
             return;
 
-        if(Math.abs(posC[0] - x) >= 2 || Math.abs(posC[2] - z) >= 2)
+        if(Math.abs(posC[0] - pos.getX()) >= 2 || Math.abs(posC[2] - pos.getZ()) >= 2)
             return;
 
         TileEntity te = world.getTileEntity(new BlockPos(posC[0], posC[1], posC[2]));
@@ -209,7 +208,7 @@ public class BlockOrbitalStation extends BlockDummyableSpace implements IBlockSe
     }
 
     @Override
-    public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
+    public boolean canPlaceBlockAt(@NotNull World worldIn, @NotNull BlockPos pos) {
         if (this == ModBlocksSpace.orbital_station) {
             return false; // block placing of extra main ports (use the dedicated sub-ports!)
         }
@@ -217,7 +216,7 @@ public class BlockOrbitalStation extends BlockDummyableSpace implements IBlockSe
     }
 
     @Override
-    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+    public boolean removedByPlayer(@NotNull IBlockState state, @NotNull World world, @NotNull BlockPos pos, @NotNull EntityPlayer player, boolean willHarvest) {
         if (this == ModBlocksSpace.orbital_station) {
             return false; // block removal of main port
         }

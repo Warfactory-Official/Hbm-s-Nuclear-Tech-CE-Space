@@ -1,6 +1,5 @@
 package com.hbmspace.blocks.machine;
 
-import com.hbm.blocks.BlockDummyable;
 import com.hbm.blocks.ILookOverlay;
 import com.hbm.handler.MultiblockHandlerXR;
 import com.hbm.lib.ForgeDirection;
@@ -89,34 +88,34 @@ public class MachineCryoDistill extends BlockDummyableSpace implements ILookOver
     }
 
     @Override
-    public void printHook(RenderGameOverlayEvent.Pre event, World world, int x, int y, int z) {
+    public void printHook(RenderGameOverlayEvent.Pre event, World world, BlockPos pos) {
 
-        int[] pos = this.findCore(world, x, y, z);
+        int[] posC = this.findCore(world, pos.getX(), pos.getY(), pos.getZ());
 
-        if(pos == null) return;
+        if(posC == null) return;
 
-        int cx = pos[0];
-        int cy = pos[1];
-        int cz = pos[2];
+        int cx = posC[0];
+        int cy = posC[1];
+        int cz = posC[2];
 
-        TileEntity te = world.getTileEntity(new BlockPos(pos[0], pos[1], pos[2]));
+        TileEntity te = world.getTileEntity(new BlockPos(posC[0], posC[1], posC[2]));
 
         if(!(te instanceof TileEntityMachineCryoDistill distill)) return;
 
         ForgeDirection dir = ForgeDirection.getOrientation(distill.getBlockMetadata() - offset);
         List<String> text = new ArrayList<>();
 
-        if(hitCheck(dir, cx, cy, cz, -1, -2, -2, x, y, z)) {
+        if(hitCheck(dir, cx, cy, cz, -1, -2, -2, pos)) {
             text.add(TextFormatting.GREEN + "-> " + TextFormatting.RESET + I18nUtil.resolveKey("hbmfluid." + distill.tanks[0].getTankType().getName().toLowerCase()));
         }
-        if(hitCheck(dir, cx, cy, cz, -2, -2, -2, x, y, z)) {
+        if(hitCheck(dir, cx, cy, cz, -2, -2, -2, pos)) {
             text.add(TextFormatting.GREEN + "-> " + TextFormatting.RESET + "Power");
         }
 
-        if(hitCheck(dir, cx, cy, cz, 3, -2, -2, x, y, z)
-                || hitCheck(dir, cx, cy, cz, 3, -1, -2, x, y, z)
-                || hitCheck(dir, cx, cy, cz, 3, 1, -2, x, y, z)
-                || hitCheck(dir, cx, cy, cz, 3, 2, -2, x, y, z)) {
+        if(hitCheck(dir, cx, cy, cz, 3, -2, -2, pos)
+                || hitCheck(dir, cx, cy, cz, 3, -1, -2, pos)
+                || hitCheck(dir, cx, cy, cz, 3, 1, -2, pos)
+                || hitCheck(dir, cx, cy, cz, 3, 2, -2, pos)) {
             text.add(TextFormatting.RED + "<- " + TextFormatting.RESET + I18nUtil.resolveKey("hbmfluid." + distill.tanks[1].getTankType().getName().toLowerCase()));
             text.add(TextFormatting.RED + "<- " + TextFormatting.RESET + I18nUtil.resolveKey("hbmfluid." + distill.tanks[2].getTankType().getName().toLowerCase()));
             text.add(TextFormatting.RED + "<- " + TextFormatting.RESET + I18nUtil.resolveKey("hbmfluid." + distill.tanks[3].getTankType().getName().toLowerCase()));
@@ -129,14 +128,14 @@ public class MachineCryoDistill extends BlockDummyableSpace implements ILookOver
     }
 
 
-    protected boolean hitCheck(ForgeDirection dir, int coreX, int coreY, int coreZ, int exDir, int exRot, int exY, int hitX, int hitY, int hitZ) {
+    protected boolean hitCheck(ForgeDirection dir, int coreX, int coreY, int coreZ, int exDir, int exRot, int exY, BlockPos hitPos) {
         ForgeDirection rot = dir.getRotation(ForgeDirection.UP);
 
         int iX = coreX + dir.offsetX * exDir + rot.offsetX * exRot;
         int iY = coreY + exY;
         int iZ = coreZ + dir.offsetZ * exDir + rot.offsetZ * exRot;
 
-        return iX == hitX && iZ == hitZ && iY == hitY;
+        return iX == hitPos.getX() && iZ == hitPos.getZ() && iY == hitPos.getY();
     }
 
 }

@@ -898,7 +898,7 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void printHook(RenderGameOverlayEvent.Pre event, World world, int x, int y, int z) {
+    public void printHook(RenderGameOverlayEvent.Pre event, World world, BlockPos pos) {
         RocketState state = getState();
         if(state == RocketState.LAUNCHING
                 || state == RocketState.LANDING
@@ -1056,9 +1056,9 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
 
         @Override
         @SideOnly(Side.CLIENT)
-        public void printHook(RenderGameOverlayEvent.Pre event, World world, int x, int y, int z) {
+        public void printHook(RenderGameOverlayEvent.Pre event, World world, BlockPos pos) {
             if(parent == null) return;
-            parent.printHook(event, world, x, y, z);
+            parent.printHook(event, world, pos);
         }
 
         @Override

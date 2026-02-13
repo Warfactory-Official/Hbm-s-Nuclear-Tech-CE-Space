@@ -1,6 +1,5 @@
 package com.hbmspace.blocks.generic;
 
-import com.hbm.blocks.BlockDummyable;
 import com.hbm.blocks.ILookOverlay;
 import com.hbm.blocks.ITooltipProvider;
 import com.hbm.tileentity.TileEntityProxyCombo;
@@ -35,14 +34,12 @@ public class BlockAirScrubber extends BlockDummyableSpace implements ILookOverla
     }
 
     @Override
-    public void printHook(RenderGameOverlayEvent.Pre event, World world, int x, int y, int z) {
-        int[] pos = this.findCore(world, x, y, z);
-        if(pos == null) return;
+    public void printHook(RenderGameOverlayEvent.Pre event, World world, BlockPos pos) {
+        int[] posC = this.findCore(world, pos.getX(), pos.getY(), pos.getZ());
+        if(posC == null) return;
 
-        TileEntity tile = world.getTileEntity(new BlockPos(pos[0], pos[1], pos[2]));
-        if(!(tile instanceof TileEntityAirScrubber)) return;
-
-        TileEntityAirScrubber scrubber = (TileEntityAirScrubber) tile;
+        TileEntity tile = world.getTileEntity(new BlockPos(posC[0], posC[1], posC[2]));
+        if(!(tile instanceof TileEntityAirScrubber scrubber)) return;
 
         List<String> text = new ArrayList<>();
 
@@ -52,7 +49,6 @@ public class BlockAirScrubber extends BlockDummyableSpace implements ILookOverla
         ILookOverlay.printGeneric(event, I18nUtil.resolveKey(getTranslationKey() + ".name"), 0xffff00, 0x404000, text);
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> list, @NotNull ITooltipFlag flagIn) {
         this.addStandardInfo(list);

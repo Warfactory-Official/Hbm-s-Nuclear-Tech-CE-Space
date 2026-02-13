@@ -84,21 +84,21 @@ public class LaunchPadRocket extends BlockDummyableSpace implements ILookOverlay
     }
 
     @Override
-    public void printHook(RenderGameOverlayEvent.Pre event, World world, int x, int y, int z) {
+    public void printHook(RenderGameOverlayEvent.Pre event, World world, BlockPos pos) {
 
-        int[] pos = this.findCore(world, x, y, z);
+        int[] posC = this.findCore(world, pos.getX(), pos.getY(), pos.getZ());
 
-        if(pos == null)
+        if(posC == null)
             return;
 
-        TileEntity te = world.getTileEntity(new BlockPos(pos[0], pos[1], pos[2]));
+        TileEntity te = world.getTileEntity(new BlockPos(posC[0], posC[1], posC[2]));
 
         if(!(te instanceof TileEntityLaunchPadRocket pad))
             return;
 
         if(pad.rocket == null) return;
 
-        if(y - pos[1] > 2) return; // Don't show tooltip on support tower
+        if(pos.getY() - posC[1] > 2) return; // Don't show tooltip on support tower
 
         List<String> text = new ArrayList<>();
         text.add("Required fuels:");

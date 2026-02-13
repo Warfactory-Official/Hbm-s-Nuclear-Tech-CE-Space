@@ -206,12 +206,12 @@ public class MachineDysonLauncher extends BlockDummyableSpace implements ILookOv
     }
 
     @Override
-    public void printHook(RenderGameOverlayEvent.Pre event, World world, int x, int y, int z) {
-        int[] pos = this.findCore(world, x, y, z);
+    public void printHook(RenderGameOverlayEvent.Pre event, World world, BlockPos pos) {
+        int[] posC = this.findCore(world, pos.getX(), pos.getY(), pos.getZ());
 
-        if(pos == null) return;
+        if(posC == null) return;
 
-        TileEntity te = world.getTileEntity(new BlockPos(pos[0], pos[1], pos[2]));
+        TileEntity te = world.getTileEntity(new BlockPos(posC[0], posC[1], posC[2]));
 
         if(!(te instanceof TileEntityDysonLauncher launcher)) return;
 

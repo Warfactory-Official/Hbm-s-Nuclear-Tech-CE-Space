@@ -108,14 +108,14 @@ public class MachineHTR3 extends BlockDummyableSpace implements ILookOverlay {
     }
 
     @Override
-    public void printHook(RenderGameOverlayEvent.Pre event, World world, int x, int y, int z) {
+    public void printHook(RenderGameOverlayEvent.Pre event, World world, BlockPos pos) {
         if(!CelestialBody.inOrbit(world)) return;
 
-        int[] pos = this.findCore(world, x, y, z);
+        int[] posC = this.findCore(world, pos.getX(), pos.getY(), pos.getZ());
 
-        if(pos == null) return;
+        if(posC == null) return;
 
-        TileEntity te = world.getTileEntity(new BlockPos(pos[0], pos[1], pos[2]));
+        TileEntity te = world.getTileEntity(new BlockPos(posC[0], posC[1], posC[2]));
 
         if(!(te instanceof TileEntityMachineHTR3 thruster))
             return;
@@ -130,7 +130,7 @@ public class MachineHTR3 extends BlockDummyableSpace implements ILookOverlay {
                 text.add(TextFormatting.GREEN + "-> " + TextFormatting.RESET + tank.getTankType().getLocalizedName() + ": " + tank.getFill() + "/" + tank.getMaxFill() + "mB");
             }
 
-            if(world.getTileEntity(new BlockPos(x, y, z)) instanceof TileEntityProxyCombo) {
+            if(world.getTileEntity(pos) instanceof TileEntityProxyCombo) {
                 text.add("Connect to PWR from here");
             }
         }

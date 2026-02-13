@@ -148,23 +148,19 @@ public class BlockDummyableBeam extends BlockDummyableSpace implements ILookOver
     }
 
     @Override
-    public void printHook(RenderGameOverlayEvent.Pre event, World world, int x, int y, int z) {
-        IBlockState state = world.getBlockState(new BlockPos(x, y, z));
-        int metadata = this.getMetaFromState(state);
+    public void printHook(RenderGameOverlayEvent.Pre event, World world, BlockPos pos) {
+        int metadata = this.getMetaFromState(world.getBlockState(pos));
 
         // if it's an extra, remove the extra-ness
         if (metadata >= extra) metadata -= extra;
 
         ForgeDirection dir = ForgeDirection.getOrientation(metadata).getOpposite();
+        BlockPos posAdded = pos.add(dir.offsetX, dir.offsetY, dir.offsetZ);
 
-        x += dir.offsetX;
-        y += dir.offsetY;
-        z += dir.offsetZ;
-
-        Block b = world.getBlockState(new BlockPos(x, y, z)).getBlock();
+        Block b = world.getBlockState(posAdded).getBlock();
 
         if (b instanceof BlockDummyableSpace && !(b instanceof BlockDummyableBeam) && b instanceof ILookOverlay) {
-            ((ILookOverlay) b).printHook(event, world, x, y, z);
+            ((ILookOverlay) b).printHook(event, world, posAdded);
         }
     }
 

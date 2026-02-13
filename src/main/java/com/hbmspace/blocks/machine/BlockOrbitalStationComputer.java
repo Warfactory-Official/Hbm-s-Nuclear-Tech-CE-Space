@@ -107,7 +107,7 @@ public class BlockOrbitalStationComputer extends BlockDummyableSpace implements 
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void printHook(RenderGameOverlayEvent.Pre event, World world, int x, int y, int z) {
+    public void printHook(RenderGameOverlayEvent.Pre event, World world, BlockPos pos) {
         if(!CelestialBody.inOrbit(world)) {
             List<String> text = new ArrayList<>();
             text.add("&[" + (BobMathUtil.getBlink() ? 0xff0000 : 0xffff00) + "&]! ! ! " + I18nUtil.resolveKey("atmosphere.noOrbit") + " ! ! !");
@@ -115,11 +115,11 @@ public class BlockOrbitalStationComputer extends BlockDummyableSpace implements 
             return;
         }
 
-        int[] pos = this.findCore(world, x, y, z);
+        int[] posC = this.findCore(world, pos.getX(), pos.getY(), pos.getZ());
 
-        if(pos == null) return;
+        if(posC == null) return;
 
-        TileEntity te = world.getTileEntity(new BlockPos(pos[0], pos[1], pos[2]));
+        TileEntity te = world.getTileEntity(new BlockPos(posC[0], posC[1], posC[2]));
 
         if(!(te instanceof TileEntityOrbitalStationComputer computer)) return;
 
@@ -129,7 +129,7 @@ public class BlockOrbitalStationComputer extends BlockDummyableSpace implements 
 
         if(!station.hasEngines) {
             text.add(TextFormatting.RED + "No engines available");
-        } else if(station.errorsAt.size() > 0) {
+        } else if(!station.errorsAt.isEmpty()) {
             for(ThreeInts errorAt : station.errorsAt) {
                 TileEntity error = world.getTileEntity(new BlockPos(errorAt.x, errorAt.y, errorAt.z));
                 if(!(error instanceof IPropulsion)) continue;
