@@ -44,7 +44,7 @@ public class AnvilRecipeTweaker {
                         new RecipesCommon.ComparableStack(ModItems.circuit, 8, ItemEnums.EnumCircuitType.VACUUM_TUBE),
                         new RecipesCommon.ComparableStack(ModBlocks.pole_satellite_receiver, 1),
                 }, new AnvilRecipes.AnvilOutput(new ItemStack(ModBlocksSpace.machine_dish_controller))).setTier(3));
-        /*constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(
+        constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(
                 new RecipesCommon.AStack[] {
                         new RecipesCommon.OreDictStack(STEEL.shell(), 6),
                         new RecipesCommon.ComparableStack(ModItemsSpace.plate_stainless, 8),
@@ -60,7 +60,7 @@ public class AnvilRecipeTweaker {
                         new RecipesCommon.ComparableStack(ModBlocks.concrete_smooth, 4),
                         new RecipesCommon.ComparableStack(ModItems.turbine_titanium, 1),
                 },
-                new AnvilRecipes.AnvilOutput(new ItemStack(ModBlocksSpace.machine_atmo_vent))).setTier(2));*/
+                new AnvilRecipes.AnvilOutput(new ItemStack(ModBlocksSpace.machine_atmo_vent))).setTier(2));
         /*constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(
                 new RecipesCommon.AStack[] {new RecipesCommon.ComparableStack(ModBlocks.glass_quartz, 3), new RecipesCommon.ComparableStack(ModItems.pill_herbal, 2), new RecipesCommon.ComparableStack(ModItems.powder_magic, 2)},
                 new AnvilRecipes.AnvilOutput(new ItemStack(ModItems.flask_infusion, 1, ItemFlask.EnumInfusion.NITAN.ordinal()))).setTier(2));*/

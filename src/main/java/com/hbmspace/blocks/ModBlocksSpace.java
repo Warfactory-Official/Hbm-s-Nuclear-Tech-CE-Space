@@ -143,6 +143,8 @@ public class ModBlocksSpace {
     public static final Block machine_radiator = new MachineRadiator(Material.IRON, "machine_radiator").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_dish_controller = new MachineDishControl(Material.IRON, "dish_control").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_discharger = new MachineDischarger(Material.IRON, "machine_discharger").setHardness(5.0F).setResistance(100.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block machine_atmo_tower = new AtmoTower(Material.IRON, "machine_atmo_tower").setHardness(10.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block machine_atmo_vent = new BlockAtmosphericCompressor(Material.IRON, "machine_atmo_vent").setHardness(10.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block gas_dock = new MachineGasDock(Material.IRON, "gas_dock").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.missileTab);
     public static final Block rbmk_burner = new RBMKBurner("rbmk_burner", "rbmk_burner").setCreativeTab(MainRegistry.machineTab);
 

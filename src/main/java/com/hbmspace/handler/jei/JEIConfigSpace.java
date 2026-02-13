@@ -28,6 +28,8 @@ public class JEIConfigSpace implements IModPlugin {
             return;
 
         registry.addRecipeCatalyst(new ItemStack(ModBlocksSpace.machine_vacuum_circuit), VACUUM_CIRCUIT);
+        registry.addRecipeCatalyst(new ItemStack(ModBlocksSpace.machine_milk_reformer), DAIRY);
+        registry.addRecipeCatalyst(new ItemStack(ModBlocksSpace.machine_cryo_distill), CRYO);
 
         registry.addRecipes(vacuumCircuitHandler.getRecipes(), VACUUM_CIRCUIT);
         registry.addRecipes(dairyHandler.getRecipes(), DAIRY);

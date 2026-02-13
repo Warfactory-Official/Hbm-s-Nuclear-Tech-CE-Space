@@ -39,6 +39,8 @@ public class ResourceManagerSpace {
     public static final IModelCustom cryo_distill = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/cryo_distill.obj")).asVBO();
     public static final IModelCustom radiator = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/radiator.obj")).asVBO();
     public static final IModelCustom magma_drill = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/magma_drill.obj")).asVBO();
+    public static final IModelCustom atmo_tower = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/atmo_tower.obj")).asVBO();
+    public static final IModelCustom atmo_vent = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/atmo_vent.obj")).asVBO();
 
     public static final IModelCustom dyson_receiver = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/dyson_receiver.obj")).asVBO();
     public static final IModelCustom dyson_anatmogenesis = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/dyson_anatmogenesis.obj")).asVBO();
@@ -82,6 +84,8 @@ public class ResourceManagerSpace {
     public static final ResourceLocation cryodistill_tex = new ResourceLocation("hbm", "textures/models/machines/cryo_distiller.png");
     public static final ResourceLocation magma_drill_tex = new ResourceLocation("hbm", "textures/models/machines/magma_drill.png");
     public static final ResourceLocation radiator_tex = new ResourceLocation("hbm", "textures/models/machines/radiator.png");
+    public static final ResourceLocation atmo_tower_tex = new ResourceLocation("hbm", "textures/models/machines/machine_atmo_tower.png");
+    public static final ResourceLocation atmo_vent_tex = new ResourceLocation("hbm", "textures/models/machines/atmo_vent.png");
 
     // Dyson
     public static final ResourceLocation dyson_receiver_tex = new ResourceLocation("hbm", "textures/models/machines/dyson_receiver.png");
