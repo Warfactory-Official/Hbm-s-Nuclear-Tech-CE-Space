@@ -19,6 +19,7 @@ public abstract class MixinDictFrame implements IDictFrameAddon {
     float hazMult;
     @Shadow
     public abstract void registerStack(String tag, ItemStack stack);
+
     @Unique
     public OreDictManager.DictFrame makeObject(MaterialShapes shape, int meta, Object... objects) {
 
@@ -33,8 +34,18 @@ public abstract class MixinDictFrame implements IDictFrameAddon {
     }
 
     @Override
-    public OreDictManager.DictFrame oreAll(Object... ore) { // Ignores metadata
+    public OreDictManager.DictFrame oreAll(Object... ore) {
         this.hazMult = HazardRegistry.ore;
-        return this.makeObject(MaterialShapes.ORE, OreDictionary.WILDCARD_VALUE, ore);
+        this.makeObject(MaterialShapes.ORE, OreDictionary.WILDCARD_VALUE, ore);
+        // Th3_Sl1ze: somehow space ores are skipped even though I'm registering them via wildcard value..
+        for(Object o : ore) {
+            if (o instanceof Block) {
+                for (int i = 0; i < 16; i++) {
+                    this.makeObject(MaterialShapes.ORE, i, o);
+                }
+            }
+        }
+
+        return (OreDictManager.DictFrame) (Object) this;
     }
 }
