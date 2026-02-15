@@ -49,7 +49,7 @@ import java.io.File;
  *
  * @author Th3_Sl1ze
 */
-@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:hbm@[2.0.0.0,);required-after:mixinbooter@[10.6,)")
+@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:hbm@[2.1.0.0,);required-after:mixinbooter@[10.6,)")
 @Mod.EventBusSubscriber
 public class SpaceMain {
 

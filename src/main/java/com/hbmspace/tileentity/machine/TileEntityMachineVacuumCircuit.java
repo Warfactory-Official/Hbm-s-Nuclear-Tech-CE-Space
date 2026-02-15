@@ -1,6 +1,7 @@
 package com.hbmspace.tileentity.machine;
 
 import com.hbm.api.energymk2.IEnergyReceiverMK2;
+import com.hbm.handler.threading.PacketThreading;
 import com.hbm.inventory.RecipesCommon;
 import com.hbm.inventory.UpgradeManagerNT;
 import com.hbm.items.machine.ItemMachineUpgrade;
@@ -8,7 +9,6 @@ import com.hbm.lib.DirPos;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.lib.Library;
-import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toclient.AuxParticlePacketNT;
 import com.hbm.tileentity.IUpgradeInfoProvider;
 import com.hbm.tileentity.TileEntityMachineBase;
@@ -127,7 +127,7 @@ public class TileEntityMachineVacuumCircuit extends TileEntityMachineBase implem
                         NBTTagCompound dPart = new NBTTagCompound();
                         dPart.setString("type", "tau");
                         dPart.setByte("count", (byte) 3);
-                        PacketDispatcher.wrapper.sendToAllAround(new AuxParticlePacketNT(dPart, pos.getX() + 0.5 + dir.offsetX * 0.625 + rot.offsetX * 0.5, pos.getY() + 1.25, pos.getZ() + 0.5 + dir.offsetZ * 0.625 + rot.offsetZ * 0.5), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 25));
+                        PacketThreading.createAllAroundThreadedPacket(new AuxParticlePacketNT(dPart, pos.getX() + 0.5 + dir.offsetX * 0.625 + rot.offsetX * 0.5, pos.getY() + 1.25, pos.getZ() + 0.5 + dir.offsetZ * 0.625 + rot.offsetZ * 0.5), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 25));
                     }
                 } else {
                     this.progress = 0;

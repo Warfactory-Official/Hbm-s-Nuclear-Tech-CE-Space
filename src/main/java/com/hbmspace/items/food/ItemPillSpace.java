@@ -1,11 +1,11 @@
 package com.hbmspace.items.food;
 
 import com.hbm.config.VersatileConfig;
+import com.hbm.handler.threading.PacketThreading;
 import com.hbm.items.IDynamicModels;
 import com.hbm.items.ModItems;
 import com.hbm.items.food.ItemPill;
 import com.hbm.lib.HBMSoundHandler;
-import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toclient.AuxParticlePacketNT;
 import com.hbmspace.items.IDynamicModelsSpace;
 import com.hbmspace.items.ModItemsSpace;
@@ -50,7 +50,7 @@ public class ItemPillSpace extends ItemPill implements IDynamicModelsSpace {
                 nbt.setString("mode", "normal");
                 nbt.setInteger("count", 25);
                 nbt.setInteger("entity", player.getEntityId());
-                PacketDispatcher.wrapper.sendToAllAround(new AuxParticlePacketNT(nbt, 0, 0, 0),  new NetworkRegistry.TargetPoint(player.dimension, x, y, z, 25));
+                PacketThreading.createAllAroundThreadedPacket(new AuxParticlePacketNT(nbt, 0, 0, 0),  new NetworkRegistry.TargetPoint(player.dimension, x, y, z, 25));
 
                 world.playSound(null, x, y, z, HBMSoundHandler.vomit, SoundCategory.PLAYERS, 1.0F, 1.0F);
                 player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 60, 19));

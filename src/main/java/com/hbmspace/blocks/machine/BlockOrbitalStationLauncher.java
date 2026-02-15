@@ -85,7 +85,7 @@ public class BlockOrbitalStationLauncher extends BlockOrbitalStation implements 
     }
 
     @Override
-    public void printHook(RenderGameOverlayEvent.Pre event, World world, int x, int y, int z) {
+    public void printHook(RenderGameOverlayEvent.Pre event, World world, BlockPos pos) {
         if(!CelestialBody.inOrbit(world)) {
             List<String> text = new ArrayList<>();
             text.add("&[" + (BobMathUtil.getBlink() ? 0xff0000 : 0xffff00) + "&]! ! ! " + I18nUtil.resolveKey("atmosphere.noOrbit") + " ! ! !");
@@ -93,12 +93,7 @@ public class BlockOrbitalStationLauncher extends BlockOrbitalStation implements 
             return;
         }
 
-        int[] pos = this.findCore(world, x, y, z);
-
-        if(pos == null)
-            return;
-
-        TileEntity te = world.getTileEntity(new BlockPos(pos[0], pos[1], pos[2]));
+        TileEntity te = this.findCoreTE(world, pos);
 
         if(!(te instanceof TileEntityOrbitalStationLauncher pad))
             return;

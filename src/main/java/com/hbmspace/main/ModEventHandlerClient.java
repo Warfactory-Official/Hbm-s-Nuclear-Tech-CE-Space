@@ -55,6 +55,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.TextFormatting;
@@ -175,7 +176,6 @@ public class ModEventHandlerClient {
 
     @SubscribeEvent
     public static void onOverlayRender(RenderGameOverlayEvent.Pre event) {
-        EntityPlayer player = Minecraft.getMinecraft().player;
         if (event.getType() == RenderGameOverlayEvent.ElementType.CROSSHAIRS) {
             Minecraft mc = Minecraft.getMinecraft();
             World world = mc.world;
@@ -185,7 +185,7 @@ public class ModEventHandlerClient {
                 Entity entity = mop.entityHit;
 
                 if(entity instanceof ILookOverlay) {
-                    ((ILookOverlay) entity).printHook(event, world, 0, 0, 0);
+                    ((ILookOverlay) entity).printHook(event, world, BlockPos.ORIGIN);
                 }
             }
         }

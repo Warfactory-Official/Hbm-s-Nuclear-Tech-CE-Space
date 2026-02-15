@@ -2,11 +2,10 @@ package com.hbmspace.tileentity.machine;
 
 import com.hbm.api.energymk2.IEnergyReceiverMK2;
 import com.hbm.blocks.BlockDummyable;
+import com.hbm.handler.threading.PacketThreading;
 import com.hbm.items.ISatChip;
-import com.hbm.items.ModItems;
 import com.hbm.lib.DirPos;
 import com.hbm.lib.ForgeDirection;
-import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toclient.AuxParticlePacketNT;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbmspace.dim.CelestialBody;
@@ -123,7 +122,7 @@ public class TileEntityDysonLauncher extends TileEntityMachineBase implements IT
                     data.setDouble("moY", 10);
                     data.setDouble("moZ", dir.offsetZ * 10);
                     data.setInteger("maxAge", 10 + count / 2 + world.rand.nextInt(5));
-                    PacketDispatcher.wrapper.sendToAllAround(new AuxParticlePacketNT(data, posX, posY, posZ), new NetworkRegistry.TargetPoint(this.world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 150));
+                    PacketThreading.createAllAroundThreadedPacket(new AuxParticlePacketNT(data, posX, posY, posZ), new NetworkRegistry.TargetPoint(this.world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 150));
                     ItemStack stack = inventory.getStackInSlot(0);
                     stack.shrink(toLaunch);
                     if(stack.getCount() <= 0) inventory.setStackInSlot(0, ItemStack.EMPTY);
