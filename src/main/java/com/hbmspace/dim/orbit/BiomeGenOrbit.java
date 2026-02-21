@@ -1,10 +1,10 @@
 package com.hbmspace.dim.orbit;
 
-import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.BiomeGenBaseCelestial;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -16,12 +16,7 @@ public class BiomeGenOrbit extends BiomeGenBaseCelestial {
 	}
 
 	@Override
-	public void genTerrainBlocks(World worldIn, Random rand, ChunkPrimer chunkPrimerIn, int x, int z, double noiseVal) {
+	public void genTerrainBlocks(@NotNull World worldIn, @NotNull Random rand, @NotNull ChunkPrimer chunkPrimerIn, int x, int z, double noiseVal) {
 		// NOTHING
 	}
-
-	public void decorate(World world, Random rand, int x, int z) {
-		// EVEN LESS
-	}
-	
 }

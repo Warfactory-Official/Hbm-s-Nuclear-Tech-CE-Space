@@ -37,11 +37,7 @@ public class CBT_Dyson extends CelestialBodyTrait {
         CBT_Dyson dyson = star.getTrait(CBT_Dyson.class);
         if(dyson == null) dyson = new CBT_Dyson();
 
-        Swarm swarm = dyson.swarms.get(id);
-        if(swarm == null) {
-            swarm = new Swarm(0);
-            dyson.swarms.put(id, swarm);
-        }
+        Swarm swarm = dyson.swarms.computeIfAbsent(id, _ -> new Swarm(0));
 
         swarm.members += amount;
 

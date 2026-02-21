@@ -27,6 +27,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.IRenderHandler;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
@@ -85,7 +86,7 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 	public boolean hasSkyLight() { return true; }
 
 	// Can be overridden to provide fog changing events based on weather
-	public float fogDensity() {
+	public float fogDensity(EntityViewRenderEvent.FogDensity event) {
 		CBT_Atmosphere atmosphere = CelestialBody.getTrait(world, CBT_Atmosphere.class);
 		if(atmosphere == null) return 0;
 

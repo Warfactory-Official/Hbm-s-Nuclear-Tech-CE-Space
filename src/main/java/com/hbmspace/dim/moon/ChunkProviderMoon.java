@@ -2,10 +2,13 @@ package com.hbmspace.dim.moon;
 
 import com.hbm.blocks.ModBlocks;
 import com.hbmspace.blocks.ModBlocksSpace;
+import com.hbmspace.config.WorldConfigSpace;
+import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.ChunkProviderCelestial;
 import com.hbmspace.dim.mapgen.MapGenCrater;
 import com.hbmspace.dim.mapgen.MapGenGreg;
 import com.hbmspace.dim.mapgen.MapgenRavineButBased;
+import com.hbmspace.world.gen.terrain.MapGenBubble;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -22,7 +25,7 @@ public class ChunkProviderMoon extends ChunkProviderCelestial {
 	private MapGenCrater smallCrater = new MapGenCrater(6);
 	private MapGenCrater largeCrater = new MapGenCrater(64);
 
-    //private MapGenBubble brine = new MapGenBubble(WorldConfig.munBrineSpawn);
+    private MapGenBubble brine = new MapGenBubble(WorldConfigSpace.munBrineSpawn);
 
 	public ChunkProviderMoon(World world, long seed, boolean hasMapFeatures) {
 		super(world, seed, hasMapFeatures);
@@ -34,6 +37,11 @@ public class ChunkProviderMoon extends ChunkProviderCelestial {
 
 		smallCrater.regolith = largeCrater.regolith = ModBlocks.basalt;
 		smallCrater.rock = largeCrater.rock = ModBlocksSpace.moon_rock;
+
+		brine.block = ModBlocksSpace.ore_brine;
+		brine.meta = (byte) CelestialBody.getMeta(world);
+		brine.replace = ModBlocksSpace.moon_rock;
+		brine.setSize(8, 16);
 
 		stoneBlock = ModBlocksSpace.moon_rock;
 		seaBlock = ModBlocks.basalt;
@@ -49,6 +57,7 @@ public class ChunkProviderMoon extends ChunkProviderCelestial {
 		rgen.generate(worldObj, x, z, buffer);
 		smallCrater.generate(worldObj, x, z, buffer);
 		largeCrater.generate(worldObj, x, z, buffer);
+		brine.generate(worldObj, x, z, buffer);
 
 		return buffer;
 	}

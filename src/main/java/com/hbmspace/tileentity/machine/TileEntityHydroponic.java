@@ -53,7 +53,7 @@ public class TileEntityHydroponic extends TileEntityMachineBase implements ITick
     public static int maxFertilizer = 200;
 
     private boolean lightsOn = false;
-    private int[] prevMeta = new int[3];
+    private final int[] prevMeta = new int[3];
 
     public TileEntityHydroponic() {
         super(6, true, true);
@@ -217,7 +217,7 @@ public class TileEntityHydroponic extends TileEntityMachineBase implements ITick
                     // after collecting produced O2, break any fully grown plants
                     // unless there is no space to collect the drops
                     if (fullyGrown) {
-                        java.util.List<ItemStack> drops = currentPlant.getDrops(world, plantPos, plantState, 0);
+                        List<ItemStack> drops = currentPlant.getDrops(world, plantPos, plantState, 0);
                         if (attemptHarvest(drops)) {
                             world.setBlockToAir(plantPos);
                             markDirty();
@@ -257,7 +257,7 @@ public class TileEntityHydroponic extends TileEntityMachineBase implements ITick
         originals[2] = inventory.getStackInSlot(5);
 
         for(ItemStack drop : drops) {
-            if(InventoryUtil.tryAddItemToInventory(inventory, 3, 5, drop) != null) {
+            if(InventoryUtil.tryAddItemToInventory(inventory, 3, 5, drop) != ItemStack.EMPTY) {
                 inventory.setStackInSlot(3, originals[0]);
                 inventory.setStackInSlot(4, originals[1]);
                 inventory.setStackInSlot(5, originals[2]);

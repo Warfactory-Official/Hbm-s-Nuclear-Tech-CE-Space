@@ -107,22 +107,20 @@ public class CBT_Atmosphere extends CelestialBodyTrait {
 	// Get the highest pressure fluid
 	public FluidType getMainFluid() {
 		sortDescending();
-		FluidEntry first = fluids.get(0);
+		FluidEntry first = fluids.getFirst();
 		return first != null ? first.fluid : Fluids.NONE;
 	}
 
 	public void sortDescending() {
-		fluids.sort((a, b) -> {
-			return Double.compare(b.pressure, a.pressure);
-		});
+		fluids.sort((a, b) -> Double.compare(b.pressure, a.pressure));
 	}
 
 	// FluidEntries store PARTIAL pressure, to get the total atmospheric pressure, use this method
 	public double getPressure() {
 		double pressure = 0;
-		for(int i = 0; i < fluids.size(); i++) {
-			pressure += fluids.get(i).pressure;
-		}
+        for (FluidEntry fluid : fluids) {
+            pressure += fluid.pressure;
+        }
 
 		return pressure;
 	}

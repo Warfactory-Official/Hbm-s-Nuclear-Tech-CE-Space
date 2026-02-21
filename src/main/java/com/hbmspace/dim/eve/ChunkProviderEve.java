@@ -1,15 +1,18 @@
 package com.hbmspace.dim.eve;
 
 import com.hbm.blocks.ModBlocks;
-import com.hbm.config.WorldConfig;
 import com.hbmspace.blocks.ModBlocksSpace;
+import com.hbmspace.config.WorldConfigSpace;
+import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.ChunkProviderCelestial;
 import com.hbmspace.dim.eve.biome.BiomeGenBaseEve;
 import com.hbmspace.dim.noise.MapGenVNoise;
+import com.hbmspace.world.gen.terrain.MapGenBubble;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
@@ -23,8 +26,8 @@ public class ChunkProviderEve extends ChunkProviderCelestial {
     private final NoiseGeneratorPerlin crackNoise;
     private final MapGenVNoise noise = new MapGenVNoise();
 
-    //private MapGenBubble oil = new MapGenBubble(WorldConfig.eveGasSpawn);
-	
+    private final MapGenBubble oil = new MapGenBubble(WorldConfigSpace.eveGasSpawn);
+
 	public ChunkProviderEve(World world, long seed, boolean hasMapFeatures) {
 		super(world, seed, hasMapFeatures);
 		reclamp = false;
@@ -43,10 +46,10 @@ public class ChunkProviderEve extends ChunkProviderCelestial {
 
         noise.applyToBiome = BiomeGenBaseEve.eveOcean;
 
-        /*oil.block = ModBlocks.ore_gas;
-        oil.meta = (byte)CelestialBody.getMeta(world);
-        oil.replace = ModBlocks.eve_rock;
-        oil.setSize(8, 16);*/
+        oil.block = ModBlocksSpace.ore_gas;
+        oil.meta = (byte) CelestialBody.getMeta(world);
+        oil.replace = ModBlocksSpace.eve_rock;
+        oil.setSize(8, 16);
 	}
 
     @Override
@@ -56,16 +59,16 @@ public class ChunkProviderEve extends ChunkProviderCelestial {
         boolean hasOcean = false;
         boolean hasSeismic = false;
 
-        for (int i = 0; i < this.biomesForGeneration.length; i++) {
-            if (this.biomesForGeneration[i] == BiomeGenBaseEve.eveOcean) hasOcean = true;
-            if (this.biomesForGeneration[i] == BiomeGenBaseEve.eveSeismicPlains) hasSeismic = true;
+        for (Biome biome : biomesForGeneration) {
+            if (biome == BiomeGenBaseEve.eveOcean) hasOcean = true;
+            if (biome == BiomeGenBaseEve.eveSeismicPlains) hasSeismic = true;
             if (hasOcean && hasSeismic) break;
         }
 
         if (hasSeismic) generateCracks(x, z, primer);
-        if (hasOcean) this.noise.generate(this.worldObj, x, z, primer);
+        if (hasOcean) noise.generate(worldObj, x, z, primer);
 
-        //this.oil.generate(this.world, x, z, primer);
+        oil.generate(worldObj, x, z, primer);
 
         return primer;
     }
@@ -101,14 +104,15 @@ public class ChunkProviderEve extends ChunkProviderCelestial {
         }
     }
 
-	@Override
-	public boolean generateStructures(@NotNull Chunk chunkIn, int x, int z){return false;}
-	@Override
-	@Nullable
-	public BlockPos getNearestStructurePos(@NotNull World worldIn, @NotNull String structureName, @NotNull BlockPos position, boolean findUnexplored){return null;}
-	@Override
-	public void recreateStructures(Chunk chunkIn, int x, int z){}
+    @Override
+    public boolean generateStructures(@NotNull Chunk chunkIn, int x, int z) {
+        return false;
+    }
 
-	@Override
-	public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos){return false;}
+    @Override
+    @Nullable
+    public BlockPos getNearestStructurePos(@NotNull World worldIn, @NotNull String structureName, @NotNull BlockPos position, boolean findUnexplored) {
+        return null;
+    }
+
 }

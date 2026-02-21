@@ -21,6 +21,7 @@ public final class EnumAddonTypes {
         EnumAddonWasteTypes.init();
         EnumAddonRBMKColumn.init();
         EnumAddonRBMKRodTypes.init();
+        EnumAddonBedrockOreTypes.init();
     }
 
     /**

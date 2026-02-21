@@ -5,10 +5,12 @@ import com.hbmspace.dim.WorldChunkManagerCelestial;
 import com.hbmspace.dim.WorldChunkManagerCelestial.BiomeGenLayers;
 import com.hbmspace.dim.WorldProviderCelestial;
 import com.hbmspace.dim.laythe.GenLayerLaythe.*;
+import net.minecraft.block.material.Material;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.layer.*;
 import net.minecraftforge.client.IRenderHandler;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -41,6 +43,15 @@ public class WorldProviderLaythe extends WorldProviderCelestial {
 	}
 
 	@Override
+	public float fogDensity(EntityViewRenderEvent.FogDensity event) {
+		if(event.getState().getMaterial() == Material.WATER) {
+			return 0.03F;
+		}
+
+		return super.fogDensity(event);
+	}
+
+	@Override
 	public boolean updateLightmap(int[] lightmap) {
 		for(int i = 0; i < 256; i++) {
 			float sun = getSunBrightness(1.0F);
@@ -59,38 +70,28 @@ public class WorldProviderLaythe extends WorldProviderCelestial {
 
 	private static BiomeGenLayers createBiomeGenerators(long seed) {
 		GenLayer biomes = new GenLayerLaytheBiomes(seed);
-		GenLayer polar = new GenLayerLaythePolar(1000L, biomes);
-		
-		
-		
-		biomes = new GenLayerFuzzyZoom(2000L, biomes);
+		biomes = new GenLayerLaythePolar(1000L, biomes);
 
-		biomes = new GenLayerZoom(2001L, biomes);
-		
-		
-		polar = new GenLayerZoom(1000L, polar);
-		GenLayer polarmag = GenLayerZoom.magnify(1000L, polar, 1);
-		biomes = new GenLayerLaythePolar(1000L, polarmag);
-		
+		biomes = new GenLayerZoom(1040L, biomes);
+		biomes = GenLayerZoom.magnify(1000L, biomes, 1);
+		biomes = new GenLayerLaythePolar(1300L, biomes);
+
 		biomes = new GenLayerDiversifyLaythe(1000L, biomes);
-		
-		biomes = new GenLayerZoom(1000L, biomes);
+		biomes = new GenLayerLaytheOceans(56000L, biomes);
+		biomes = new GenLayerLaytheIslands(200L, biomes);
+
+		biomes = new GenLayerZoom(1200L, biomes);
 		biomes = new GenLayerZoom(1001L, biomes);
 
 		biomes = new GenLayerLaytheOceans(4000L, biomes);
-		biomes = new GenLayerLaytheOceans(4000L, biomes);
-		biomes = new GenLayerLaytheOceans(4000L, biomes);
-		biomes = new GenLayerLaytheOceans(4000L, biomes);
-		
-		GenLayer oceanGenLayer = new GenLayerLaytheOceans(4000L, biomes);
-		oceanGenLayer = GenLayerZoom.magnify(4000L, biomes, 0);
-		
+		biomes = new GenLayerLaytheOceans(4001L, biomes);
+
 		biomes = new GenLayerZoom(1003L, biomes);
+		biomes = new GenLayerLaytheOceans(4342L, biomes);
 		biomes = new GenLayerSmooth(700L, biomes);
-		biomes = new GenLayerLaytheIslands(200L, biomes);
 
 		biomes = new GenLayerZoom(1006L, biomes);
-			
+
 		GenLayer genLayerVoronoiZoom = new GenLayerVoronoiZoom(10L, biomes);
 
 		return new BiomeGenLayers(biomes, genLayerVoronoiZoom, seed);

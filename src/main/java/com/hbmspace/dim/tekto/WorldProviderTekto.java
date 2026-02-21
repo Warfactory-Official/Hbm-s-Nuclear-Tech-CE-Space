@@ -8,8 +8,6 @@ import com.hbmspace.dim.WorldProviderCelestial;
 import com.hbmspace.dim.tekto.GenLayerTekto.GenLayerTektoRiverMix;
 import com.hbmspace.dim.tekto.GenLayerTekto.GenlayerTektoBiomes;
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.layer.*;
@@ -25,24 +23,8 @@ public class WorldProviderTekto extends WorldProviderCelestial {
 	}
 	
 	@Override
-	public IChunkGenerator createChunkGenerator() {
+	public @NotNull IChunkGenerator createChunkGenerator() {
 		return new ChunkProviderTekto(this.world, this.getSeed(), false);
-	}
-
-
-	@Override
-	public void updateWeather() {
-		super.updateWeather();
-	}
-
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public @NotNull Vec3d getSkyColor(@NotNull Entity camera, float partialTicks) {
-		Vec3d ohshit = super.getSkyColor(camera, partialTicks);
-
-		return new Vec3d(ohshit.x , ohshit.y, ohshit.z);
-		
 	}
 	
 	@Override
@@ -55,11 +37,16 @@ public class WorldProviderTekto extends WorldProviderCelestial {
 
 	@Override
 	public Block getStone() {
-		return ModBlocks.basalt; //temp
+		return ModBlocks.basalt;
+	}
+
+	@Override
+	public boolean hasIce() {
+		return true;
 	}
 
 	private static BiomeGenLayers createBiomeGenerators(long seed) {
-		GenLayer genlayerBiomes = new GenlayerTektoBiomes(seed); // Your custom biome layer
+		GenLayer genlayerBiomes = new GenlayerTektoBiomes(seed);
 
 		genlayerBiomes = new GenLayerZoom(1000L, genlayerBiomes);
 		genlayerBiomes = new GenLayerZoom(1001L, genlayerBiomes);
@@ -80,6 +67,6 @@ public class WorldProviderTekto extends WorldProviderCelestial {
 	}
 
 	@Override
-	public DimensionType getDimensionType(){return DimensionType.getById(SpaceConfig.tektoDimension);}
+	public @NotNull DimensionType getDimensionType(){return DimensionType.getById(SpaceConfig.tektoDimension);}
 
 }

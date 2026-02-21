@@ -4,6 +4,7 @@ import com.hbmspace.dim.moho.biome.BiomeGenBaseMoho;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
+import org.jetbrains.annotations.NotNull;
 
 public class GenLayerMohoPlateauExtend extends GenLayer {
 
@@ -13,7 +14,7 @@ public class GenLayerMohoPlateauExtend extends GenLayer {
     }
 
     @Override
-    public int[] getInts(int areaX, int areaY, int areaWidth, int areaHeight) {
+    public int @NotNull [] getInts(int areaX, int areaY, int areaWidth, int areaHeight) {
         int i = areaX - 1;
         int j = areaY - 1;
         int k = areaWidth + 2;
@@ -23,25 +24,24 @@ public class GenLayerMohoPlateauExtend extends GenLayer {
         int[] out = IntCache.getIntCache(areaWidth * areaHeight);
 
         final int cragId = Biome.getIdForBiome(BiomeGenBaseMoho.mohoCrag);
-        final int plateauId = 0; // Biome.getIdForBiome(BiomeGenBaseMoho.mohoPlateau);
+        final int plateauId = Biome.getIdForBiome(BiomeGenBaseMoho.mohoPlateau);
 
         for (int y = 0; y < areaHeight; ++y) {
             for (int x = 0; x < areaWidth; ++x) {
-                this.initChunkSeed((long) (x + areaX), (long) (y + areaY));
+                this.initChunkSeed(x + areaX, y + areaY);
 
                 int center = in[x + 1 + (y + 1) * k];
 
                 if (center == cragId) {
-                    int north = in[x + 1 + (y + 0) * k];
-                    int east  = in[x + 2 + (y + 1) * k];
-                    int west  = in[x + 0 + (y + 1) * k];
+                    int north = in[x + 1 + (y) * k];
+                    int east = in[x + 2 + (y + 1) * k];
+                    int west = in[x + (y + 1) * k];
                     int south = in[x + 1 + (y + 2) * k];
 
-                    boolean surrounded =
-                            ((north == cragId || north == plateauId) &&
-                                    (east  == cragId || east  == plateauId) &&
-                                    (west  == cragId || west  == plateauId) &&
-                                    (south == cragId || south == plateauId));
+                    boolean surrounded = ((north == cragId || north == plateauId)
+                            && (east == cragId || east == plateauId)
+                            && (west == cragId || west == plateauId)
+                            && (south == cragId || south == plateauId));
 
                     if (surrounded) {
                         center = plateauId;

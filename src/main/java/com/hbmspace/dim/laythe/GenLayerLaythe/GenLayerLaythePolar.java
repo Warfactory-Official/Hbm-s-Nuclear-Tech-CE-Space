@@ -5,6 +5,7 @@ import com.hbmspace.dim.laythe.biome.BiomeGenBaseLaythe;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
+import org.jetbrains.annotations.NotNull;
 
 public class GenLayerLaythePolar extends GenLayer {
 
@@ -14,7 +15,7 @@ public class GenLayerLaythePolar extends GenLayer {
     }
 
 
-    public int[] getInts(int p_75904_1_, int p_75904_2_, int p_75904_3_, int p_75904_4_)
+    public int @NotNull [] getInts(int p_75904_1_, int p_75904_2_, int p_75904_3_, int p_75904_4_)
     {
         int i1 = p_75904_1_ - 1;
         int j1 = p_75904_2_ - 1;
@@ -27,12 +28,12 @@ public class GenLayerLaythePolar extends GenLayer {
         {
             for (int j2 = 0; j2 < p_75904_3_; ++j2)
             {
-                int k2 = aint[j2 + 0 + (i2 + 0) * k1];
-                int l2 = aint[j2 + 2 + (i2 + 0) * k1];
-                int i3 = aint[j2 + 0 + (i2 + 2) * k1];
+                int k2 = aint[j2 + (i2) * k1];
+                int l2 = aint[j2 + 2 + (i2) * k1];
+                int i3 = aint[j2 + (i2 + 2) * k1];
                 int j3 = aint[j2 + 2 + (i2 + 2) * k1];
                 int k3 = aint[j2 + 1 + (i2 + 1) * k1];
-                this.initChunkSeed((long)(j2 + p_75904_1_), (long)(i2 + p_75904_2_));
+                this.initChunkSeed(j2 + p_75904_1_, i2 + p_75904_2_);
                 if (k3 == SpaceConfig.laytheOceanBiome && k2 == SpaceConfig.laytheOceanBiome && l2 == SpaceConfig.laytheOceanBiome && i3 == SpaceConfig.laytheOceanBiome && j3 == SpaceConfig.laytheOceanBiome)
                 {
                     aint1[j2 + i2 * p_75904_3_] = Biome.getIdForBiome(BiomeGenBaseLaythe.laythePolar);

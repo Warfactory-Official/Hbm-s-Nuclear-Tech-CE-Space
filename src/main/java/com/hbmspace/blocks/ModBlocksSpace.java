@@ -1,6 +1,5 @@
 package com.hbmspace.blocks;
 
-import com.hbm.blocks.BlockBase;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.OreEnumUtil;
 import com.hbm.inventory.fluid.Fluids;
@@ -102,6 +101,9 @@ public class ModBlocksSpace {
 
     public static final Block stone_resource = new BlockEnumMetaSpace<>(Material.ROCK, SoundType.STONE, "stone_resource", BlockEnumsSpace.EnumStoneType.VALUES, true, true).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
 
+    public static final Block spike_cacti = new BlockRubberCacti("rubber_tall").setCreativeTab(MainRegistry.blockTab).setSoundType(SoundType.GROUND).setHardness(0.0F);
+    public static final Block vinyl_sand = new BlockFallingBaseSpace(Material.SAND, "vinyl_sand", SoundType.SAND, "sand_vinyl").setCreativeTab(MainRegistry.blockTab).setHardness(1.0F).setResistance(1.0F);
+    public static final Block vinyl_vines = new BlockVinylVine("vinyl_vine").setCreativeTab(MainRegistry.blockTab).setHardness(1.0F).setResistance(1.0F);
     public static final Block vinyl_log = new BlockLogNT("vinyl_log", "vinyl_log_side", "vinyl_log_top").setSoundType(SoundType.WOOD).setCreativeTab(MainRegistry.blockTab).setHardness(0.5F).setResistance(2.5F);
     public static final Block pvc_log = new BlockLogNT("pvc_log", "pvc_log_side", "pvc_log_top").setSoundType(SoundType.WOOD).setCreativeTab(MainRegistry.blockTab).setHardness(0.5F).setResistance(2.5F);
     public static final Block vinyl_planks = new BlockBakeBaseSpace(Material.WOOD, "vinyl_planks").setSoundType(SoundType.WOOD).setCreativeTab(MainRegistry.blockTab).setHardness(1.0F).setResistance(1.0F);
@@ -135,7 +137,7 @@ public class ModBlocksSpace {
     public static final Block machine_solar = new MachineSolar(Material.IRON, "machine_solar").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block air_vent = new BlockAirPump(Material.IRON, "air_vent").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block air_scrubber = new BlockAirScrubber(Material.IRON, "air_scrubber").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
-    //public static final Block algae_film = new BlockAlgaeFilm(Material.IRON, "algae_film").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block algae_film = new BlockAlgaeFilm(Material.IRON, "algae_film").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block hydrobay = new MachineHydroponic(Material.IRON, "hydrobay").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_cryo_distill = new MachineCryoDistill(Material.IRON, "machine_cryo_distill").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_milk_reformer = new MachineMilkReformer(Material.IRON, "machine_milk_reformer").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
@@ -146,6 +148,7 @@ public class ModBlocksSpace {
     public static final Block machine_atmo_tower = new AtmoTower(Material.IRON, "machine_atmo_tower").setHardness(10.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_atmo_vent = new BlockAtmosphericCompressor(Material.IRON, "machine_atmo_vent").setHardness(10.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block gas_dock = new MachineGasDock(Material.IRON, "gas_dock").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.missileTab);
+    public static final Block orrery = new BlockOrrery(Material.IRON, "orrery").setHardness(10.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block rbmk_burner = new RBMKBurner("rbmk_burner", "rbmk_burner").setCreativeTab(MainRegistry.machineTab);
 
     public static final Block dyson_launcher = new MachineDysonLauncher(Material.IRON, "dyson_launcher").setHardness(10.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);
@@ -154,13 +157,26 @@ public class ModBlocksSpace {
     public static final Block dyson_converter_he = new MachineDysonConverterHE(Material.IRON, "dyson_converter_he").setHardness(10.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block dyson_converter_anatmogenesis = new MachineDysonConverterAnatmogenesis(Material.IRON, "dyson_converter_anatmogenesis").setHardness(10.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);
 
+    public static final Block geysir_electric = new BlockVolcanoV2("geysir_electric", "basalt").setLightLevel(1.0F).setHardness(2.0F);
+    public static final Block geysir_chloric = new BlockGeysierDCM("geysir_chloric", "basalt").setLightLevel(1.0F).setHardness(2.0F);
+    public static final Block sapling_pvc = new BlockNTSapling("sapling").setCreativeTab(MainRegistry.blockTab);
+    public static final Block laythe_kelp = new BlockKelp("laythe_kelp").setCreativeTab(MainRegistry.blockTab).setHardness(0.0F);
+    public static final Block plant_tall_laythe = new BlockTallPlantWater("plant_tall_laythe").setCreativeTab(MainRegistry.blockTab).setHardness(0.0F);
+    public static final Block laythe_short = new BlockWaterPlant("laythe_seagrass").setCreativeTab(MainRegistry.blockTab).setHardness(0.0F);
+    public static final Block laythe_glow = new BlockWaterPlant("laythe_glowgrass").setCreativeTab(MainRegistry.blockTab).setHardness(0.0F).setLightLevel(1.0F);
     public static final Block crop_strawberry = new BlockCrop(Blocks.FARMLAND, (atmosphere) -> atmosphere.hasFluid(com.hbmspace.inventory.fluid.Fluids.EARTHAIR, 0.1) || atmosphere.hasFluid(Fluids.OXYGEN, 0.1), true, "crop_strawberry", "strawberry").setSoundType(SoundType.PLANT).setHardness(0.0F);
     public static final Block crop_mint = new BlockCrop(Blocks.FARMLAND, (atmosphere) -> atmosphere.hasFluid(com.hbmspace.inventory.fluid.Fluids.EARTHAIR, 0.1) || atmosphere.hasFluid(Fluids.OXYGEN, 0.1), true, "crop_mint", "mint").setSoundType(SoundType.PLANT).setHardness(0.0F);
     public static final Block crop_coffee = new BlockCrop(Blocks.FARMLAND, (atmosphere) -> atmosphere.hasFluid(com.hbmspace.inventory.fluid.Fluids.EARTHAIR, 0.1) || atmosphere.hasFluid(Fluids.OXYGEN, 0.1), true, "crop_coffee", "coffee").setSoundType(SoundType.PLANT).setHardness(0.0F);
     public static final Block crop_tea = new BlockCrop(Blocks.FARMLAND, (atmosphere) -> atmosphere.hasFluid(com.hbmspace.inventory.fluid.Fluids.EARTHAIR, 0.1) || atmosphere.hasFluid(Fluids.OXYGEN, 0.1), true, "crop_tea", "tea").setSoundType(SoundType.PLANT).setHardness(0.0F);
     public static final Block crop_paraffin = new BlockCrop(ModBlocksSpace.rubber_farmland, (atmosphere) -> atmosphere.hasFluid(com.hbmspace.inventory.fluid.Fluids.TEKTOAIR, 0.1) || atmosphere.hasFluid(Fluids.CHLORINE, 0.1), false, "crop_paraffin", "paraffin").setSoundType(SoundType.PLANT).setHardness(0.0F);
+    public static final Block laythe_coral = new BlockCoral("laythe_coral").setCreativeTab(MainRegistry.blockTab).setHardness(0.0F);
+    public static final Block laythe_coral_block = new BlockEnumMetaSpace<>(Material.CORAL, SoundType.PLANT, "laythe_coral_block", BlockCoral.EnumCoral.VALUES, false, true).setHardness(0.5F).setCreativeTab(MainRegistry.blockTab);
     public static final Block rubber_farmland = new BlockRubberFarm("rubber_farmland").setSoundType(SoundType.GROUND).setCreativeTab(MainRegistry.blockTab).setHardness(1.0F).setResistance(1.0F);
+    public static final Block rubber_plant = new BlockRubberPlant("rubber_plant").setCreativeTab(MainRegistry.blockTab).setSoundType(SoundType.GROUND).setHardness(0.0F);
+    public static final Block rubber_grass = new RubberGrass(Material.GRASS, "rubber_grass", false).setSoundType(SoundType.GROUND).setCreativeTab(MainRegistry.blockTab).setHardness(0.5F).setResistance(2.5F);
+    public static final Block rubber_leaves = new BlockRubberLeaves("rubber_leaves").setCreativeTab(MainRegistry.blockTab).setHardness(0.5F).setResistance(2.5F);
     public static final Block rubber_silt = new BlockBakeBaseSpace(Material.SAND, "rubber_silt").setSoundType(SoundType.GROUND).setCreativeTab(MainRegistry.blockTab).setHardness(1.0F).setResistance(1.0F);
+    public static final Block pet_leaves = new BlockRubberLeaves("pet_leaves").setCreativeTab(MainRegistry.blockTab).setHardness(0.5F).setResistance(2.5F);
     public static final Block ccl_block = new GenericFluidBlockSpace(ccl_fluid, Material.WATER, "ccl_block").setDamage(ModDamageSource.lead, 1F).setResistance(500.0F);
     public static final Block dummy_beam = new BlockDummyableBeam(Material.IRON, "dummy_beam").setHardness(10.0F).setResistance(20.0F);
 

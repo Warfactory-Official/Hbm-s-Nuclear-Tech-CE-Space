@@ -22,6 +22,7 @@ import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
 import net.minecraftforge.event.terraingen.InitNoiseGensEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +63,7 @@ public abstract class ChunkProviderCelestial implements IChunkGenerator {
 	private NoiseGeneratorOctaves secondOrder;
 	private NoiseGeneratorOctaves thirdOrder;
 	private NoiseGeneratorOctaves perlin;
-	private NoiseGeneratorPerlin realPerlin;
+	private final NoiseGeneratorPerlin realPerlin;
 	private NoiseGeneratorOctaves heightOrder;
 
 	protected Biome[] biomesForGeneration;
@@ -268,8 +269,8 @@ public abstract class ChunkProviderCelestial implements IChunkGenerator {
 				}
 
 				++i1;
-				double d13 = (double) f1;
-				double d14 = (double) f;
+				double d13 = f1;
+				double d14 = f;
 				d13 += d12 * 0.2D;
 				d13 = d13 * 8.5D / 8.0D;
 				double d5 = 8.5D + d13 * 4.0D;
@@ -288,7 +289,7 @@ public abstract class ChunkProviderCelestial implements IChunkGenerator {
 					//maybe sometime soon...?
 					double d10 = reclamp ? MathHelper.clampedLerp(d7, d8, d9) - d6 : d8 - d6;
 					if(j2 > 29) {
-						double d11 = (double) ((float) (j2 - 29) / 3.0F);
+						double d11 = (float) (j2 - 29) / 3.0F;
 						d10 = d10 * (1.0D - d11) + -10.0D * d11;
 					}
 
@@ -302,7 +303,7 @@ public abstract class ChunkProviderCelestial implements IChunkGenerator {
 	protected void replaceBlocksForBiome(int x, int z, ChunkPrimer chunkPrimer, Biome[] biomes) {
 		if(!ForgeEventFactory.onReplaceBiomeBlocks(this, x, z, chunkPrimer, this.worldObj)) return;
 		double d0 = 0.03125D;
-		stoneNoise = realPerlin.getRegion(stoneNoise, (double) (x * 16), (double) (z * 16), 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
+		stoneNoise = realPerlin.getRegion(stoneNoise, x * 16, z * 16, 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
 
 		for (int k = 0; k < 16; ++k) {
 			for (int l = 0; l < 16; ++l) {
@@ -313,7 +314,7 @@ public abstract class ChunkProviderCelestial implements IChunkGenerator {
 	}
 
 	@Override
-	public Chunk generateChunk(int x, int z) {
+	public @NotNull Chunk generateChunk(int x, int z) {
 		rand.setSeed((long) x * 341873128712L + (long) z * 132897987541L);
 
 		ChunkPrimer ablock = getChunkPrimer(x, z);
@@ -377,11 +378,10 @@ public abstract class ChunkProviderCelestial implements IChunkGenerator {
 	 * Returns a list of creatures of the specified type that can spawn at the given
 	 * location.
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public List<Biome.SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos) {
+	public @NotNull List<Biome.SpawnListEntry> getPossibleCreatures(@NotNull EnumCreatureType creatureType, @NotNull BlockPos pos) {
         Biome biomegenbase = this.worldObj.getBiome(pos);
-		if(biomegenbase instanceof BiomeGenCraterBase) return new ArrayList<Biome.SpawnListEntry>();
+		if(biomegenbase instanceof BiomeGenCraterBase) return new ArrayList<>();
         return biomegenbase.getSpawnableList(creatureType);
 	}
 
@@ -389,18 +389,13 @@ public abstract class ChunkProviderCelestial implements IChunkGenerator {
 	 * I have no fucking clue, just return false
 	 */
 	@Override
-	public boolean isInsideStructure(World world, String shitfuck, BlockPos pos) {
+	public boolean isInsideStructure(@NotNull World world, @NotNull String shitfuck, @NotNull BlockPos pos) {
 		return false;
 	}
 
 	@Override
-	public void recreateStructures(Chunk chunkIn, int x, int z) {
+	public void recreateStructures(@NotNull Chunk chunkIn, int x, int z) {
 
-	}
-
-	public static class BlockMetaBuffer {
-		public Block[] blocks = new Block[65536];
-		public byte[] metas = new byte[65536];
 	}
 
 }

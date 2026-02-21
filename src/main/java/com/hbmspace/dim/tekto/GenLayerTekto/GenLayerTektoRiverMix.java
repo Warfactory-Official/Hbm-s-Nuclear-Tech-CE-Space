@@ -7,11 +7,12 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.GenLayerRiverMix;
 import net.minecraft.world.gen.layer.IntCache;
+import org.jetbrains.annotations.NotNull;
 
 public class GenLayerTektoRiverMix extends GenLayerRiverMix {
 
-	private GenLayer biomePatternGeneratorChain;
-	private GenLayer riverPatternGeneratorChain;
+	private final GenLayer biomePatternGeneratorChain;
+	private final GenLayer riverPatternGeneratorChain;
 
 	public GenLayerTektoRiverMix(long seed, GenLayer biomePatternGeneratorChain, GenLayer riverPatternGeneratorChain) {
 		super(seed, biomePatternGeneratorChain, riverPatternGeneratorChain);
@@ -28,7 +29,7 @@ public class GenLayerTektoRiverMix extends GenLayerRiverMix {
 	}
 
 	@Override
-	public int[] getInts(int x, int z, int width, int length) {
+	public int @NotNull [] getInts(int x, int z, int width, int length) {
 		int[] inputBiomeIds = this.biomePatternGeneratorChain.getInts(x, z, width, length);
 		int[] riverBiomeIds = this.riverPatternGeneratorChain.getInts(x, z, width, length);
 		int[] outputBiomeIds = IntCache.getIntCache(width * length);

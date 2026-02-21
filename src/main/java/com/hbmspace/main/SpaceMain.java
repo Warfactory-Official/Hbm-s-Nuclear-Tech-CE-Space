@@ -14,9 +14,9 @@ import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.enums.EnumAddonTypes;
 import com.hbmspace.handler.registires.ModItemsReplaceHandler;
 import com.hbmspace.inventory.OreDictManagerSpace;
+import com.hbmspace.inventory.recipes.tweakers.AnvilRecipeTweaker;
 import com.hbmspace.inventory.recipes.tweakers.RecipeTweakerManager;
 import com.hbmspace.items.ModItemsSpace;
-import com.hbmspace.enums.EnumAddonWatzTypes;
 import com.hbmspace.items.weapon.ItemCustomMissilePart;
 import com.hbmspace.lib.HBMSpaceSoundHandler;
 import com.hbmspace.packet.PacketRegistry;
@@ -79,6 +79,7 @@ public class SpaceMain {
         CapabilityManager.INSTANCE.register(HbmLivingCapabilitySpace.IEntityHbmProps.class, new HbmLivingCapabilitySpace.EntityHbmPropsStorage(), HbmLivingCapabilitySpace.EntityHbmProps.FACTORY);
 
         OreDictManagerSpace.registerGroups();
+        AnvilRecipeTweaker.registerListener();
         SolarSystem.init();
         HbmPotion.init();
         EnumAddonTypes.init();

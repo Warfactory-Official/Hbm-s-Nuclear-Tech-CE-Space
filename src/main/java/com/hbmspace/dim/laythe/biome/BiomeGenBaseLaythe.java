@@ -23,9 +23,10 @@ import java.util.Random;
 
 public abstract class BiomeGenBaseLaythe extends BiomeGenBaseCelestial {
 
-	public static final Biome laytheIsland = new BiomeGenLaytheIslands(new BiomeProperties("Laythe Islands").setBaseHeight(0.125F).setHeightVariation(0.05F).setTemperature(0.2F).setRainfall(0.2F).setWaterColor(0x5b209a));
-	public static final Biome laytheOcean = new BiomeGenLaytheOcean(new BiomeProperties("Sagan Sea").setBaseHeight(-0.6F).setHeightVariation(0.01F).setTemperature(0.2F).setRainfall(0.2F));
+	public static final Biome laytheIsland = new BiomeGenLaytheIslands(new BiomeProperties("Laythe Islands").setBaseHeight(0.256F).setHeightVariation(0.05F).setTemperature(0.2F).setRainfall(0.2F).setWaterColor(0x5b209a));
+	public static final Biome laytheOcean = new BiomeGenLaytheOcean(new BiomeProperties("Sagan Sea").setBaseHeight(-1.8F).setHeightVariation(0.24F).setTemperature(0.2F).setRainfall(0.2F));
 	public static final Biome laythePolar = new BiomeGenLaythePolar(new BiomeProperties("Laythe Poles").setBaseHeight(-0.1F).setHeightVariation(0.05F).setTemperature(0.2F).setRainfall(0.2F).setWaterColor(0xC1F4FF));
+	public static final Biome laytheCoast = new BiomeGenLaytheCoast(new BiomeProperties("Laythe Reef").setBaseHeight(-0.4F).setHeightVariation(0.01F).setTemperature(0.2F).setRainfall(0.2F));
 
 	public BiomeGenBaseLaythe(BiomeProperties properties) {
 		super(properties);

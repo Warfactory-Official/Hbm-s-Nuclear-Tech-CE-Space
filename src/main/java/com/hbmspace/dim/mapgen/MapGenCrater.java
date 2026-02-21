@@ -7,10 +7,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.MapGenBase;
+import org.jetbrains.annotations.NotNull;
 
 public class MapGenCrater extends MapGenBase {
     
-	private int chancePerChunk = 100;
+	private final int chancePerChunk;
 	private int minSize = 8;
 	private int maxSize = 64;
 
@@ -35,7 +36,7 @@ public class MapGenCrater extends MapGenBase {
 
 	// This function is looped over from -this.range to +this.range on both XZ axes.
 	@Override
-	protected void recursiveGenerate(World world, int offsetX, int offsetZ, int chunkX, int chunkZ, ChunkPrimer chunkPrimer) {
+	protected void recursiveGenerate(@NotNull World world, int offsetX, int offsetZ, int chunkX, int chunkZ, @NotNull ChunkPrimer chunkPrimer) {
 
 		if (rand.nextInt(chancePerChunk) == Math.abs(offsetX) % chancePerChunk && rand.nextInt(chancePerChunk) == Math.abs(offsetZ) % chancePerChunk) {
 

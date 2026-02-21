@@ -41,6 +41,7 @@ public class ResourceManagerSpace {
     public static final IModelCustom magma_drill = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/magma_drill.obj")).asVBO();
     public static final IModelCustom atmo_tower = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/atmo_tower.obj")).asVBO();
     public static final IModelCustom atmo_vent = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/atmo_vent.obj")).asVBO();
+    public static final HFRWavefrontObject algae_film = new HFRWavefrontObject(new ResourceLocation("hbm", "models/blocks/algae_film.obj"));
 
     public static final IModelCustom dyson_receiver = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/dyson_receiver.obj")).asVBO();
     public static final IModelCustom dyson_anatmogenesis = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/dyson_anatmogenesis.obj")).asVBO();

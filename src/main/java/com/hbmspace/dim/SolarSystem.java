@@ -1,6 +1,8 @@
 package com.hbmspace.dim;
 
 import com.hbm.main.MainRegistry;
+import com.hbm.util.Vec3NT;
+import com.hbmspace.dim.trait.CelestialBodyTrait;
 import com.hbmspace.inventory.fluid.Fluids;
 import com.hbmspace.util.AstronomyUtil;
 import com.hbm.util.BobMathUtil;
@@ -169,7 +171,7 @@ public class SolarSystem {
 												.withOrbitalParameters(179_890, 0.171F, 15.0F, 4.25F, 2.0F)
 												.withRotationalPeriod(901_902)
 
-								)/*,
+								),
 
 						new CelestialBody("sarnus")
 								.withMassRadius(1.223e24F, 5_300)
@@ -222,7 +224,7 @@ public class SolarSystem {
 												.withMassRadius(2.788e21F, 286)
 												.withOrbitalParameters(32_301, 0.0534F, 0.0F, 4.02F, 284.0F)
 												.withRotationalPeriod(306_443)
-												.withTraits(new CBT_Atmosphere(Fluids.NITROGEN, 0.005F), new CBT_BATTLEFIELD())
+												.withTraits(new CBT_Atmosphere(Fluids.NITROGEN, 0.005F), new CelestialBodyTrait.CBT_BATTLEFIELD())
 												.withIce(true),
 
 										new CelestialBody("nissee") // words cannot express how much i actually fear this moon whenever im passing by it when playing opm. theres more that meets the eye and no one is brave enough to admit that
@@ -230,7 +232,7 @@ public class SolarSystem {
 												.withOrbitalParameters(487_744, 0.0534F, 0.0F, 45.02F, 84.0F)
 												.withRotationalPeriod(27_924)
 												.withMinProcessingLevel(3)
-								)*/
+								)
 				);
 
 		runTests();
@@ -247,8 +249,8 @@ public class SolarSystem {
 		DRES("dres"),
 		EVE("eve"),
 		IKE("ike"),
-		LAYTHE("laythe");
-		// TEKTO("tekto");
+		LAYTHE("laythe"),
+		TEKTO("tekto");
 		//THATMO("thatmo"); sit this one out buddy :)
 
 		public static final Body[] VALUES = values();
@@ -309,9 +311,70 @@ public class SolarSystem {
 
 	}
 
+	public static class OrreryMetric {
+
+		// Similar to above, but just for exaggerated positions + orbital paths
+		public Vec3NT position;
+		public Vec3NT[] orbitalPath;
+
+		public CelestialBody body;
+
+		private static final int PATH_RESOLUTION = 32;
+
+		public OrreryMetric(CelestialBody body, Vec3NT position) {
+			this.body = body;
+			this.position = position;
+			this.orbitalPath = new Vec3NT[PATH_RESOLUTION];
+		}
+
+	}
+
 	/**
 	 * Celestial mechanics
 	 */
+
+	// Generates a map of positions and orbital paths, with non-linear scaling to compress
+	public static List<OrreryMetric> calculatePositionsOrrery(World world, float partialTicks) {
+		List<OrreryMetric> metrics = new ArrayList<OrreryMetric>();
+
+		double ticks = ((double)world.getTotalWorldTime() + partialTicks) * (double)AstronomyUtil.TIME_MULTIPLIER;
+
+		// Get our XYZ coordinates of all bodies
+		calculatePositionsRecursiveOrrery(metrics, null, CelestialBody.getBody(world).getStar(), ticks, 0);
+
+		return metrics;
+	}
+
+	// Creates a "mock" system, with positions neatly divided
+	private static void calculatePositionsRecursiveOrrery(List<OrreryMetric> metrics, OrreryMetric parentMetric, CelestialBody body, double ticks, int depth) {
+		Vec3NT parentPosition = parentMetric != null ? parentMetric.position : new Vec3NT(0, 0, 0);
+
+		double distance = Math.min(body.radiusKm, ORRERY_MAX_RADIUS) * 1.42;
+		for(CelestialBody satellite : body.satellites) {
+			double extraDistance = MathHelper.clamp(satellite.radiusKm, ORRERY_MIN_RADIUS, ORRERY_MAX_RADIUS) * ((1 + satellite.eccentricity) * 2) * 1.42;
+			for(CelestialBody inner : satellite.satellites) {
+				extraDistance += MathHelper.clamp(inner.radiusKm, ORRERY_MIN_RADIUS, ORRERY_MAX_RADIUS) * ((1 + inner.eccentricity) * 2) * 2;
+			}
+
+			// distance is combined radii * hypotenuse (so cubes don't intersect at edges)
+			distance += extraDistance;
+
+			Vec3NT position = Vec3NT.from(calculatePositionFromTime(satellite, ticks, distance));
+			position = position.add(parentPosition.x, parentPosition.y, parentPosition.z);
+
+			OrreryMetric metric = new OrreryMetric(satellite, position);
+			for(int i = 0; i < metric.orbitalPath.length; i++) {
+				metric.orbitalPath[i] = Vec3NT.from(calculatePositionFromAngle(satellite, (float)i / metric.orbitalPath.length * 360, distance))
+						.add(parentPosition.x, parentPosition.y, parentPosition.z);
+			}
+
+			metrics.add(metric);
+
+			distance += extraDistance;
+
+			calculatePositionsRecursiveOrrery(metrics, metric, satellite, ticks, depth + 1);
+		}
+	}
 
 	// Create an ordered list for rendering all bodies within the system, minus the parent star
 	public static List<AstroMetric> calculateMetricsFromBody(World world, float partialTicks, CelestialBody body, float solarAngle) {

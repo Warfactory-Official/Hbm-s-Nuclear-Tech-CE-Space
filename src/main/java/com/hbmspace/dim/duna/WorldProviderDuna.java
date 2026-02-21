@@ -22,6 +22,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.layer.*;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class WorldProviderDuna extends WorldProviderCelestial {
 
@@ -31,7 +33,7 @@ public class WorldProviderDuna extends WorldProviderCelestial {
 	}
 	
 	@Override
-	public IChunkGenerator createChunkGenerator() {
+	public @NotNull IChunkGenerator createChunkGenerator() {
 		return new ChunkProviderDuna(this.world, this.getSeed(), false);
 	}
 
@@ -67,11 +69,11 @@ public class WorldProviderDuna extends WorldProviderCelestial {
 	}
 
 	@Override
-	public float fogDensity() {
+	public float fogDensity(EntityViewRenderEvent.FogDensity event) {
 		if(dustStormIntensity >= 0.5F)
 			return dustStormIntensity * dustStormIntensity * 0.05F;
 
-		return super.fogDensity();
+		return super.fogDensity(event);
 	}
 
 	@Override
@@ -167,6 +169,6 @@ public class WorldProviderDuna extends WorldProviderCelestial {
 	}
 
 	@Override
-	public DimensionType getDimensionType(){return DimensionType.getById(SpaceConfig.dunaDimension);}
+	public @NotNull DimensionType getDimensionType(){return DimensionType.getById(SpaceConfig.dunaDimension);}
 
 }

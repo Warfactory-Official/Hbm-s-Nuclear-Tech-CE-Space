@@ -36,17 +36,17 @@ public class GUIHydroponic extends GuiInfoContainer {
         hydro.tanks[0].renderTankInfo(this, mouseX, mouseY, guiLeft + 13, guiTop + 70 - 52, 16, 52);
         hydro.tanks[1].renderTankInfo(this, mouseX, mouseY, guiLeft + 31, guiTop + 70 - 52, 16, 52);
         drawElectricityInfo(this, mouseX, mouseY, guiLeft + 147, guiTop + 52 - 34, 16, 34, hydro.power, TileEntityHydroponic.maxPower);
-
+        int highLight;
         if(mc.player.inventory.getItemStack().isEmpty() && isMouseOverSlot(this.inventorySlots.getSlot(1), mouseX, mouseY) && !inventorySlots.getSlot(1).getHasStack()) {
             ItemStack[] validItems = hydro.getValidFertilizers();
             int cycle = (int) ((System.currentTimeMillis() % (1000 * validItems.length)) / 1000);
             ItemStack selected = validItems[cycle];
-            selected.setCount(0);
+            highLight = cycle;
 
             List<Object[]> lines = new ArrayList<>();
             lines.add(validItems);
             lines.add(new Object[] {I18nUtil.resolveKey(selected.getDisplayName())});
-            drawStackText(lines, mouseX, mouseY, this.fontRenderer, 0);
+            drawStackText(lines, mouseX, mouseY, this.fontRenderer, highLight);
         }
     }
 

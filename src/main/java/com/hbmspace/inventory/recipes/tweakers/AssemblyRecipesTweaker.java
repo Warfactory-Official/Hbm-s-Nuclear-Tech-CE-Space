@@ -2,6 +2,7 @@ package com.hbmspace.inventory.recipes.tweakers;
 
 import com.hbm.blocks.ModBlocks;
 import com.hbm.inventory.RecipesCommon;
+import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.recipes.AssemblyMachineRecipes;
 import com.hbm.inventory.recipes.loader.GenericRecipe;
@@ -155,13 +156,13 @@ public class AssemblyRecipesTweaker {
                         new RecipesCommon.OreDictStack(STEEL.ingot(), 2),
                         new RecipesCommon.ComparableStack(ModItems.motor, 2),
                         new RecipesCommon.OreDictStack(STEEL.pipe(), 8)));
-        /*recs.register(new GenericRecipe("ass.algaefilm").setup(400, 100).outputItems(new ItemStack(ModBlocksSpace.algae_film, 1))
+        recs.register(new GenericRecipe("ass.algaefilm").setup(400, 100).outputItems(new ItemStack(ModBlocksSpace.algae_film, 1))
                 .inputItems(
-                        new OreDictStack(AL.plate(), 8),
-                        new ComparableStack(ModItemsSpace.saltleaf, 16),
-                        new ComparableStack(ModBlocks.fan, 1),
-                        new ComparableStack(ModBlocks.steel_beam, 4),
-                        new ComparableStack(ModBlocks.fence_metal, 2)));*/
+                        new RecipesCommon.OreDictStack(AL.plate(), 8),
+                        new RecipesCommon.ComparableStack(ModItemsSpace.saltleaf, 16),
+                        new RecipesCommon.ComparableStack(ModBlocks.fan, 1),
+                        new RecipesCommon.ComparableStack(ModBlocks.steel_beam, 4),
+                        new RecipesCommon.ComparableStack(ModBlocks.fence_metal, 2)));
         recs.register(new GenericRecipe("ass.airscrubber").setup(400, 100).outputItems(new ItemStack(ModBlocksSpace.air_scrubber, 1))
                 .inputItems(
                         new RecipesCommon.OreDictStack(STAINLESS.plate(), 6),
@@ -241,9 +242,9 @@ public class AssemblyRecipesTweaker {
                         new RecipesCommon.OreDictStack(ANY_PLASTIC.ingot(), 8),
                         new RecipesCommon.ComparableStack(ModBlocks.steel_scaffold, 64),
                         new RecipesCommon.ComparableStack(ModItems.circuit, 4, ItemEnums.EnumCircuitType.BASIC)));
-        /*recs.register(new GenericRecipe("ass.orrery").setup(400, 100).outputItems(new ItemStack(ModBlocksSpace.orrery, 1))
-                .inputItems(new OreDictStack(KEY_ANYGLASS, 16), new ComparableStack(ModItems.circuit, 12, ItemEnums.EnumCircuitType.ADVANCED))
-                .inputFluids(new FluidStack(Fluids.TRITIUM, 2_000)));*/
+        recs.register(new GenericRecipe("ass.orrery").setup(400, 100).outputItems(new ItemStack(ModBlocksSpace.orrery, 1))
+                .inputItems(new RecipesCommon.OreDictStack(KEY_ANYGLASS, 16), new RecipesCommon.ComparableStack(ModItems.circuit, 12, ItemEnums.EnumCircuitType.ADVANCED))
+                .inputFluids(new FluidStack(Fluids.TRITIUM, 2_000)));
 
         // stations
         recs.register(new GenericRecipe("ass.orbitalstationport").setup(400, 100).outputItems(new ItemStack(ModBlocksSpace.orbital_station_port, 1))

@@ -51,7 +51,7 @@ public class WorldGeneratorMoon implements IWorldGenerator {
 		BlockOre.addValidBody(ModBlocksSpace.ore_quartz, SolarSystem.Body.MUN);
 		BlockOre.addValidBody(ModBlocksSpace.ore_shale, SolarSystem.Body.MUN);
 
-		//BlockOre.addValidBody(ModBlocksSpace.ore_brine, SolarSystem.Body.MUN);
+		BlockOre.addValidBody(ModBlocksSpace.ore_brine, SolarSystem.Body.MUN);
 	}
 
 	@Override

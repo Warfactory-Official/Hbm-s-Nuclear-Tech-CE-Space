@@ -1,6 +1,7 @@
 package com.hbmspace.dim.eve.GenLayerEve;
 
 import com.hbm.blocks.ModBlocks;
+import com.hbmspace.blocks.ModBlocksSpace;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -31,7 +32,7 @@ public class WorldGenElectricVolcano extends WorldGenerator {
         this.stoneBlock = stoneBlock;
 
         this.volcanoBlock = ModBlocks.basalt;
-        this.ventBlock = Blocks.OBSIDIAN; // ModBlocksSpace.geysir_electric;
+        this.ventBlock = ModBlocksSpace.geysir_electric;
     }
 
     @Override

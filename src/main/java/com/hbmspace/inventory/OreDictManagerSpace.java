@@ -5,13 +5,16 @@ import com.hbm.items.ItemEnums;
 import com.hbmspace.blocks.BlockEnumsSpace;
 import com.hbmspace.hazard.HazardRegistrySpace;
 import com.hbmspace.items.enums.ItemEnumsSpace;
+import net.minecraft.init.Items;
 
 import static com.hbm.inventory.OreDictManager.DictFrame.fromAll;
 import static com.hbm.inventory.OreDictManager.DictFrame.fromOne;
 import static com.hbm.inventory.material.MaterialShapes.DUST;
+import static com.hbm.items.ModItems.*;
 import static com.hbmspace.blocks.ModBlocksSpace.*;
 import static com.hbmspace.items.ModItemsSpace.*;
 import static com.hbm.inventory.OreDictManager.*;
+import static com.hbmspace.items.ModItemsSpace.chunk_ore;
 
 public class OreDictManagerSpace {
 
@@ -32,6 +35,11 @@ public class OreDictManagerSpace {
     public static final DictFrame GALLIUM = new DictFrame("Gallium");
     public static final DictFrame GAAS = new DictFrame("GalliumArsenide");
     public static final DictFrame STAINLESS = new DictFrame("StainlessSteel");
+
+    public static final DictFrame GLOWSTONE = new DictFrame("Glowstone");
+
+    public static final DictFrame TASMANITE = new DictFrame("Tasmanite");
+    public static final DictFrame AYERITE = new DictFrame("Ayerite");
 
     public static final DictFrame BK247 = new DictFrame ("Berkelium247", "Bk247");
     public static final DictFrame CF251 = new DictFrame ("Californium251", "Cf251");
@@ -106,6 +114,9 @@ public class OreDictManagerSpace {
         GAAS		.nugget(nugget_gaas)									.ingot(ingot_gaas)													.billet(billet_gaas);
         HAFNIUM		.nugget(nugget_hafnium)									.ingot(ingot_hafnium);
         IRIDIUM		.ingot(ingot_iridium);
+        TASMANITE	.nugget(nugget_australium_lesser)	.billet(billet_australium_lesser)	.ingot(ingot_australium_lesser);
+        AYERITE		.nugget(nugget_australium_greater)	.billet(billet_australium_greater)	.ingot(ingot_australium_greater);
+        GLOWSTONE.dust(Items.GLOWSTONE_DUST);
         STAINLESS															.ingot(ingot_stainless)			 																	.plate(plate_stainless);
         PENTLANDITE	.crystal(fromOne(chunk_ore, ItemEnumsSpace.EnumChunkType.PENTLANDITE));
         COALCOKE.dust(fromOne(powder_coke, ItemEnums.EnumCokeType.COAL));

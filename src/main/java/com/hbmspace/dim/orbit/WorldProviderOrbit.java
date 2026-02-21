@@ -7,25 +7,22 @@ import com.hbmspace.dim.WorldProviderCelestial;
 import com.hbmspace.dim.trait.CBT_Atmosphere;
 import com.hbmspace.dim.trait.CBT_Destroyed;
 import com.hbmspace.handler.atmosphere.ChunkAtmosphereManager;
-import com.hbm.lib.Library;
 import com.hbmspace.util.AstronomyUtil;
 import com.hbm.util.BobMathUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProviderSingle;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.client.IRenderHandler;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -67,12 +64,16 @@ public class WorldProviderOrbit extends WorldProvider {
 	}
 	
 	@Override
-	public IChunkGenerator createChunkGenerator() {
+	public @NotNull IChunkGenerator createChunkGenerator() {
 		return new ChunkProviderOrbit(this.world);
 	}
 
 	@Override
 	public void updateWeather() {
+		world.prevRainingStrength = 0.0F;
+		world.prevThunderingStrength = 0.0F;
+		world.rainingStrength = 0.0F;
+		world.thunderingStrength = 0.0F;
 	}
 
 	// This is called once, at the beginning of every frame
@@ -111,13 +112,13 @@ public class WorldProviderOrbit extends WorldProvider {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Vec3d getFogColor(float x, float y) {
+	public @NotNull Vec3d getFogColor(float x, float y) {
 		return new Vec3d(0, 0, 0);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Vec3d getSkyColor(Entity camera, float partialTicks) {
+	public @NotNull Vec3d getSkyColor(@NotNull Entity camera, float partialTicks) {
 		// getSkyColor is called first on every frame, so if you want to memoise anything, do it here
 		updateSky(partialTicks);
 
@@ -147,9 +148,7 @@ public class WorldProviderOrbit extends WorldProvider {
 
 		float distanceFactor = MathHelper.clamp((semiMajorAxisKm - distanceStart) / (distanceEnd - distanceStart), 0F, 1F);
 
-		float celestialAngle = world.getCelestialAngle(par1);
-		float celestialPhase = (1 - (celestialAngle + 0.5F) % 1) * 2 - 1;
-		float starBrightness = (float)Library.smoothstep(Math.abs(celestialPhase), 0.6, 0.75);
+		float starBrightness = (float) eclipseAmount;
 
 		return MathHelper.clamp(starBrightness, distanceFactor, 1F);
 	}
@@ -160,19 +159,16 @@ public class WorldProviderOrbit extends WorldProvider {
 		if(SolarSystem.kerbol.hasTrait(CBT_Destroyed.class))
 			return 0;
 
-		float celestialAngle = world.getCelestialAngle(par1);
-		float celestialPhase = (1 - (celestialAngle + 0.5F) % 1) * 2 - 1;
-
-		return 1 - (float)Library.smoothstep(Math.abs(celestialPhase), 0.6, 0.8);
+		return 1.0F - (float) eclipseAmount;
 	}
 
 	@Override
-	public boolean canDoLightning(Chunk chunk) {
+	public boolean canDoLightning(@NotNull Chunk chunk) {
 		return false;
 	}
 
 	@Override
-	public boolean canDoRainSnowIce(Chunk chunk) {
+	public boolean canDoRainSnowIce(@NotNull Chunk chunk) {
 		return false;
 	}
 	
@@ -190,14 +186,7 @@ public class WorldProviderOrbit extends WorldProvider {
 
 	@Override
 	public float calculateCelestialAngle(long worldTime, float partialTicks) {
-		CelestialBody orbiting = OrbitalStation.clientStation.orbiting;
-		CelestialBody target = OrbitalStation.clientStation.target;
-		double progress = OrbitalStation.clientStation.getTransferProgress(partialTicks);
-		float angle = (float)SolarSystem.calculateSingleAngle(world, partialTicks, orbiting, getOrbitalAltitude(orbiting));
-		if(progress > 0) {
-			angle = (float)BobMathUtil.lerp(progress, angle, (float)SolarSystem.calculateSingleAngle(world, partialTicks, target, getOrbitalAltitude(target)));
-		}
-		return 0.5F - (angle / 360.0F);
+		return celestialAngle;
 	}
 
 	// Same shit as in Celestial
@@ -228,6 +217,6 @@ public class WorldProviderOrbit extends WorldProvider {
 	}
 
 	@Override
-	public DimensionType getDimensionType(){return DimensionType.getById(SpaceConfig.orbitDimension);}
+	public @NotNull DimensionType getDimensionType(){return DimensionType.getById(SpaceConfig.orbitDimension);}
 	
 }

@@ -1,20 +1,24 @@
 package com.hbmspace.dim.mapgen;
 
-import com.hbm.blocks.ModBlocks;
-import com.hbmspace.blocks.ModBlocksSpace;
-import com.hbmspace.config.SpaceConfig;
-import net.minecraft.block.material.Material;
+import com.hbm.config.SpaceConfig;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.MapGenBase;
+import org.jetbrains.annotations.NotNull;
 
 public class MapGenVolcano extends MapGenBase {
-	
+
 	private int chancePerChunk = 100;
 	private int minSize = 32;
 	private int maxSize = 64;
+
+	private Block coreBlock;
+	private Block materialBlock;
 
 	// Note that the chance is effectively squared, so make it lower than you normally would
 	public MapGenVolcano(int chancePerChunk) {
@@ -28,6 +32,11 @@ public class MapGenVolcano extends MapGenBase {
 		this.range = (maxSize / 8) + 1;
 	}
 
+	public void setMaterial(Block coreBlock, Block mateBlock) {
+		this.coreBlock = coreBlock;
+		this.materialBlock = mateBlock;
+	}
+
 	private double heightFunc(double x, double rad, double depth) {
 		double xs = x / (rad * 2);
 		double inner = (x * x * x) / (rad / 4) + 32;
@@ -37,22 +46,22 @@ public class MapGenVolcano extends MapGenBase {
 
 	// This function is looped over from -this.range to +this.range on both XZ axes.
 	@Override
-	protected void recursiveGenerate(World world, int offsetX, int offsetZ, int chunkX, int chunkZ, ChunkPrimer primer) {
+	public void recursiveGenerate(@NotNull World world, int chunkX, int chunkZ, int originalX, int originalZ, @NotNull ChunkPrimer primer) {
 
-		if(rand.nextInt(chancePerChunk) == Math.abs(offsetX) % chancePerChunk && rand.nextInt(chancePerChunk) == Math.abs(offsetZ) % chancePerChunk) {
+		if(rand.nextInt(chancePerChunk) == Math.abs(chunkX) % chancePerChunk && rand.nextInt(chancePerChunk) == Math.abs(chunkZ) % chancePerChunk) {
 
 			double radius = rand.nextInt(maxSize - minSize) + minSize;
 			double depth = 0.75D;
 
-			int xCoord = -offsetX + chunkX;
-			int zCoord = -offsetZ + chunkZ;
+			int xCoord = -chunkX + originalX;
+			int zCoord = -chunkZ + originalZ;
 
-			for(int bx = 15; bx >= 0; bx--) { // bx, bz is the coordinate of the block we're modifying, relative to the generating chunk origin
+			for(int bx = 15; bx >= 0; bx--) { // bx, bz is the coordinate of the block we're modifying
 				for(int bz = 15; bz >= 0; bz--) {
 					for(int y = 254; y >= 0; y--) {
-						int index = (bx * 16 + bz) * 256 + y;
+						IBlockState state = primer.getBlockState(bx, y, bz);
 
-						if(primer.getBlockState(bx, y, bz).getMaterial() != Material.AIR && primer.getBlockState(bx, y, bz).isOpaqueCube()) {
+						if(state.getBlock() != Blocks.AIR && state.isOpaqueCube()) {
 							// x, z are the coordinates relative to the target virtual chunk origin
 							int x = xCoord * 16 + bx;
 							int z = zCoord * 16 + bz;
@@ -65,7 +74,7 @@ public class MapGenVolcano extends MapGenBase {
 								int height = (int) MathHelper.clamp(heightFunc(r, radius, depth), 0, y - 1);
 								if(height > 0) {
 									for(int i = 0; i < height && i + y < 255; i++) {
-										primer.setBlockState(bx, y + i, bz, ModBlocks.basalt.getDefaultState());
+										primer.setBlockState(bx, y + i, bz, materialBlock.getDefaultState());
 									}
 								} else {
 									for(int i = 0; i > height && i + y > 1; i--) {
@@ -73,12 +82,13 @@ public class MapGenVolcano extends MapGenBase {
 									}
 								}
 
-								index += height;
-								y += height;
+								int finalY = y + height;
 
-								if(x == 0 && z == 0 && SpaceConfig.enableVolcanoGen) primer.setBlockState(bx, y + 1, bz, ModBlocks.volcano_core.getDefaultState());;
+								if(x == 0 && z == 0 && SpaceConfig.enableVolcanoGen && finalY + 1 < 256) {
+									primer.setBlockState(bx, finalY + 1, bz, coreBlock.getDefaultState());
+								}
 							}
-							
+
 							break;
 						}
 					}

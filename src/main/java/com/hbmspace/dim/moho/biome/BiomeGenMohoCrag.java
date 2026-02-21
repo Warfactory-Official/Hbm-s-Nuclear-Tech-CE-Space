@@ -3,9 +3,9 @@ package com.hbmspace.dim.moho.biome;
 import com.hbmspace.blocks.ModBlocksSpace;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -19,7 +19,7 @@ public class BiomeGenMohoCrag extends BiomeGenBaseMoho {
 	}
 
 	@Override
-	public void genTerrainBlocks(World world, Random rand, ChunkPrimer chunkPrimer, int x, int z, double noise) {
+	public void genTerrainBlocks(@NotNull World world, Random rand, @NotNull ChunkPrimer chunkPrimer, int x, int z, double noise) {
 		IBlockState topBlockState = this.topBlock;
 		IBlockState fillerBlockState = this.fillerBlock;
 		int k = -1;
@@ -29,10 +29,9 @@ public class BiomeGenMohoCrag extends BiomeGenBaseMoho {
 		int maxHeight = 256;
 
 		for (int l1 = maxHeight - 1; l1 >= 0; --l1) {
-			BlockPos pos = new BlockPos(x, l1, z);
-			IBlockState currentState = chunkPrimer.getBlockState(i1, l1, j1);
+            IBlockState currentState = chunkPrimer.getBlockState(i1, l1, j1);
 
-			if (l1 <= 0 + rand.nextInt(5)) {
+			if (l1 <= rand.nextInt(5)) {
 				chunkPrimer.setBlockState(i1, l1, j1, Blocks.BEDROCK.getDefaultState());
 			} else {
 				if (currentState.getBlock() != Blocks.AIR) {
@@ -47,23 +46,17 @@ public class BiomeGenMohoCrag extends BiomeGenBaseMoho {
 							}
 
 							if (l1 < 63 && (topBlockState.getBlock() == Blocks.AIR)) {
-								if (this.getTemperature(pos) < 0.15F) {
-									topBlockState = this.topBlock;
-								} else {
-									topBlockState = this.topBlock;
-								}
-							}
+                                topBlockState = this.topBlock;
+                            }
 
 							k = l;
 
 							if (l1 >= 62) {
 								chunkPrimer.setBlockState(i1, l1, j1, topBlockState);
-							} else if (l1 < 62) {
+							} else {
 								topBlockState = Blocks.AIR.getDefaultState();
 								fillerBlockState = ModBlocksSpace.moho_stone.getDefaultState();
 								chunkPrimer.setBlockState(i1, l1, j1, Blocks.GRAVEL.getDefaultState());
-							} else {
-								chunkPrimer.setBlockState(i1, l1, j1, fillerBlockState);
 							}
 						} else if (k > 0) {
 							--k;

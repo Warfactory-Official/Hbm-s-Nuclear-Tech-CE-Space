@@ -8,6 +8,7 @@ import com.hbmspace.dim.trait.*;
 import com.hbm.saveddata.satellites.Satellite;
 import com.hbm.saveddata.satellites.SatelliteSavedData;
 import com.hbm.util.BobMathUtil;
+import com.hbmspace.main.ModEventHandlerClient;
 import com.hbmspace.render.shader.ShaderSpace;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -98,7 +99,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 
 			lastBrightestPixel = lightmapColors[255] + lightmapColors[250];
 		}
-		float fogIntensity = celestialProvider.fogDensity() * 30;
+		float fogIntensity = ModEventHandlerClient.lastFogDensity * 30;
 		CelestialBody body = CelestialBody.getBody(world);
 		CelestialBody sun = body.getStar();
 		CBT_Atmosphere atmosphere = body.getTrait(CBT_Atmosphere.class);
@@ -188,7 +189,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 			GlStateManager.rotate(solarAngle * 360.0F, 1.0F, 0.0F, 0.0F);
 
 			// Draw DIGAMMA STAR
-			renderDigamma(mc, solarAngle);
+			renderDigamma(world, mc, solarAngle);
 
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
 
@@ -985,27 +986,47 @@ public class SkyProviderCelestial extends IRenderHandler {
 		}
 	}
 
-	protected void renderDigamma(Minecraft mc, float celestialAngle) {
+	protected void renderDigamma(WorldClient world, Minecraft mc, float solarAngle) {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 
 		GlStateManager.pushMatrix();
 		{
+
+			double var12 = 1.0D + world.rand.nextFloat() * 0.5D;
+			double dist = 100.0D;
+
+			if(ModEventHandlerClient.renderLodeStar) {
+				GlStateManager.pushMatrix();
+				GlStateManager.rotate(-75.0F, 1.0F, 0.0F, 0.0F);
+				GlStateManager.rotate(10.0F, 0.0F, 1.0F, 0.0F);
+				mc.getTextureManager().bindTexture(lodeStar); // genu-ine bona-fide ass whooping
+
+				bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+				bufferBuilder.pos(-var12, dist, -var12).tex(0.0D, 0.0D).endVertex();
+				bufferBuilder.pos(var12, dist, -var12).tex(0.0D, 1.0D).endVertex();
+				bufferBuilder.pos(var12, dist, var12).tex(1.0D, 1.0D).endVertex();
+				bufferBuilder.pos(-var12, dist, var12).tex(1.0D, 0.0D).endVertex();
+				tessellator.draw();
+
+				GlStateManager.popMatrix();
+			}
+
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
 
-			float brightness = (float) Math.sin(celestialAngle * Math.PI);
+			float brightness = (float) Math.sin(solarAngle * Math.PI);
 			brightness *= brightness;
 			GlStateManager.color(brightness, brightness, brightness, brightness);
 			GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
-			GlStateManager.rotate(celestialAngle * 360.0F, 1.0F, 0.0F, 0.0F);
+			GlStateManager.rotate(solarAngle * 360.0F, 1.0F, 0.0F, 0.0F);
 			GlStateManager.rotate(140.0F, 1.0F, 0.0F, 0.0F);
 			GlStateManager.rotate(-40.0F, 0.0F, 0.0F, 1.0F);
 
 			mc.getTextureManager().bindTexture(digammaStar);
 
 			double digamma = HbmLivingProps.getDigamma(Minecraft.getMinecraft().player);
-			double var12 = 1D + digamma * 0.25D;
-			double dist = 100D - digamma * 2.5D;
+			var12 = 1.0D + digamma * 0.25D;
+			dist = 100.0D - digamma * 2.5D;
 
 			bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 			bufferBuilder.pos(-var12, dist, -var12).tex(0.0D, 0.0D).endVertex();
@@ -1013,6 +1034,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 			bufferBuilder.pos(var12, dist, var12).tex(1.0D, 1.0D).endVertex();
 			bufferBuilder.pos(-var12, dist, var12).tex(1.0D, 0.0D).endVertex();
 			tessellator.draw();
+
 		}
 		GlStateManager.popMatrix();
 	}

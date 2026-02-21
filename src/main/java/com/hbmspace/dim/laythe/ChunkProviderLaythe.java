@@ -1,11 +1,15 @@
 package com.hbmspace.dim.laythe;
 
+import com.hbm.blocks.ModBlocks;
 import com.hbmspace.blocks.ModBlocksSpace;
+import com.hbmspace.config.WorldConfigSpace;
+import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.ChunkProviderCelestial;
 import com.hbmspace.dim.laythe.biome.BiomeGenBaseLaythe;
 import com.hbmspace.dim.mapgen.MapGenGreg;
 import com.hbmspace.dim.mapgen.MapGenTiltedSpires;
 import com.hbmspace.entity.mob.EntityCreeperFlesh;
+import com.hbmspace.world.gen.terrain.MapGenBubble;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -21,13 +25,13 @@ import java.util.List;
 
 public class ChunkProviderLaythe extends ChunkProviderCelestial {
 
-	private MapGenGreg caveGenV3 = new MapGenGreg();
-	private MapGenTiltedSpires spires = new MapGenTiltedSpires(2, 14, 0.8F);
-	private MapGenTiltedSpires snowires = new MapGenTiltedSpires(2, 14, 0.8F);
+	private final MapGenGreg caveGenV3 = new MapGenGreg();
+	private final MapGenTiltedSpires spires = new MapGenTiltedSpires(2, 14, 0.8F);
+	private final MapGenTiltedSpires snowires = new MapGenTiltedSpires(2, 14, 0.8F);
 
-    // private MapGenBubble oil = new MapGenBubble(WorldConfig.laytheOilSpawn);
+    private final MapGenBubble oil = new MapGenBubble(WorldConfigSpace.laytheOilSpawn);
 
-	private List<Biome.SpawnListEntry> spawnedOfFlesh = new ArrayList<>();
+	private final List<Biome.SpawnListEntry> spawnedOfFlesh = new ArrayList<>();
 
 	public ChunkProviderLaythe(World world, long seed, boolean hasMapFeatures) {
 		super(world, seed, hasMapFeatures);
@@ -38,6 +42,11 @@ public class ChunkProviderLaythe extends ChunkProviderCelestial {
         spires.curve = snowires.curve = true;
         spires.maxPoint = snowires.maxPoint = 6.0F;
         spires.maxTilt = snowires.maxTilt = 3.5F;
+
+		oil.block = ModBlocks.ore_oil;
+		oil.meta = (byte) CelestialBody.getMeta(world);
+		oil.replace = Blocks.STONE;
+		oil.setSize(8, 16);
 
 		seaBlock = Blocks.WATER;
 
@@ -52,17 +61,19 @@ public class ChunkProviderLaythe extends ChunkProviderCelestial {
 	public ChunkPrimer getChunkPrimer(int x, int z) {
 		ChunkPrimer buffer = super.getChunkPrimer(x, z);
 		
-		spires.generate(worldObj, x, z, buffer);
-		caveGenV3.generate(worldObj, x, z, buffer);
 		if(biomesForGeneration[0] == BiomeGenBaseLaythe.laythePolar) {
 			snowires.generate(worldObj, x, z, buffer);
+		} else {
+			spires.generate(worldObj, x, z, buffer);
 		}
+		caveGenV3.generate(worldObj, x, z, buffer);
+		oil.generate(worldObj, x, z, buffer);
 
 		return buffer;
 	}
 
 	@Override
-	public @NotNull List<Biome.SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos) {
+	public @NotNull List<Biome.SpawnListEntry> getPossibleCreatures(@NotNull EnumCreatureType creatureType, @NotNull BlockPos pos) {
 		if(creatureType == EnumCreatureType.MONSTER && worldObj.getBlockState(pos.down()) == ModBlocksSpace.tumor)
 			return spawnedOfFlesh;
 
@@ -70,9 +81,14 @@ public class ChunkProviderLaythe extends ChunkProviderCelestial {
 	}
 
 	@Override
-	public boolean generateStructures(@NotNull Chunk chunkIn, int x, int z){return false;}
+	public boolean generateStructures(@NotNull Chunk chunkIn, int x, int z) {
+		return false;
+	}
+
 	@Override
 	@Nullable
-	public BlockPos getNearestStructurePos(@NotNull World worldIn, @NotNull String structureName, @NotNull BlockPos position, boolean findUnexplored){return null;}
+	public BlockPos getNearestStructurePos(@NotNull World worldIn, @NotNull String structureName, @NotNull BlockPos position, boolean findUnexplored) {
+		return null;
+	}
 
 }

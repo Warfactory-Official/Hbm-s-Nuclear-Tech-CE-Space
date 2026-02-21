@@ -7,6 +7,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -20,7 +21,7 @@ public class BiomeGenMohoBasalt extends BiomeGenBaseMoho {
     }
 
     @Override
-    public void genTerrainBlocks(World world, Random rand, ChunkPrimer primer, int x, int z, double noise) {
+    public void genTerrainBlocks(World world, Random rand, @NotNull ChunkPrimer primer, int x, int z, double noise) {
         IBlockState topState = this.topBlock;
         IBlockState fillerState = this.fillerBlock;
 

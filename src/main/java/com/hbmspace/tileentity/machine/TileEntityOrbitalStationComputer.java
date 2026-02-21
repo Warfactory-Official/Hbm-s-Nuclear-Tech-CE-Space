@@ -34,7 +34,7 @@ public class TileEntityOrbitalStationComputer extends TileEntityMachineBase impl
 
         if(station.orbiting == body) return false;
 
-        station.travelTo(world, body);
+        station.travelTo(body);
         inventory.setStackInSlot(0, drive);
         markChanged();
 

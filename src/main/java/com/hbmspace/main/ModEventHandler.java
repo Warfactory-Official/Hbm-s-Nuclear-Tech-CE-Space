@@ -156,7 +156,7 @@ public class ModEventHandler {
                 // Placing blocks onto beams counts as a break, but doesn't reduce light count
                 // TODO
                 /*if(!(event.getState().getBlock() instanceof BlockBeamBase)) {
-                    CelestialBody body = CelestialBody.getBody(event.world);
+                    CelestialBody body = CelestialBody.getBody(event.getWorld());
                     CBT_Lights lights = body.getTrait(CBT_Lights.class);
 
                     if(lights == null) lights = new CBT_Lights();

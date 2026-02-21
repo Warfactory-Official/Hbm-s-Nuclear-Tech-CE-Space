@@ -9,15 +9,16 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.MapGenBase;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
 public class ChunkProviderDres extends ChunkProviderCelestial {
 	
-	private MapGenBase caveGenerator = new MapGenVanillaCaves(ModBlocksSpace.dres_rock);
+	private final MapGenBase caveGenerator = new MapGenVanillaCaves(ModBlocksSpace.dres_rock);
 
-	private MapGenCrater smallCrater = new MapGenCrater(6);
-	private MapGenCrater largeCrater = new MapGenCrater(64);
+	private final MapGenCrater smallCrater = new MapGenCrater(6);
+	private final MapGenCrater largeCrater = new MapGenCrater(64);
 
 	public ChunkProviderDres(World world, long seed, boolean hasMapFeatures) {
 		super(world, seed, hasMapFeatures);
@@ -43,12 +44,13 @@ public class ChunkProviderDres extends ChunkProviderCelestial {
 	}
 
 	@Override
-	public boolean generateStructures(Chunk chunkIn, int x, int z){return false;}
+	public boolean generateStructures(@NotNull Chunk chunkIn, int x, int z) {
+		return false;
+	}
+
 	@Override
 	@Nullable
-	public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position, boolean findUnexplored){return null;}
-	@Override
-	public void recreateStructures(Chunk chunkIn, int x, int z){};
-	@Override
-	public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos){return false;}
+	public BlockPos getNearestStructurePos(@NotNull World worldIn, @NotNull String structureName, @NotNull BlockPos position, boolean findUnexplored) {
+		return null;
+	}
 }

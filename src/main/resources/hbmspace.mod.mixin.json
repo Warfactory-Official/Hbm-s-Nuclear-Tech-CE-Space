@@ -9,6 +9,7 @@
     "hbm.MixinArmorFSBClient",
     "hbm.MixinItemModInsertClient",
     "hbm.MixinBlockNTMOre",
+    "hbm.particle.MixinParticleRocketFlame",
     "hbm.MixinAuxParticlePacketNTAccessor",
     "hbm.MixinAuxParticlePacketNTHandler",
     "hbm.items.MixinItemRBMKRodClient"
@@ -22,6 +23,7 @@
     "hbm.MixinFluids",
     "hbm.MixinMainRegistry",
     "hbm.MixinMatDistribution",
+    "hbm.items.MixinItemBedrockOreNew",
     "hbm.MixinHbmWorldGen",
     "hbm.MixinNTMWorldGenerator",
     "hbm.MixinPermaSyncHandler",

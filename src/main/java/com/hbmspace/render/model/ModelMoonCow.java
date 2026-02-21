@@ -1,5 +1,6 @@
 package com.hbmspace.render.model;
 
+import com.hbmspace.render.util.SpaceRenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelCow;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -38,47 +39,10 @@ public class ModelMoonCow extends ModelCow {
 
             GlStateManager.scale(0.7F, 0.7F, 0.7F);
 
-            renderBlock(Tessellator.getInstance());
+            SpaceRenderUtil.renderBlock(Tessellator.getInstance());
 
         }
         GlStateManager.popMatrix();
-    }
-
-    public static void renderBlock(Tessellator tessellator) {
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(org.lwjgl.opengl.GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-
-        buffer.pos(-0.5, +0.5, -0.5).tex(1, 1).endVertex();
-        buffer.pos(+0.5, +0.5, -0.5).tex(0, 1).endVertex();
-        buffer.pos(+0.5, -0.5, -0.5).tex(0, 0).endVertex();
-        buffer.pos(-0.5, -0.5, -0.5).tex(1, 0).endVertex();
-
-        buffer.pos(-0.5, +0.5, +0.5).tex(1, 1).endVertex();
-        buffer.pos(-0.5, +0.5, -0.5).tex(0, 1).endVertex();
-        buffer.pos(-0.5, -0.5, -0.5).tex(0, 0).endVertex();
-        buffer.pos(-0.5, -0.5, +0.5).tex(1, 0).endVertex();
-
-        buffer.pos(+0.5, +0.5, +0.5).tex(1, 1).endVertex();
-        buffer.pos(-0.5, +0.5, +0.5).tex(0, 1).endVertex();
-        buffer.pos(-0.5, -0.5, +0.5).tex(0, 0).endVertex();
-        buffer.pos(+0.5, -0.5, +0.5).tex(1, 0).endVertex();
-
-        buffer.pos(+0.5, +0.5, -0.5).tex(1, 1).endVertex();
-        buffer.pos(+0.5, +0.5, +0.5).tex(0, 1).endVertex();
-        buffer.pos(+0.5, -0.5, +0.5).tex(0, 0).endVertex();
-        buffer.pos(+0.5, -0.5, -0.5).tex(1, 0).endVertex();
-
-        buffer.pos(-0.5, -0.5, -0.5).tex(1, 1).endVertex();
-        buffer.pos(+0.5, -0.5, -0.5).tex(0, 1).endVertex();
-        buffer.pos(+0.5, -0.5, +0.5).tex(0, 0).endVertex();
-        buffer.pos(-0.5, -0.5, +0.5).tex(1, 0).endVertex();
-
-        buffer.pos(+0.5, +0.5, -0.5).tex(1, 1).endVertex();
-        buffer.pos(-0.5, +0.5, -0.5).tex(0, 1).endVertex();
-        buffer.pos(-0.5, +0.5, +0.5).tex(0, 0).endVertex();
-        buffer.pos(+0.5, +0.5, +0.5).tex(1, 0).endVertex();
-
-        tessellator.draw();
     }
 
 }

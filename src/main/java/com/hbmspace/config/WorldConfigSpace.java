@@ -15,6 +15,14 @@ public class WorldConfigSpace {
     public static int bedrockGasPerDepositMin = 10;
     public static int bedrockGasPerDepositMax = 50;
 
+    // Space oils and ores
+    public static int dunaOilSpawn = 100;
+    public static int eveGasSpawn = 100;
+    public static int laytheOilSpawn = 100;
+    public static int munBrineSpawn = 100;
+    public static int minmusBrineSpawn = 100;
+    public static int ikeBrineSpawn = 100;
+
     public static int earthOilPerDeposit = 500;
     public static int earthGasPerDepositMin = 100;
     public static int earthGasPerDepositMax = 500;
@@ -62,6 +70,12 @@ public class WorldConfigSpace {
         nickelSpawn = CommonConfig.createConfigInt(config, CATEGORY_OREGEN, "2.24_nickelSpawnrate", "Amount of nickel ore veins per chunk", 12);
         zincSpawn = CommonConfig.createConfigInt(config, CATEGORY_OREGEN, "2.25_zincSpawnrate", "Amount of zinc ore veins per chunk", 8);
         mineralSpawn = CommonConfig.createConfigInt(config, CATEGORY_OREGEN, "2.26_mineralSpawnrate", "Amount of mineral ore veins per chunk", 5);
+        dunaOilSpawn = CommonConfig.createConfigInt(config, CATEGORY_OREGEN, "2.27S_oilSpawnRate", "Spawns an oil bubble every nTH chunk (on Duna)", 100);
+        laytheOilSpawn = CommonConfig.createConfigInt(config, CATEGORY_OREGEN, "2.28S_oilSpawnRate", "Spawns a DS oil bubble every nTH chunk (on Laythe)", 100);
+        eveGasSpawn = CommonConfig.createConfigInt(config, CATEGORY_OREGEN, "2.29S_gasSpawnRate", "Spawns a natural gas bubble every nTH chunk (on Eve)", 100);
+        munBrineSpawn = CommonConfig.createConfigInt(config, CATEGORY_OREGEN, "2.30S_brineSpawnRate", "Spawns a brine bubble every nTH chunk (on Mun)", 100);
+        minmusBrineSpawn = CommonConfig.createConfigInt(config, CATEGORY_OREGEN, "2.31S_brineSpawnRate", "Spawns a brine bubble every nTH chunk (on Minmus)", 100);
+        ikeBrineSpawn = CommonConfig.createConfigInt(config, CATEGORY_OREGEN, "2.32S_brineSpawnRate", "Spawns a brine bubble every nTH chunk (on Ike)", 100);
 
         bedrockOilPerDeposit = CommonConfig.createConfigInt(config, CATEGORY_OREGEN, "2.O00_bedrockOilPerDeposit", "Oil extracted per bedrock oil block suck", bedrockOilPerDeposit);
         bedrockGasPerDepositMin = CommonConfig.createConfigInt(config, CATEGORY_OREGEN, "2.O01_bedrockGasPerDepositMin", "Minimum natural gas extracted per bedrock oil block suck", bedrockGasPerDepositMin);

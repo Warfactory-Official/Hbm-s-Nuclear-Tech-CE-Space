@@ -4,17 +4,18 @@ import com.hbmspace.dim.laythe.biome.BiomeGenBaseLaythe;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
+import org.jetbrains.annotations.NotNull;
 
 public class GenLayerLaytheBiomes extends GenLayer {
 
-	private static final Biome[] biomes = new Biome[] { BiomeGenBaseLaythe.laytheIsland, BiomeGenBaseLaythe.laytheOcean };
+	private static final Biome[] biomes = new Biome[] { BiomeGenBaseLaythe.laytheIsland, BiomeGenBaseLaythe.laytheOcean, BiomeGenBaseLaythe.laytheCoast };
 
 	public GenLayerLaytheBiomes(long l) {
 		super(l);
 	}
 
 	@Override
-	public int[] getInts(int x, int z, int width, int depth) {
+	public int @NotNull [] getInts(int x, int z, int width, int depth) {
 		int[] dest = IntCache.getIntCache(width * depth);
 
 		for(int k = 0; k < depth; ++k) {

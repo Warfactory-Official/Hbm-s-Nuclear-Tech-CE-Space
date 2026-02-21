@@ -24,7 +24,7 @@ public class BlockCluster extends BlockOre implements IDrillInteraction {
     }
 
     @Override
-    public Item getItemDropped(@NotNull IBlockState state, @NotNull Random rand, int fortune) {
+    public @NotNull Item getItemDropped(@NotNull IBlockState state, @NotNull Random rand, int fortune) {
         return Items.AIR;
     }
 

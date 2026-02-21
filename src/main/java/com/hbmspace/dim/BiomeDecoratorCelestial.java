@@ -7,10 +7,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.gen.feature.WorldGenLakes;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -24,7 +24,13 @@ public class BiomeDecoratorCelestial extends BiomeDecorator {
 	public int lavaCount = 20;
 
 	public int waterPlantsPerChunk = 0;
-	public WorldGenerator genPlants;
+	public int rubberPlantsPerChunk = 0;
+	public int coralPerChunk = 0;
+
+	public int seaLevel = 63;
+	public WorldGenWaterPlant genPlants;
+	public WorldGenRubberPlant genRPlants;
+	public WorldGenWaterCoral genCoral;
 
 	// ACTUAL lakes, not the single block stuff
 	// honestly MCP couldja give things better names pls?
@@ -36,10 +42,12 @@ public class BiomeDecoratorCelestial extends BiomeDecorator {
 	public BiomeDecoratorCelestial(Block stoneBlock) {
 		this.stoneBlock = stoneBlock;
 		this.genPlants = new WorldGenWaterPlant();
+		this.genRPlants = new WorldGenRubberPlant();
+		this.genCoral = new WorldGenWaterCoral();
 	}
 
 	@Override
-	protected void genDecorations(Biome biome, World worldIn, Random random) {
+	protected void genDecorations(@NotNull Biome biome, @NotNull World worldIn, @NotNull Random random) {
 		MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(worldIn, random, chunkPos));
 		this.generateOres(worldIn, random);
 
@@ -69,6 +77,26 @@ public class BiomeDecoratorCelestial extends BiomeDecorator {
 				int z = this.chunkPos.getZ() + random.nextInt(16) + 8;
 				int y = random.nextInt(64);
 				genPlants.generate(worldIn, random, new BlockPos(x, y, z));
+			}
+		}
+		doGen = TerrainGen.decorate(worldIn, random, chunkPos, REED);
+		if(doGen && this.rubberPlantsPerChunk > 0) {
+			for (int i = 0; i < rubberPlantsPerChunk; ++i) {
+				int x = this.chunkPos.getX() + random.nextInt(16) + 8;
+				int z = this.chunkPos.getZ() + random.nextInt(16) + 8;
+				int y = random.nextInt(80);
+				genRPlants.generate(worldIn, random, new BlockPos(x, y, z));
+			}
+		}
+
+		doGen = TerrainGen.decorate(worldIn, random, chunkPos, REED);
+		if(doGen && this.coralPerChunk > 0) {
+			for (int i = 0; i < coralPerChunk; ++i) {
+				int x = this.chunkPos.getX() + random.nextInt(16) + 8;
+				int z = this.chunkPos.getZ() + random.nextInt(16) + 8;
+				int y = random.nextInt(seaLevel);
+				genCoral.seaLevel = seaLevel;
+				genCoral.generate(worldIn, random, new BlockPos(x, y, z));
 			}
 		}
 

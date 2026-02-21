@@ -13,7 +13,9 @@ import com.hbm.render.item.BakedModelCustom;
 import com.hbm.render.item.BakedModelNoFPV;
 import com.hbm.render.item.TEISRBase;
 import com.hbm.sound.AudioWrapper;
+import com.hbm.util.Clock;
 import com.hbm.util.I18nUtil;
+import com.hbm.util.Vec3NT;
 import com.hbmspace.Tags;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.blocks.generic.BlockOre;
@@ -78,6 +80,9 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = Tags.MODID, value = Side.CLIENT)
 public class ModEventHandlerClient {
+
+    public static boolean renderLodeStar = false;
+    public static long lastStarCheck = 0L;
 
     @SubscribeEvent
     public static void modelBaking(ModelBakeEvent evt) {
@@ -159,16 +164,18 @@ public class ModEventHandlerClient {
         }
     }
 
+    public static float lastFogDensity;
+
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void thickenFog(EntityViewRenderEvent.FogDensity event) {
         if (event.getEntity().world.provider instanceof WorldProviderCelestial provider) {
-            float fogDensity = provider.fogDensity();
-            if (fogDensity > 0) {
+            lastFogDensity = provider.fogDensity(event);
+            if (lastFogDensity > 0) {
                 if (GLContext.getCapabilities().GL_NV_fog_distance) {
                     GlStateManager.glFogi(34138, 34139);
                 }
                 GlStateManager.setFog(GlStateManager.FogMode.EXP);
-                event.setDensity(fogDensity);
+                event.setDensity(lastFogDensity);
                 event.setCanceled(true);
             }
         }
@@ -340,7 +347,27 @@ public class ModEventHandlerClient {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayer player = mc.player;
         World world = mc.world;
+        long millis = Clock.get_ms();
+        if(millis == 0) millis = System.currentTimeMillis();
+
         if(event.phase == TickEvent.Phase.START) {
+
+            if(world == null) return;
+            if(lastStarCheck + 200 < millis) {
+                renderLodeStar = false;
+                lastStarCheck = millis;
+
+                if(player != null) {
+                    Vec3NT pos = new Vec3NT(player.posX, player.posY, player.posZ);
+                    Vec3NT lodestarHeading = new Vec3NT(0, 0, -1D).rotateAroundXDeg(-15).multiply(25);
+                    Vec3NT nextPos = new Vec3NT(pos).add(lodestarHeading.x, lodestarHeading.y, lodestarHeading.z);
+                    RayTraceResult mop = world.rayTraceBlocks(pos, nextPos, false, true, false);
+                    if(mop != null && mop.typeOfHit == mop.typeOfHit.BLOCK && world.getBlockState(mop.getBlockPos()).getBlock() == ModBlocks.glass_polarized) {
+                        renderLodeStar = true;
+                    }
+                }
+            }
+
             if (player != null && world.provider instanceof WorldProviderOrbit && HbmLivingPropsSpace.hasGravity(player)) {
                 if (shipHum == null || !shipHum.isPlaying()) {
                     shipHum = SpaceMain.proxy.getLoopedSound(HBMSpaceSoundHandler.stationHum, SoundCategory.BLOCKS, player, 0.1f /* ClientConfig.AUDIO_SHIP_HUM_VOLUME.get() */, 5.0F, 1.0F, 10);

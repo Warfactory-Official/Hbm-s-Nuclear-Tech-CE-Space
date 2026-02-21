@@ -39,7 +39,7 @@ public class OrbitalStation {
 	public int dZ;
 
 	public boolean hasEngines = true;
-	public List<ThreeInts> errorsAt = new ArrayList<ThreeInts>();
+	public List<ThreeInts> errorsAt = new ArrayList<>();
 	public int errorTimer;
 
 	public float gravityMultiplier = 1;
@@ -52,13 +52,13 @@ public class OrbitalStation {
 	}
 
 	private TileEntityOrbitalStation mainPort;
-	private HashMap<ThreeInts, TileEntityOrbitalStation> ports = new HashMap<>();
+	private final HashMap<ThreeInts, TileEntityOrbitalStation> ports = new HashMap<>();
 	private int portIndex = 0;
 
-	private HashSet<IPropulsion> engines = new HashSet<>();
+	private final HashSet<IPropulsion> engines = new HashSet<>();
 
 	public static OrbitalStation clientStation = new OrbitalStation(CelestialBody.getBody(0));
-	public static List<OrbitalStation> orbitingStations = new ArrayList<OrbitalStation>();
+	public static List<OrbitalStation> orbitingStations = new ArrayList<>();
 
 	public static final int STATION_SIZE = 1024; // total area for each station
 	public static final int BUFFER_SIZE = 256; // size of the buffer region that drops you out of orbit (preventing seeing other stations)
@@ -87,7 +87,7 @@ public class OrbitalStation {
 		this.dZ = z;
 	}
 
-	public void travelTo(World world, CelestialBody target) {
+	public void travelTo(CelestialBody target) {
 		if(state != StationState.ORBIT) return; // only when at rest can we start a new journey
 		if(!canTravel(orbiting, target)) return;
 
@@ -114,11 +114,11 @@ public class OrbitalStation {
 
 			SolarSystemWorldSavedData.get().markDirty();
 
-			hasEngines = engines.size() > 0;
+			hasEngines = !engines.isEmpty();
 
 			errorTimer--;
 			if(errorTimer <= 0) {
-				errorsAt = new ArrayList<ThreeInts>();
+				errorsAt = new ArrayList<>();
 				errorTimer = 0;
 			}
 		}
@@ -127,14 +127,14 @@ public class OrbitalStation {
 	}
 
 	private boolean canTravel(CelestialBody from, CelestialBody to) {
-		if(engines.size() == 0) return false;
+		if(engines.isEmpty()) return false;
 
 		double deltaV = SolarSystem.getDeltaVBetween(from, to);
 		int shipMass = 200_000; // Always static, to not punish building big cool stations
 		float totalThrust = getTotalThrust();
 
 		boolean canTravel = true;
-		errorsAt = new ArrayList<ThreeInts>();
+		errorsAt = new ArrayList<>();
 
 		for(IPropulsion engine : engines) {
 			float massPortion = engine.getThrust() / totalThrust;
@@ -242,7 +242,7 @@ public class OrbitalStation {
 	}
 
 	public TileEntityOrbitalStation getPort() {
-		if(ports.size() == 0) return null;
+		if(ports.isEmpty()) return null;
 
 		// First, find any port that's available
 		int index = 0;
@@ -279,10 +279,10 @@ public class OrbitalStation {
 		minX = maxX = mainPort.getPos().getX();
 		minZ = maxZ = mainPort.getPos().getZ();
 
-		Stack<ThreeInts> stack = new Stack<ThreeInts>();
+		Stack<ThreeInts> stack = new Stack<>();
 		stack.push(new ThreeInts(mainPort.getPos().getX(), mainPort.getPos().getY(), mainPort.getPos().getZ()));
 
-		HashSet<ThreeInts> visited = new HashSet<ThreeInts>();
+		HashSet<ThreeInts> visited = new HashSet<>();
 
 		while(!stack.isEmpty()) {
 			ThreeInts pos = stack.pop();
@@ -373,7 +373,7 @@ public class OrbitalStation {
 
 		station.name = BufferUtil.readString(buf);
 
-		station.errorsAt = new ArrayList<ThreeInts>();
+		station.errorsAt = new ArrayList<>();
 		int count = buf.readInt();
 		for(int i = 0; i < count; i++) {
 			int x = buf.readInt();

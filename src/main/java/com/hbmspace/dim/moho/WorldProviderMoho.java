@@ -54,7 +54,7 @@ public class WorldProviderMoho extends WorldProviderCelestial {
         // apply the rivers to the biome map
         GenLayer genlayerRiverMix = new GenLayerRiverMix(100L, biomes, genlayerRiver);
 
-		return new BiomeGenLayers(biomes, genlayerVoronoiZoom, seed);
+		return new BiomeGenLayers(genlayerRiverMix, genlayerVoronoiZoom, seed);
 	}
 
 	@Override

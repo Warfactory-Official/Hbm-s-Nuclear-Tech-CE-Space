@@ -6,6 +6,7 @@ public class RecipeTweakerManager {
 
     public static void initRecipeTweakers() {
         AnvilRecipeTweaker.init();
+        AnvilSmithingRecipeTweaker.init();
         ArcWelderRecipesTweaker.init();
         AssemblyRecipesTweaker.init();
         BlastFurnaceRecipesTweaker.init();

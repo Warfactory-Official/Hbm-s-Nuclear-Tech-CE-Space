@@ -54,7 +54,7 @@ public class SkyProviderOrbit extends SkyProviderCelestial {
 			GlStateManager.rotate(solarAngle * 360.0F, 1.0F, 0.0F, 0.0F);
 
 			// digma balls
-			renderDigamma(mc, solarAngle);
+			renderDigamma(world, mc, solarAngle);
 
 			// SRC_ALPHA, ONE, ONE, ZERO
 			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);

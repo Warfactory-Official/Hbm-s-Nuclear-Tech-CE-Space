@@ -1,12 +1,8 @@
 package com.hbmspace.dim.moho;
 
-import com.hbm.blocks.ModBlocks;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.dim.ChunkProviderCelestial;
-import com.hbmspace.dim.mapgen.ExperimentalCaveGenerator;
-import com.hbmspace.dim.mapgen.MapGenCrater;
-import com.hbmspace.dim.mapgen.MapGenVolcano;
-import com.hbmspace.dim.mapgen.MapgenRavineButBased;
+import com.hbmspace.dim.mapgen.*;
 import com.hbmspace.dim.moho.biome.BiomeGenBaseMoho;
 import com.hbmspace.dim.noise.MapGenVNoise;
 import net.minecraft.init.Blocks;
@@ -14,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -26,7 +23,7 @@ public class ChunkProviderMoho extends ChunkProviderCelestial {
 	private MapGenCrater smallCrater = new MapGenCrater(6);
 	private MapGenCrater largeCrater = new MapGenCrater(64);
 	private MapGenVolcano volcano = new MapGenVolcano(72);
-    //private MapGenPlateau plateau = new MapGenPlateau(worldObj);
+    private MapGenPlateau plateau = new MapGenPlateau(worldObj);
 
 	public ChunkProviderMoho(World world, long seed, boolean hasMapFeatures) {
 		super(world, seed, hasMapFeatures);
@@ -52,19 +49,32 @@ public class ChunkProviderMoho extends ChunkProviderCelestial {
         noise.plateThickness = 25;
         noise.applyToBiome = BiomeGenBaseMoho.mohoLavaSea;
 
-        /*plateau.maxPlateauAddition = 6;
-		plateau.surfrock = ModBlocks.moho_regolith;
-		plateau.stoneBlock = ModBlocks.moho_stone;
-		plateau.fillblock = Blocks.lava;
+        plateau.maxPlateauAddition = 6;
+		plateau.surfrock = ModBlocksSpace.moho_regolith;
+		plateau.stoneBlock = ModBlocksSpace.moho_stone;
+		plateau.fillblock = Blocks.LAVA;
 		plateau.maxPlateauAddition = 6;
 		plateau.stepHeight = 2;
 		plateau.noiseScale = 0.03;
-		plateau.applyToBiome = BiomeGenBaseMoho.mohoPlateau;*/
+		plateau.applyToBiome = BiomeGenBaseMoho.mohoPlateau;
 	}
 
 	@Override
 	public ChunkPrimer getChunkPrimer(int x, int z) {
 		ChunkPrimer buffer = super.getChunkPrimer(x, z);
+
+		boolean hasLavaSea = false;
+		boolean hasPlateau = false;
+
+		for(int i = 0; i < biomesForGeneration.length; i++) {
+			if(biomesForGeneration[i] == BiomeGenBaseMoho.mohoLavaSea) hasLavaSea = true;
+			if(biomesForGeneration[i] == BiomeGenBaseMoho.mohoPlateau) hasPlateau = true;
+			if(hasLavaSea && hasPlateau) break;
+		}
+
+		if(hasLavaSea) noise.generate(worldObj, x, z, buffer);
+
+		if(hasPlateau) plateau.generate(worldObj, x, z, buffer);
 
 		// how many times do I gotta say BEEEEG
 		caveGenV2.generate(worldObj, x, z, buffer);
@@ -82,8 +92,8 @@ public class ChunkProviderMoho extends ChunkProviderCelestial {
 	@Nullable
 	public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position, boolean findUnexplored){return null;}
 	@Override
-	public void recreateStructures(Chunk chunkIn, int x, int z){};
+	public void recreateStructures(@NotNull Chunk chunkIn, int x, int z){};
 	@Override
-	public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos){return false;}
+	public boolean isInsideStructure(@NotNull World worldIn, @NotNull String structureName, @NotNull BlockPos pos){return false;}
 
 }

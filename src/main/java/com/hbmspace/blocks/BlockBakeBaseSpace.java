@@ -15,4 +15,12 @@ public class BlockBakeBaseSpace extends BlockBakeBase implements IDynamicModelsS
         IDynamicModels.INSTANCES.remove(this);
         IDynamicModelsSpace.INSTANCES.add(this);
     }
+
+    public BlockBakeBaseSpace(Material m, String s, BlockBakeFrame blockFrame) {
+        super(m, s, blockFrame);
+        ModBlocks.ALL_BLOCKS.remove(this);
+        ModBlocksSpace.ALL_BLOCKS.add(this);
+        IDynamicModels.INSTANCES.remove(this);
+        IDynamicModelsSpace.INSTANCES.add(this);
+    }
 }
