@@ -24,6 +24,9 @@
     "hbm.MixinMainRegistry",
     "hbm.MixinMatDistribution",
     "hbm.items.MixinItemBedrockOreNew",
+    "hbm.items.MixinItemBedrockOreBase",
+    "hbm.items.MixinItemOreDensityScanner",
+    "hbm.jei.MixinOreSlopperHandler",
     "hbm.MixinHbmWorldGen",
     "hbm.MixinNTMWorldGenerator",
     "hbm.MixinPermaSyncHandler",
@@ -33,6 +36,8 @@
     "hbm.recipes.MixinGasCentrifugeRecipes",
     "hbm.recipes.MixinGasCentrifugeRecipes_PseudoFluidType",
     "hbm.recipes.MixinSerializableRecipe",
+    "hbm.tileentities.MixinTileEntityMachineOreSlopper",
+    "hbm.tileentities.MixinTileEntityMachineExcavator",
     "hbm.tileentities.MixinTileEntityCondenser"
   ],
   "server": [],

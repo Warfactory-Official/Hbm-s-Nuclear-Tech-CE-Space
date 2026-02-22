@@ -13,6 +13,11 @@ import static com.hbmspace.inventory.OreDictManagerSpace.*;
 
 public class MatsSpace {
 
+    static {
+        MAT_POLYMER.setAutogen(FRAGMENT, STOCK, GRIP);
+        MAT_RUBBER.setAutogen(FRAGMENT, DUST, PIPE, GRIP);
+        MAT_PVC.setAutogen(FRAGMENT, DUST, STOCK, GRIP);
+    }
     /* make that >24_000 */
     public static final int _EX = 24_000;
 

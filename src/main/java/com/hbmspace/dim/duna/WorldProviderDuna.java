@@ -160,12 +160,12 @@ public class WorldProviderDuna extends WorldProviderCelestial {
 		GenLayer genlayerVoronoiZoom = new GenLayerVoronoiZoom(10L, biomes);
 
 		GenLayer genlayerRiverZoom = new GenLayerZoom(1000L, biomes);
-		GenLayer genlayerRiver = new GenLayerRiver(1004L, genlayerRiverZoom); // Your custom river layer
-		genlayerRiver = new GenLayerZoom(105L, genlayerRiver);
+		// GenLayer genlayerRiver = new GenLayerRiver(1004L, genlayerRiverZoom); // Your custom river layer
+		// genlayerRiver = new GenLayerZoom(105L, genlayerRiver);
 
-		GenLayer genlayerRiverMix = new GenLayerRiverMix(100L, biomes, genlayerRiver);
+		// GenLayer genlayerRiverMix = new GenLayerRiverMix(100L, biomes, genlayerRiver);
 
-		return new BiomeGenLayers(genlayerRiverMix, genlayerVoronoiZoom, seed);
+		return new BiomeGenLayers(genlayerRiverZoom, genlayerVoronoiZoom, seed);
 	}
 
 	@Override
