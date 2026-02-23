@@ -10,6 +10,7 @@ package com.hbmspace.dim.laythe.biome;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.dim.BiomeDecoratorCelestial;
 import com.hbmspace.dim.BiomeGenBaseCelestial;
+import com.hbmspace.entity.mob.EntityScutterfish;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -31,8 +32,7 @@ public abstract class BiomeGenBaseLaythe extends BiomeGenBaseCelestial {
 	public BiomeGenBaseLaythe(BiomeProperties properties) {
 		super(properties);
 		properties.setWaterColor(0x5b009a);
-		// no-no-no, mister fish! you won't go to your family, you will go in this ebaniy tazik blyat
-		//this.waterCreatures.add(new BiomeGenBase.SpawnListEntry(EntityScutterfish.class, 10, 4, 4));
+		this.waterCreatures.add(new SpawnListEntry(EntityScutterfish.class, 10, 4, 4));
 
 		BiomeDecoratorCelestial decorator = new BiomeDecoratorCelestial(Blocks.STONE);
 		decorator.waterPlantsPerChunk = 32;

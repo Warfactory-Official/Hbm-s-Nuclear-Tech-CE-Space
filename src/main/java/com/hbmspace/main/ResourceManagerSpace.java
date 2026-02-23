@@ -50,6 +50,13 @@ public class ResourceManagerSpace {
     public static final IModelCustom dyson_spinlaunch = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/dyson_spinlaunch.obj")).asVBO();
     public static final IModelCustom dyson_swarm_member = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/dyson_swarm_satellite.obj"));
 
+    //Laythies
+    public static final IModelCustom scutterfish = new HFRWavefrontObject(new ResourceLocation("hbm", "models/mobs/scutterfish.obj")).asVBO();
+    public static final IModelCustom scuttlecrab = new HFRWavefrontObject(new ResourceLocation("hbm", "models/mobs/scuttlecrab.obj")).asVBO();
+    public static final IModelCustom scrapfish = new HFRWavefrontObject(new ResourceLocation("hbm", "models/mobs/scrapfish.obj")).asVBO();
+    public static final IModelCustom depthsquid = new HFRWavefrontObject(new ResourceLocation("hbm", "models/mobs/depthsquid.obj")).asVBO();
+    public static final IModelCustom sifter_eel = new HFRWavefrontObject(new ResourceLocation("hbm", "models/mobs/siftereel.obj")).asVBO();
+
     /** TEXTURES **/
 
     public static final ResourceLocation lpw2_tex = new ResourceLocation("hbm", "textures/models/machines/lpw2.png");

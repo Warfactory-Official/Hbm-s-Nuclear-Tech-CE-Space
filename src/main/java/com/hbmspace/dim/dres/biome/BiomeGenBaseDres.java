@@ -15,8 +15,8 @@ import net.minecraft.world.biome.Biome;
 
 public abstract class BiomeGenBaseDres extends BiomeGenBaseCelestial {
 
-    public static final Biome dresPlains = new BiomeGenDresPlains(new BiomeProperties("Dresian Plains").setBaseHeight(0.625F).setHeightVariation(0.04F).setTemperature(-1.0F).setRainfall(0.0F));
-    public static final Biome dresCanyon = new BiomeGenDresCanyon(new BiomeProperties("Dres Large Basins").setBaseHeight(-1F).setHeightVariation(0.34F).setTemperature(-1.0F).setRainfall(0.0F));
+    public static final Biome dresPlains = new BiomeGenDresPlains(new BiomeProperties("Dresian Plains").setBaseHeight(0.625F).setHeightVariation(0.04F).setTemperature(0.5F).setRainfall(0.0F));
+    public static final Biome dresCanyon = new BiomeGenDresCanyon(new BiomeProperties("Dres Large Basins").setBaseHeight(-1F).setHeightVariation(0.34F).setTemperature(0.5F).setRainfall(0.0F));
     
     public BiomeGenBaseDres(BiomeProperties properties) {
         super(properties);
