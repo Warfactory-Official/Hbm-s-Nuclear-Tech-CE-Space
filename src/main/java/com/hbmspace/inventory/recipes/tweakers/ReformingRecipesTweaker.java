@@ -10,8 +10,6 @@ import static com.hbm.inventory.recipes.ReformingRecipes.recipes;
 public class ReformingRecipesTweaker {
 
     public static void init() {
-        if (RecipeTweakerManager.isModified(ReformingRecipes.class)) return;
-
         recipes.put(com.hbmspace.inventory.fluid.Fluids.HALOLIGHT, new Tuple.Triplet<>(
                 new FluidStack(Fluids.UNSATURATEDS, 50),
                 new FluidStack(Fluids.REFORMGAS, 35),

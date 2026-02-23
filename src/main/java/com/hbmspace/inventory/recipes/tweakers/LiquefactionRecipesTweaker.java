@@ -17,7 +17,6 @@ import static com.hbmspace.inventory.OreDictManagerSpace.KEY_STONE;
 public class LiquefactionRecipesTweaker {
 
     public static void init() {
-        if (RecipeTweakerManager.isModified(LiquefactionRecipes.class)) return;
         recipes.remove(new RecipesCommon.ComparableStack(Blocks.COBBLESTONE), new FluidStack(250, Fluids.LAVA));
         recipes.remove(new RecipesCommon.ComparableStack(Blocks.STONE), new FluidStack(250, Fluids.LAVA));
         recipes.remove(new RecipesCommon.ComparableStack(Blocks.PACKED_ICE), new FluidStack(1000, Fluids.WATER));

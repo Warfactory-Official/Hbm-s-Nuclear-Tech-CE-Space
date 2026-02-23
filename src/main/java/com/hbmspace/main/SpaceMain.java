@@ -126,6 +126,7 @@ public class SpaceMain {
     @EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
+        RecipeTweakerManager.initRecipeTweakers();
     }
 
     @EventHandler
@@ -140,7 +141,6 @@ public class SpaceMain {
         proxy.postInit(event);
         if(event.getSide() == Side.SERVER) RocketPart.registerServerParts(); // fuck me, parts were registered on client but NOT on server
 
-        RecipeTweakerManager.initRecipeTweakers();
     }
 
     @EventHandler

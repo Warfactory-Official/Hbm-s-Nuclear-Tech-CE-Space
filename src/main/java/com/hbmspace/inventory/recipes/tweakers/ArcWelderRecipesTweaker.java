@@ -20,7 +20,6 @@ import static com.hbmspace.inventory.OreDictManagerSpace.STAINLESS;
 public class ArcWelderRecipesTweaker {
 
     public static void init() {
-        if (RecipeTweakerManager.isModified(ArcWelderRecipes.class)) return;
         recipes.add(new ArcWelderRecipes.ArcWelderRecipe(new ItemStack(ModItems.plate_welded, 1, MatsSpace.MAT_STAINLESS.id), 250, 20_000L,
                 new RecipesCommon.OreDictStack(STAINLESS.plateCast(), 2)));
 

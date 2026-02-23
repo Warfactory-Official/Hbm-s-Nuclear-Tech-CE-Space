@@ -26,9 +26,6 @@ public class AssemblyRecipesTweaker {
     public static void init() {
         String autoPlate = "autoswitch.plates";
         AssemblyMachineRecipes recs = AssemblyMachineRecipes.INSTANCE;
-        if (recs.modified) {
-            return;
-        }
         recs.register(new GenericRecipe("ass.platenickel").setup(60, 100).outputItems(new ItemStack(ModItemsSpace.plate_nickel, 1)).inputItems(new RecipesCommon.OreDictStack(NI.ingot())).setPools(GenericRecipes.POOL_PREFIX_ALT + "plates").setGroup(autoPlate, recs));
         recs.register(new GenericRecipe("ass.platestainless").setup(60, 100).outputItems(new ItemStack(ModItemsSpace.plate_stainless, 1)).inputItems(new RecipesCommon.OreDictStack(STAINLESS.ingot())).setPools(GenericRecipes.POOL_PREFIX_ALT + "plates").setGroup(autoPlate, recs));
 

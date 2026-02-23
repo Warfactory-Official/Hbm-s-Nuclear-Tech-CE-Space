@@ -10,7 +10,6 @@ import static com.hbm.inventory.recipes.HydrotreatingRecipes.recipes;
 public class HydrotreatingRecipesTweaker {
 
     public static void init() {
-        if (RecipeTweakerManager.isModified(HydrotreatingRecipes.class)) return;
         recipes.put(com.hbmspace.inventory.fluid.Fluids.CCL, new Tuple.Triplet<>(
                 new FluidStack(Fluids.HYDROGEN, 10, 1),
                 new FluidStack(com.hbmspace.inventory.fluid.Fluids.CHLOROMETHANE, 80),

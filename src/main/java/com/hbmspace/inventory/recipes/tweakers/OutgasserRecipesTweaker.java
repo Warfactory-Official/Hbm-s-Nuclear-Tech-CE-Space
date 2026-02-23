@@ -12,7 +12,6 @@ import static com.hbm.inventory.recipes.OutgasserRecipes.recipes;
 public class OutgasserRecipesTweaker {
 
     public static void init() {
-        if (RecipeTweakerManager.isModified(OutgasserRecipes.class)) return;
         /* cobalt to cobalt-60 */
         recipes.put(new RecipesCommon.OreDictStack(CO.ingot()), new OutgasserRecipes.OutgasserRecipe(new ItemStack(ModItems.ingot_co60), null));
         recipes.put(new RecipesCommon.OreDictStack(CO.nugget()), new OutgasserRecipes.OutgasserRecipe(new ItemStack(ModItems.nugget_co60), null));

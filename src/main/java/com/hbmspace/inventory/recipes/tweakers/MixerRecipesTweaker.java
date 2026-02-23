@@ -17,7 +17,6 @@ import static com.hbm.inventory.recipes.MixerRecipes.register;
 public class MixerRecipesTweaker {
 
     public static void init() {
-        if(RecipeTweakerManager.isModified(MixerRecipes.class)) return;
         // TODO replace a few recipes, should find them in 1.7 upstream
 
         register(com.hbmspace.inventory.fluid.Fluids.SMILK, new MixerRecipes.MixerRecipe(500, 50).setStack1(new FluidStack(com.hbmspace.inventory.fluid.Fluids.MILK, 500)).setSolid(new RecipesCommon.ComparableStack(ModItemsSpace.strawberry, 4)));

@@ -13,7 +13,6 @@ import static com.hbmspace.inventory.OreDictManagerSpace.*;
 public class PressRecipesTweaker {
 
     public static void init() {
-        if (RecipeTweakerManager.isModified(PressRecipes.class)) return;
         makeRecipe(ItemStamp.StampType.PLATE, new RecipesCommon.OreDictStack(NI.ingot()), ModItemsSpace.plate_nickel);
         makeRecipe(ItemStamp.StampType.PLATE, new RecipesCommon.OreDictStack(STAINLESS.ingot()), ModItemsSpace.plate_stainless);
         makeRecipe(ItemStamp.StampType.CIRCUIT, new RecipesCommon.OreDictStack(GAAS.billet()), OreDictManager.DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.GAAS));

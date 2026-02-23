@@ -14,7 +14,6 @@ import static com.hbmspace.inventory.fluid.Fluids.VINYL;
 public class SolidificationRecipesTweaker {
 
     public static void init() {
-        if (RecipeTweakerManager.isModified(SolidificationRecipes.class)) return;
         SolidificationRecipes.registerRecipe(BLOOD, 1290, new ItemStack(ModItemsSpace.flesh_wafer, 5));
         SolidificationRecipes.registerRecipe(CARBONDIOXIDE, 1000, ModBlocksSpace.dry_ice);
         SolidificationRecipes.registerRecipe(AQUEOUS_NICKEL, 500, ModItemsSpace.nickel_salts);

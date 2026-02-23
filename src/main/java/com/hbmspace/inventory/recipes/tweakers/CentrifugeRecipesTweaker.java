@@ -19,7 +19,6 @@ import static com.hbmspace.inventory.OreDictManagerSpace.NI;
 public class CentrifugeRecipesTweaker {
 
     public static void init() {
-        if (RecipeTweakerManager.isModified(CentrifugeRecipes.class)) return;
         recipes.put(new RecipesCommon.OreDictStack(NI.ore()), new ItemStack[]{
                 new ItemStack(ModItemsSpace.chunk_ore, 2, ItemEnumsSpace.EnumChunkType.PENTLANDITE.ordinal()),
                 new ItemStack(ModItems.sulfur, 1),

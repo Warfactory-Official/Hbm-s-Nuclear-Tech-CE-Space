@@ -13,8 +13,6 @@ import java.util.Iterator;
 public class AnvilSmithingRecipeTweaker {
 
     public static void init() {
-        if (RecipeTweakerManager.isModified(AnvilRecipes.class)) return;
-
         Iterator<AnvilSmithingRecipe> iterator = AnvilRecipes.smithingRecipes.iterator();
         while (iterator.hasNext()) {
             AnvilSmithingRecipe recipe = iterator.next();

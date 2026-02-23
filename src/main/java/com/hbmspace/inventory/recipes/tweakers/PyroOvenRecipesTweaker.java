@@ -7,7 +7,6 @@ import static com.hbmspace.inventory.fluid.Fluids.POLYTHYLENE;
 public class PyroOvenRecipesTweaker {
 
     public static void init() {
-        if (RecipeTweakerManager.isModified(PyroOvenRecipes.class)) return;
         PyroOvenRecipes.registerSFAuto(POLYTHYLENE);
     }
 }
