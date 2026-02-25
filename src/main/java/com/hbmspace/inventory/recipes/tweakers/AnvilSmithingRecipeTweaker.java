@@ -8,31 +8,47 @@ import com.hbm.items.ModItems;
 import com.hbmspace.inventory.OreDictManagerSpace;
 import net.minecraft.item.ItemStack;
 
-import java.util.Iterator;
-
+import java.util.ArrayList;
+import java.util.List;
+// Th3_Sl1ze: behold, some slop for removing the CE-main gunmetal recipe
 public class AnvilSmithingRecipeTweaker {
 
     public static void init() {
-        Iterator<AnvilSmithingRecipe> iterator = AnvilRecipes.smithingRecipes.iterator();
-        while (iterator.hasNext()) {
-            AnvilSmithingRecipe recipe = iterator.next();
-            if (recipe != null && stacksEqual(recipe.getSimpleOutput(), new ItemStack(ModItems.ingot_gunmetal, 1))) {
-                iterator.remove();
-                break;
-            }
+        if (!(AnvilRecipes.smithingRecipes instanceof TweakedRecipeList)) {
+            List<AnvilSmithingRecipe> oldList = AnvilRecipes.smithingRecipes;
+            AnvilRecipes.smithingRecipes = new TweakedRecipeList();
+            AnvilRecipes.smithingRecipes.addAll(oldList);
         }
 
-        AnvilRecipes.smithingRecipes.add(new AnvilSmithingRecipe(
+        AnvilRecipes.smithingRecipes.removeIf(recipe -> recipe != null && stacksEqual(recipe.getSimpleOutput(), new ItemStack(ModItems.ingot_gunmetal, 1)));
+
+        AnvilSmithingRecipe newRecipe = new AnvilSmithingRecipe(
                 1,
                 new ItemStack(ModItems.ingot_gunmetal, 1),
                 new RecipesCommon.OreDictStack(OreDictManager.CU.ingot()),
                 new RecipesCommon.OreDictStack(OreDictManagerSpace.ZI.ingot())
-        ));
+        );
+
+        ((TweakedRecipeList) AnvilRecipes.smithingRecipes).addTweaked(newRecipe);
     }
 
     private static boolean stacksEqual(ItemStack a, ItemStack b) {
         return a != null && b != null && !a.isEmpty() && !b.isEmpty()
                 && a.getItem() == b.getItem()
-                && a.getMetadata() == b.getMetadata();
+                && a.getItemDamage() == b.getItemDamage();
+    }
+
+    private static class TweakedRecipeList extends ArrayList<AnvilSmithingRecipe> {
+        @Override
+        public boolean add(AnvilSmithingRecipe recipe) {
+            if (recipe != null && stacksEqual(recipe.getSimpleOutput(), new ItemStack(ModItems.ingot_gunmetal, 1))) {
+                return false;
+            }
+            return super.add(recipe);
+        }
+
+        public void addTweaked(AnvilSmithingRecipe recipe) {
+            super.add(recipe);
+        }
     }
 }

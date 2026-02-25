@@ -7,8 +7,7 @@ public class RecipeTweakerManager {
     public static void initRecipeTweakers() {
         SerializableRecipe.additionalListeners.add(recipeHandlerName -> {
             switch (recipeHandlerName) {
-                case "AnvilRecipes": AnvilRecipeTweaker.init(); break;
-                case "AnvilSmithingRecipes": AnvilSmithingRecipeTweaker.init(); break;
+                case "AnvilRecipes": AnvilRecipeTweaker.init(); AnvilSmithingRecipeTweaker.init(); break;
                 case "ArcWelderRecipes": ArcWelderRecipesTweaker.init(); break;
                 case "AssemblyMachineRecipes": AssemblyRecipesTweaker.init(); break;
                 case "BlastFurnaceRecipes": BlastFurnaceRecipesTweaker.init(); break;
