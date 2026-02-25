@@ -1,6 +1,5 @@
 package com.hbmspace.inventory.recipes.tweakers;
 
-import com.hbm.api.recipe.IRecipeRegisterListener;
 import com.hbm.inventory.recipes.loader.SerializableRecipe;
 
 public class RecipeTweakerManager {
@@ -11,7 +10,6 @@ public class RecipeTweakerManager {
                 case "AnvilRecipes": AnvilRecipeTweaker.init(); break;
                 case "AnvilSmithingRecipes": AnvilSmithingRecipeTweaker.init(); break;
                 case "ArcWelderRecipes": ArcWelderRecipesTweaker.init(); break;
-                case "AssemblerRecipes":
                 case "AssemblyMachineRecipes": AssemblyRecipesTweaker.init(); break;
                 case "BlastFurnaceRecipes": BlastFurnaceRecipesTweaker.init(); break;
                 case "CentrifugeRecipes": CentrifugeRecipesTweaker.init(); break;
