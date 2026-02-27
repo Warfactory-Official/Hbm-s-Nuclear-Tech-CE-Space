@@ -77,7 +77,6 @@ public abstract class MixinParticleRocketFlame extends Particle implements IPart
             this.particleRed = MathHelper.clamp((this.customRed != 0 ? this.customRed : 1.0F) * dark + add, 0.0F, 1.0F);
             this.particleGreen = MathHelper.clamp((this.customGreen != 0 ? this.customGreen : 0.6F) * dark + add, 0.0F, 1.0F);
             this.particleBlue = MathHelper.clamp((this.customBlue != 0 ? this.customBlue : 0.0F) * dark + add, 0.0F, 1.0F);
-            SpaceMain.logger.info("Bruh");
 
             this.particleAlpha = MathHelper.clamp((float) Math.pow(1.0 - Math.min(((float) (this.age) / (float) (this.maxAge)), 1.0), 0.5), 0.0F, 1.0F);
 
