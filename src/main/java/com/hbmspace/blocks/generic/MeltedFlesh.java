@@ -10,6 +10,7 @@ import com.hbmspace.dim.trait.CBT_Temperature;
 import com.hbmspace.items.IDynamicModelsSpace;
 import com.hbmspace.items.ModItemsSpace;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -27,8 +28,8 @@ import java.util.Random;
 
 public class MeltedFlesh extends BlockLayering implements IDynamicModelsSpace {
 
-    public MeltedFlesh(Material material, String s, String texture) {
-        super(material, s, texture);
+    public MeltedFlesh(Material material, String s, SoundType type, String texture) {
+        super(material, s, type, texture);
         this.setTickRandomly(true);
         ModBlocks.ALL_BLOCKS.remove(this);
         ModBlocksSpace.ALL_BLOCKS.add(this);
