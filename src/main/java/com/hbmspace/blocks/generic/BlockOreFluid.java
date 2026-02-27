@@ -6,13 +6,19 @@ import com.hbmspace.config.WorldConfigSpace;
 import com.hbmspace.dim.SolarSystem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Random;
-// TODO finally add tekto, retard (saying that to myself)
+import java.util.Set;
+
 public class BlockOreFluid extends BlockOre {
 
     private final Block empty;
@@ -48,7 +54,7 @@ public class BlockOreFluid extends BlockOre {
         switch (type) {
             case OIL:
                 if (meta == SolarSystem.Body.LAYTHE.ordinal()) return Fluids.OIL_DS;
-                //if (meta == SolarSystem.Body.TEKTO.ordinal()) return com.hbmspace.inventory.fluid.Fluids.TCRUDE;
+                if (meta == SolarSystem.Body.TEKTO.ordinal()) return com.hbmspace.inventory.fluid.Fluids.TCRUDE;
                 return Fluids.OIL;
             case GAS:
                 return Fluids.GAS;
@@ -61,14 +67,16 @@ public class BlockOreFluid extends BlockOre {
 
     public FluidType getSecondaryFluid(int meta) {
         return switch (type) {
-            case OIL -> //if (meta == SolarSystem.Body.TEKTO.ordinal()) yield com.hbmspace.inventory.fluid.Fluids.HGAS;
-                    Fluids.GAS;
+            case OIL -> {
+                if (meta == SolarSystem.Body.TEKTO.ordinal()) yield com.hbmspace.inventory.fluid.Fluids.HGAS;
+                yield Fluids.GAS;
+            }
             case GAS -> Fluids.PETROLEUM;
             default -> Fluids.NONE;
         };
     }
 
-    public int getBlockFluidAmount(int meta) {
+    public int getBlockFluidAmount() {
         return switch (type) {
             case OIL -> 250;
             case GAS -> 100;
@@ -78,7 +86,7 @@ public class BlockOreFluid extends BlockOre {
 
     public int getPrimaryFluidAmount(int meta) {
         if (empty == null) {
-            //if (meta == SolarSystem.Body.TEKTO.ordinal()) return WorldConfigSpace.tektoBedrockOilPerDeposit;
+            if (meta == SolarSystem.Body.TEKTO.ordinal()) return WorldConfigSpace.tektoBedrockOilPerDeposit;
             return WorldConfigSpace.bedrockOilPerDeposit;
         }
 
@@ -88,7 +96,7 @@ public class BlockOreFluid extends BlockOre {
         if (meta == SolarSystem.Body.MUN.ordinal()) return WorldConfigSpace.munBrinePerDeposit;
         if (meta == SolarSystem.Body.MINMUS.ordinal()) return WorldConfigSpace.minmusBrinePerDeposit;
         if (meta == SolarSystem.Body.IKE.ordinal()) return WorldConfigSpace.ikeBrinePerDeposit;
-        //if (meta == SolarSystem.Body.TEKTO.ordinal()) return WorldConfigSpace.tektoOilPerDeposit;
+        if (meta == SolarSystem.Body.TEKTO.ordinal()) return WorldConfigSpace.tektoOilPerDeposit;
         return WorldConfigSpace.earthOilPerDeposit;
     }
 
@@ -96,8 +104,8 @@ public class BlockOreFluid extends BlockOre {
         Random rand = new Random();
 
         if (empty == null) {
-            /*if (meta == SolarSystem.Body.TEKTO.ordinal())
-                return WorldConfigSpace.tektoBedrockGasPerDepositMin + rand.nextInt(WorldConfigSpace.tektoBedrockGasPerDepositMax - WorldConfigSpace.tektoBedrockGasPerDepositMin);*/
+            if (meta == SolarSystem.Body.TEKTO.ordinal())
+                return WorldConfigSpace.tektoBedrockGasPerDepositMin + rand.nextInt(WorldConfigSpace.tektoBedrockGasPerDepositMax - WorldConfigSpace.tektoBedrockGasPerDepositMin);
             return WorldConfigSpace.bedrockGasPerDepositMin + rand.nextInt(WorldConfigSpace.bedrockGasPerDepositMax - WorldConfigSpace.bedrockGasPerDepositMin);
         }
 
@@ -107,8 +115,8 @@ public class BlockOreFluid extends BlockOre {
             return WorldConfigSpace.laytheGasPerDepositMin + rand.nextInt(WorldConfigSpace.laytheGasPerDepositMax - WorldConfigSpace.laytheGasPerDepositMin);
         if (meta == SolarSystem.Body.EVE.ordinal())
             return WorldConfigSpace.evePetPerDepositMin + rand.nextInt(WorldConfigSpace.evePetPerDepositMax - WorldConfigSpace.evePetPerDepositMin);
-        /*if (meta == SolarSystem.Body.TEKTO.ordinal())
-            return WorldConfigSpace.tektoGasPerDepositMin + rand.nextInt(WorldConfigSpace.tektoGasPerDepositMax - WorldConfigSpace.tektoGasPerDepositMin);*/
+        if (meta == SolarSystem.Body.TEKTO.ordinal())
+            return WorldConfigSpace.tektoGasPerDepositMin + rand.nextInt(WorldConfigSpace.tektoGasPerDepositMax - WorldConfigSpace.tektoGasPerDepositMin);
         return WorldConfigSpace.earthGasPerDepositMin + rand.nextInt(WorldConfigSpace.earthGasPerDepositMax - WorldConfigSpace.earthGasPerDepositMin);
     }
 
@@ -132,10 +140,6 @@ public class BlockOreFluid extends BlockOre {
         }
     }
 
-    public boolean requiresFracking() {
-        return empty == null;
-    }
-
     @Override
     public void neighborChanged(@NotNull IBlockState state, @NotNull World world, @NotNull BlockPos pos, @NotNull Block blockIn, @NotNull BlockPos fromPos) {
         if (empty == null) return;
@@ -148,6 +152,25 @@ public class BlockOreFluid extends BlockOre {
 
             world.setBlockState(pos, empty.getDefaultState().withProperty(META, currentMeta), 3);
             world.setBlockState(downPos, this.getDefaultState().withProperty(META, currentMeta), 3);
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> items) {
+        if (tab == this.getCreativeTab() || tab == CreativeTabs.SEARCH) {
+            Set<SolarSystem.Body> validBodies = spawnMap.get(this);
+
+            if (validBodies != null && !validBodies.isEmpty()) {
+                SolarSystem.Body[] bodies = SolarSystem.Body.values();
+
+                for (int i = 0; i < bodies.length; i++) {
+                    if (validBodies.contains(bodies[i]) && i != 1) {
+                        // Since I'm replacing the existing ore blocks for fluid variants instead of just adding, I'm leaving the earth 0 id here
+                        items.add(new ItemStack(this, 1, i));
+                    }
+                }
+            }
         }
     }
 

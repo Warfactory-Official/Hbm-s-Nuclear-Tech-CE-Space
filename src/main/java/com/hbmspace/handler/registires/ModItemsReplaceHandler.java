@@ -1,17 +1,23 @@
 package com.hbmspace.handler.registires;
 
+import com.hbm.blocks.ModBlocks;
 import com.hbm.items.ModItems;
 import com.hbmspace.accessors.ICanSealAccessor;
 import com.hbmspace.accessors.IHaveCorrosionProtAccessor;
 import com.hbmspace.items.ModItemsSpace;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+
+import java.lang.reflect.Field;
 
 public class ModItemsReplaceHandler {
 
     public static void initReplacings(RegistryEvent.Register<Item> event) {
         replaceInsert(event);
         replaceArmors(event);
+        replaceItemBlocks(event);
     }
 
     private static void replaceInsert(RegistryEvent.Register<Item> event) {
@@ -67,5 +73,27 @@ public class ModItemsReplaceHandler {
         if(ModItems.hev_plate instanceof ICanSealAccessor hev_seal) hev_seal.setSealed(true);
         if(ModItems.hev_legs instanceof ICanSealAccessor hev_seal) hev_seal.setSealed(true);
         if(ModItems.hev_boots instanceof ICanSealAccessor hev_seal) hev_seal.setSealed(true);
+    }
+
+    private static void replaceItemBlocks(RegistryEvent.Register<Item> event) {
+        ItemBlock ore_oil_item = new ItemBlock(ModBlocks.ore_oil) {
+            @Override
+            public int getMetadata(int damage) {
+                return damage;
+            }
+        };
+        ore_oil_item.setHasSubtypes(true);
+        ore_oil_item.setMaxDamage(0);
+
+        try {
+            Field regNameField = IForgeRegistryEntry.Impl.class.getDeclaredField("registryName");
+            regNameField.setAccessible(true);
+            regNameField.set(ore_oil_item, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ore_oil_item.setRegistryName("hbm", "ore_oil");
+        event.getRegistry().register(ore_oil_item);
     }
 }

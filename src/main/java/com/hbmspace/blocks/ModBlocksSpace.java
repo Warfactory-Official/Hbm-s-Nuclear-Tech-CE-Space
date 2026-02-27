@@ -79,8 +79,6 @@ public class ModBlocksSpace {
     public static final Block ore_iodine = new BlockOre("ore_iodine", null, 2).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_lanthanium = new BlockOre("ore_lanthanium", null, 2).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_oil_empty = new BlockOre("ore_oil_empty", null, 3).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
-    public static final Block ore_oil = new BlockOreFluid("ore_oil", ore_oil_empty, BlockOreFluid.ReserveType.OIL).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
-    public static final Block ore_bedrock_oil = new BlockOreFluid("ore_bedrock_oil", null, BlockOreFluid.ReserveType.OIL).setCreativeTab(MainRegistry.blockTab).setBlockUnbreakable().setResistance(1_000_000);
     public static final Block ore_gas_empty = new BlockOre("ore_gas_empty", null, 3).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_gas = new BlockOreFluid("ore_gas", ore_gas_empty, BlockOreFluid.ReserveType.GAS).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_brine_empty = new BlockOre("ore_brine_empty", null, 3).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);

@@ -12,6 +12,7 @@ import com.hbmspace.config.WorldConfigSpace;
 import com.hbmspace.dim.CommandSpaceTP;
 import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.enums.EnumAddonTypes;
+import com.hbmspace.handler.registires.ModBlocksReplaceHandler;
 import com.hbmspace.handler.registires.ModItemsReplaceHandler;
 import com.hbmspace.inventory.OreDictManagerSpace;
 import com.hbmspace.inventory.recipes.tweakers.AnvilRecipeTweaker;
@@ -24,6 +25,7 @@ import com.hbmspace.potion.HbmPotion;
 import com.hbmspace.render.misc.RocketPart;
 import com.hbmspace.world.PlanetGen;
 import com.hbmspace.world.feature.OreLayer3DSpace;
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -49,7 +51,7 @@ import java.io.File;
  *
  * @author Th3_Sl1ze
 */
-@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:hbm@[2.1.0.0,);required-after:mixinbooter@[10.6,)")
+@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:hbm@[2.1.1.0,);required-after:mixinbooter@[10.6,)")
 @Mod.EventBusSubscriber
 public class SpaceMain {
 
@@ -68,6 +70,12 @@ public class SpaceMain {
         ModItemsSpace.swapStackSizes(event);
         ModItemsReplaceHandler.initReplacings(event);
     }
+
+    @SubscribeEvent
+    public static void onBlockRegister(RegistryEvent.Register<Block> event) {
+        ModBlocksReplaceHandler.initReplacings(event);
+    }
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         if (logger == null)
