@@ -41,11 +41,9 @@ dependencies {
     annotationProcessor project(':processor')
     compileOnly project(':processor')
 
+    implementation 'com.hbm:ntm-ce:2.1.1.0-java25:dev-java25'
     implementation rfg.deobf("curse.maven:opencomputers-223008:6608365")
     compileOnly 'mezz:jei:4.29.8'
     implementation 'com.google.guava:guava:31.0.1-jre'
     runtimeOnlyNonPublishable rfg.deobf("curse.maven:ctm-267602:2915363")
-    implementation project.files("libs/NTM-CE.jar")
 }
-
-tasks.named("extractDependencyATs").configure { dependsOn("downloadNtmCe") }
