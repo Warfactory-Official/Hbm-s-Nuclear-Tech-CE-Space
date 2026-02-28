@@ -42,6 +42,7 @@
     "hbm.tileentities.MixinTileEntityCondenser",
     "hbm.tileentities.MixinTileEntityMachineExcavator",
     "hbm.tileentities.MixinTileEntityOilDrillBase",
+    "hbm.tileentities.MixinTileEntityMachineFrackingTower",
     "hbm.tileentities.MixinTileEntityMachineOreSlopper"
   ],
   "server": [],
