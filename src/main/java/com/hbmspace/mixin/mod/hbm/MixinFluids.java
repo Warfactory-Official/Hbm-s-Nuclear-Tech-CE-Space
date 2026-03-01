@@ -23,6 +23,9 @@ public abstract class MixinFluids {
     @Final
     protected static List<FluidType> metaOrder;
 
+    @Shadow
+    private static void registerCalculatedFuel(FluidType type, double base, double combustMult, FT_Combustible.FuelGrade grade) {}
+
     @Unique
     private static FluidType space$createFixed(String name, int color, int p, int f, int r, EnumSymbol symbol, int id) {
         FluidType fluid = new FluidType(name, color, p, f, r, symbol, name.toLowerCase(java.util.Locale.US), 0xFFFFFF, id, null);
@@ -173,5 +176,41 @@ public abstract class MixinFluids {
         metaOrder.add(GASEOUS_HYDROGEN);
         metaOrder.add(GAS_WATZ);
         metaOrder.add(LITHYDRO);
+
+        Fluids.HYDROGEN.addTraits(new FT_Heatable().setEff(FT_Heatable.HeatingType.PWR, 1.0D).addStep(300, 1, SUPERHEATED_HYDROGEN, 1));
+        SUPERHEATED_HYDROGEN.addTraits(new FT_Coolable(Fluids.HYDROGEN, 1, 1, 300));
+
+        Fluids.WATZ.addTraits(new FT_Heatable().setEff(FT_Heatable.HeatingType.PWR, 1.0D).addStep(300, 1, GAS_WATZ, 1), new FT_PWRModerator(1.40D));
+        GAS_WATZ.addTraits(new FT_Coolable(Fluids.WATZ, 1, 1, 300));
+
+        Fluids.WASTEFLUID.addTraits(new FT_Heatable().setEff(FT_Heatable.HeatingType.PWR, 1.0D).addStep(300, 1, Fluids.WASTEGAS, 1), new FT_PWRModerator(1.20D));
+        Fluids.WASTEGAS.addTraits(new FT_Coolable(Fluids.WATZ, 1, 1, 300));
+
+        URANIUM_BROMIDE.addTraits(new FT_Heatable().setEff(FT_Heatable.HeatingType.PWR, 1.0D).addStep(300, 1, GASEOUS_URANIUM_BROMIDE, 1), new FT_PWRModerator(1.75D));
+        GASEOUS_URANIUM_BROMIDE.addTraits(new FT_Coolable(URANIUM_BROMIDE, 1, 1, 300));
+
+
+        THORIUM_BROMIDE.addTraits(new FT_Heatable().setEff(FT_Heatable.HeatingType.PWR, 1.0D).addStep(300, 1, GASEOUS_THORIUM_BROMIDE, 1), new FT_PWRModerator(1.50D));
+        GASEOUS_THORIUM_BROMIDE.addTraits(new FT_Coolable(THORIUM_BROMIDE, 1, 1, 300));
+
+        Fluids.HEAVYWATER.addTraits(new FT_Heatable().setEff(FT_Heatable.HeatingType.PWR, 1.0D).addStep(300, 1, Fluids.HEAVYWATER_HOT, 1), new FT_PWRModerator(1.25D));
+        Fluids.HEAVYWATER_HOT.addTraits(new FT_Coolable(Fluids.HEAVYWATER, 1, 1, 300).setEff(FT_Coolable.CoolingType.HEATEXCHANGER, 1.0D));
+
+        Fluids.SODIUM_HOT.addTraits(new FT_Coolable(Fluids.SODIUM, 1, 1, 400).setEff(FT_Coolable.CoolingType.HEATEXCHANGER, 1.0D));
+
+        Fluids.THORIUM_SALT.addTraits(new FT_Heatable().setEff(FT_Heatable.HeatingType.PWR, 1.0D).addStep(400, 1, Fluids.THORIUM_SALT_HOT, 1), new FT_PWRModerator(2.5D));
+        Fluids.THORIUM_SALT_HOT.addTraits(new FT_Coolable(Fluids.THORIUM_SALT_DEPLETED, 1, 1, 400).setEff(FT_Coolable.CoolingType.HEATEXCHANGER, 1.0D));
+
+        long baseline = 100_000L; //we do not know
+        double demandHigh = 2.0D; //kerosene and jet fuels
+        double complexityRefinery = 1.1D;
+        double complexityCracking = 1.25D;
+        double flammabilityHigh = 2.0D; //satan's asshole
+
+        registerCalculatedFuel(BLOODGAS, Fluids.KEROSENE.getTrait(FT_Flammable.class).getHeatEnergy() * 0.8, 2.5, FT_Combustible.FuelGrade.AERO); //0.8
+        registerCalculatedFuel(NMASSTETRANOL, Fluids.BALEFIRE.getTrait(FT_Flammable.class).getHeatEnergy() * 1000, 10.5, FT_Combustible.FuelGrade.HIGH); //0.8
+        registerCalculatedFuel(DICYANOACETYLENE, (baseline / 0.15 * flammabilityHigh * demandHigh * complexityRefinery * complexityCracking) + Fluids.UNSATURATEDS.getTrait(FT_Flammable.class).getHeatEnergy(), 0, null);
+
+        registerCalculatedFuel(METHANOL, 375_000D /* diesel / 2 */, 2.5D, FT_Combustible.FuelGrade.HIGH);
     }
 }
