@@ -5,19 +5,20 @@ import com.hbm.packet.PermaSyncHandler;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.SolarSystemWorldSavedData;
 import com.hbmspace.dim.WorldProviderCelestial;
+import com.hbmspace.dim.orbit.OrbitalStation;
 import com.hbmspace.dim.trait.CelestialBodyTrait;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Mixins using ordinals are brittle and must be updated when PermaSyncHandler changes.
@@ -34,23 +35,11 @@ public class MixinPermaSyncHandler {
             buf.writeBoolean(true);
 
             SolarSystemWorldSavedData solarSystemData = SolarSystemWorldSavedData.get(world);
-            Collection<CelestialBody> allBodies = CelestialBody.getAllBodies();
-            buf.writeInt(allBodies.size());
-
-            for(CelestialBody body : allBodies) {
-                ByteBufUtils.writeUTF8String(buf, body.name);
-
+            for(CelestialBody body : CelestialBody.getAllBodies()) {
                 HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait> traits = solarSystemData.getTraits(body.name);
                 if(traits != null) {
-                    buf.writeBoolean(true);
-
-                    int writeCount = 0;
-                    for(int i = 0; i < CelestialBodyTrait.traitList.size(); i++) {
-                        if(traits.containsKey(CelestialBodyTrait.traitList.get(i))) {
-                            writeCount++;
-                        }
-                    }
-                    buf.writeInt(writeCount);
+                    buf.writeBoolean(true); // Has traits marker (since we can have an empty list)
+                    buf.writeInt(traits.size());
 
                     for(int i = 0; i < CelestialBodyTrait.traitList.size(); i++) {
                         Class<? extends CelestialBodyTrait> traitClass = CelestialBodyTrait.traitList.get(i);
@@ -64,6 +53,17 @@ public class MixinPermaSyncHandler {
                 } else {
                     buf.writeBoolean(false);
                 }
+            }
+
+            // long ass line award
+            List<OrbitalStation> stations = solarSystemData.getStations().values().stream()
+                    .filter(station -> station.hasStation && station.orbiting.dimensionId == player.dimension)
+                    .toList();
+
+            buf.writeInt(stations.size());
+            for(OrbitalStation station : stations) {
+                buf.writeInt(station.dX);
+                buf.writeInt(station.dZ);
             }
         } else {
             buf.writeBoolean(false);
@@ -85,30 +85,41 @@ public class MixinPermaSyncHandler {
         /// CBT ///
         if(buf.readBoolean()) {
             try {
-                HashMap<String, HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait>> traitMap = new HashMap<>();
+                HashMap<String, HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait>> traitMap = SolarSystemWorldSavedData.clientTraits;
 
-                int bodyCount = buf.readInt();
-                for(int bodyIdx = 0; bodyIdx < bodyCount; bodyIdx++) {
-                    String bodyName = ByteBufUtils.readUTF8String(buf);
+                if(traitMap == null) {
+                    traitMap = new HashMap<>();
+                    SolarSystemWorldSavedData.updateClientTraits(traitMap);
+                }
 
+                for(CelestialBody body : CelestialBody.getAllBodies()) {
                     if(buf.readBoolean()) {
-                        HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait> traits = new HashMap<>();
+                        HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait> traits = traitMap.computeIfAbsent(body.name, _ -> new HashMap<>());
+
+                        List<Class<? extends CelestialBodyTrait>> sentTraits = new ArrayList<>();
 
                         int cbtSize = buf.readInt();
                         for(int i = 0; i < cbtSize; i++) {
-                            int traitId = buf.readInt();
-                            if(traitId >= 0 && traitId < CelestialBodyTrait.traitList.size()) {
-                                CelestialBodyTrait trait = CelestialBodyTrait.traitList.get(traitId).newInstance();
-                                trait.readFromBytes(buf);
-                                traits.put(trait.getClass(), trait);
-                            }
+                            Class<? extends CelestialBodyTrait> clazz = CelestialBodyTrait.traitList.get(buf.readInt());
+                            sentTraits.add(clazz);
+
+                            CelestialBodyTrait trait = traits.getOrDefault(clazz, clazz.getDeclaredConstructor().newInstance());
+                            trait.readFromBytes(buf);
+
+                            traits.put(trait.getClass(), trait);
                         }
 
-                        traitMap.put(bodyName, traits);
+                        traits.keySet().removeIf(traitClass -> !sentTraits.contains(traitClass));
+                    } else {
+                        traitMap.remove(body.name);
                     }
                 }
 
-                SolarSystemWorldSavedData.updateClientTraits(traitMap);
+                OrbitalStation.orbitingStations.clear();
+                int count = buf.readInt();
+                for(int i = 0; i < count; i++) {
+                    OrbitalStation.orbitingStations.add(new OrbitalStation(null, buf.readInt(), buf.readInt()));
+                }
             } catch (Exception ex) {
                 MainRegistry.logger.catching(ex);
                 SolarSystemWorldSavedData.updateClientTraits(null);

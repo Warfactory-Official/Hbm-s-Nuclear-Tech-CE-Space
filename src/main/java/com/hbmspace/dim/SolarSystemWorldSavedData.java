@@ -223,7 +223,7 @@ public class SolarSystemWorldSavedData extends WorldSavedData {
 
 
 	// Client sync
-	private static HashMap<String, HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait>> clientTraits = new HashMap<>();
+	public static HashMap<String, HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait>> clientTraits = new HashMap<>();
 
 	public static void updateClientTraits(HashMap<String, HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait>> traits) {
 		clientTraits = traits;
