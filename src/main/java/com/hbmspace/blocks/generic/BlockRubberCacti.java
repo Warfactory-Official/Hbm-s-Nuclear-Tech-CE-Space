@@ -55,7 +55,7 @@ public class BlockRubberCacti extends BlockEnumMetaSpace<BlockRubberCacti.EnumBu
         return Arrays.stream(blockEnum)
                 .map(Enum::name)
                 .map(name -> registryName + "." + name.toLowerCase(Locale.US))
-                .map(tex -> new BlockBakeFrame(BlockBakeFrame.BlockForm.CROSS, tex))
+                .map(BlockBakeFrame::cross)
                 .toArray(BlockBakeFrame[]::new);
     }
 
@@ -134,10 +134,7 @@ public class BlockRubberCacti extends BlockEnumMetaSpace<BlockRubberCacti.EnumBu
     @SideOnly(Side.CLIENT)
     public void registerSprite(TextureMap map) {
         for (BlockBakeFrame frame : blockFrames) {
-            for (String texture : frame.textureArray) {
-                ResourceLocation spriteLoc = new ResourceLocation("hbm", "blocks/" + texture);
-                map.registerSprite(spriteLoc);
-            }
+            frame.registerBlockTextures(map);
         }
     }
 
@@ -149,7 +146,7 @@ public class BlockRubberCacti extends BlockEnumMetaSpace<BlockRubberCacti.EnumBu
             try {
                 IModel baseModel = ModelLoaderRegistry.getModel(new ResourceLocation("hbmspace", "block/cross_tall_tinted"));
                 ImmutableMap.Builder<String, String> textureMap = ImmutableMap.builder();
-                String texturePath = "hbm" + ":blocks/" + blockFrame.textureArray[0];
+                String texturePath = blockFrame.getTextureLocation(0).toString();
                 textureMap.put("cross", texturePath);
                 textureMap.put("particle", texturePath);
                 IModel retexturedModel = baseModel.retexture(textureMap.build());

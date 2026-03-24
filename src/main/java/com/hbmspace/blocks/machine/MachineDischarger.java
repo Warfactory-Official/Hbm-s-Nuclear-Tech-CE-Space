@@ -38,7 +38,7 @@ public class MachineDischarger extends BlockContainerBakeableSpace {
     private static boolean keepInventory;
 
     public MachineDischarger(Material p_i45386_1_, String s) {
-        super(p_i45386_1_, s, BlockBakeFrame.bottomTop("discharger_side", "discharger_top", "discharger_bottom"));
+        super(p_i45386_1_, s, BlockBakeFrame.sideTopBottom("discharger_side", "discharger_top", "discharger_bottom"));
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
 

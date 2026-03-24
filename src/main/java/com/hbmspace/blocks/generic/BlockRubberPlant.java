@@ -41,7 +41,7 @@ public class BlockRubberPlant extends BlockEnumMetaSpace<BlockRubberPlant.EnumRu
         return Arrays.stream(blockEnum)
                 .map(Enum::name)
                 .map(name -> registryName + "." + name.toLowerCase(Locale.US))
-                .map(tex -> new BlockBakeFrame(BlockBakeFrame.BlockForm.CROSS, tex))
+                .map(BlockBakeFrame::cross)
                 .toArray(BlockBakeFrame[]::new);
     }
 

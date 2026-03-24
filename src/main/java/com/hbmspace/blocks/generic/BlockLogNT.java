@@ -42,7 +42,7 @@ public class BlockLogNT extends BlockLog implements IDynamicModelsSpace {
         this.setTranslationKey(regName);
         this.setRegistryName(regName);
 
-        this.blockFrame = new BlockBakeFrame(topTexture, sideTexture);
+        this.blockFrame = BlockBakeFrame.column(topTexture, sideTexture);
 
         ModBlocksSpace.ALL_BLOCKS.add(this);
         IDynamicModelsSpace.INSTANCES.add(this);
@@ -91,7 +91,7 @@ public class BlockLogNT extends BlockLog implements IDynamicModelsSpace {
     @SideOnly(Side.CLIENT)
     public void bakeModel(ModelBakeEvent event) {
         try {
-            IModel baseModel = ModelLoaderRegistry.getModel(new ResourceLocation(blockFrame.getBaseModel()));
+            IModel baseModel = ModelLoaderRegistry.getModel(blockFrame.getBaseModelLocation());
 
             // axis=y/x/z -> normal pillar (end=top, side=side)
             ImmutableMap.Builder<String, String> textureMap = ImmutableMap.builder();
@@ -100,9 +100,9 @@ public class BlockLogNT extends BlockLog implements IDynamicModelsSpace {
 
             // axis=none -> bark all around (end=side, side=side)
             ImmutableMap<String, String> barkTextures = ImmutableMap.<String, String>builder()
-                    .put("end", blockFrame.getSpriteLoc(1).toString())
-                    .put("side", blockFrame.getSpriteLoc(1).toString())
-                    .put("particle", blockFrame.getSpriteLoc(1).toString())
+                    .put("end", blockFrame.getTextureLocation(1).toString())
+                    .put("side", blockFrame.getTextureLocation(1).toString())
+                    .put("particle", blockFrame.getTextureLocation(1).toString())
                     .build();
             IModel barkModel = baseModel.retexture(barkTextures);
 

@@ -274,7 +274,7 @@ public class BlockCrop extends BlockBush implements IGrowable, IPlantableBreathi
 
         this.cropFrames = new BlockBakeFrame[8];
         for (int i = 0; i < 8; i++) {
-            this.cropFrames[i] = new BlockBakeFrame(BlockBakeFrame.BlockForm.CROSS, tex[i]);
+            this.cropFrames[i] = BlockBakeFrame.cross(tex[i]);
         }
     }
 
@@ -288,7 +288,7 @@ public class BlockCrop extends BlockBush implements IGrowable, IPlantableBreathi
 
             for (int age = 0; age < 8; age++) {
                 BlockBakeFrame frame = this.cropFrames[age];
-                IModel baseModel = ModelLoaderRegistry.getModel(new ResourceLocation(frame.getBaseModel()));
+                IModel baseModel = ModelLoaderRegistry.getModel(frame.getBaseModelLocation());
 
                 ImmutableMap.Builder<String, String> textureMap = ImmutableMap.builder();
                 frame.putTextures(textureMap);

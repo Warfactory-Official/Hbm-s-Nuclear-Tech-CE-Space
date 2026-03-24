@@ -39,7 +39,7 @@ public class BlockAirPump extends BlockContainerBakeableSpace implements ILookOv
     public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
     public BlockAirPump(Material m, String s) {
-        super(m, s, BlockBakeFrame.bottomTop("vent_chlorine_seal_side", "vent_chlorine_seal_top", "vent_chlorine_seal_side"));
+        super(m, s, BlockBakeFrame.sideTopBottom("vent_chlorine_seal_side", "vent_chlorine_seal_top", "vent_chlorine_seal_side"));
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
 

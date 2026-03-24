@@ -2,7 +2,6 @@ package com.hbmspace.blocks.generic;
 
 import com.google.common.collect.ImmutableMap;
 import com.hbm.blocks.ICustomBlockItem;
-import com.hbm.blocks.generic.IMetaBlock;
 import com.hbm.main.MainRegistry;
 import com.hbm.render.block.BlockBakeFrame;
 import com.hbmspace.blocks.ModBlocksSpace;
@@ -57,7 +56,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class BlockNTSapling extends BlockBush implements ICustomBlockItem, IGrowable, IPlantableBreathing, IDynamicModelsSpace, IMetaBlock {
+public class BlockNTSapling extends BlockBush implements ICustomBlockItem, IGrowable, IPlantableBreathing, IDynamicModelsSpace {
 
     public static final PropertyEnum<EnumSapling> VARIANT = PropertyEnum.create("variant", EnumSapling.class);
     protected static final AxisAlignedBB SAPLING_AABB = new AxisAlignedBB(0.09999999403953552D, 0.0D, 0.09999999403953552D, 0.8999999761581421D, 0.800000011920929D, 0.8999999761581421D);
@@ -200,8 +199,8 @@ public class BlockNTSapling extends BlockBush implements ICustomBlockItem, IGrow
     @Override
     @SideOnly(Side.CLIENT)
     public void bakeModel(ModelBakeEvent event) {
-        BlockBakeFrame crossFrame = new BlockBakeFrame(BlockBakeFrame.BlockForm.CROSS, "dummy");
-        ResourceLocation baseModelLoc = new ResourceLocation(crossFrame.getBaseModel());
+        BlockBakeFrame crossFrame = BlockBakeFrame.cross("dummy");
+        ResourceLocation baseModelLoc = crossFrame.getBaseModelLocation();
         ResourceLocation itemBaseLoc = new ResourceLocation("minecraft:item/generated");
 
         try {

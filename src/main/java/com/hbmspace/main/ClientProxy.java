@@ -1,22 +1,20 @@
 package com.hbmspace.main;
 
-import com.hbm.items.RBMKItemRenderers;
 import com.hbm.main.client.NTMClientRegistry;
 import com.hbm.particle.ParticleRocketFlame;
 import com.hbm.particle.helper.ParticleCreators;
 import com.hbm.render.item.ItemRenderMissilePart;
-import com.hbm.render.tileentity.RenderRBMKLid;
 import com.hbm.sound.AudioWrapper;
 import com.hbm.sound.AudioWrapperClient;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.trait.CBT_Atmosphere;
+import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.particle.IParticleRocketFlame;
 import com.hbmspace.particle.ParticleGlow;
 import com.hbmspace.render.misc.RocketPart;
 import com.hbmspace.render.tileentity.IItemRendererProviderSpace;
 import com.hbmspace.sound.AudioWrapperClientSpace;
-import com.hbmspace.tileentity.machine.rbmk.TileEntityRBMKBurner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -36,7 +34,6 @@ import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.BlockFluidClassic;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import java.awt.*;
@@ -56,7 +53,6 @@ public class ClientProxy extends ServerProxy {
             Minecraft.getMinecraft().getFramebuffer().enableStencil();
 
         AutoRegistrySpace.registerRenderInfo();
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRBMKBurner.class, new RenderRBMKLid());
         ModelLoader.setCustomStateMapper(ModBlocksSpace.ccl_block, new StateMap.Builder().ignore(BlockFluidClassic.LEVEL).build());
     }
     @Override
@@ -65,7 +61,7 @@ public class ClientProxy extends ServerProxy {
         for (TileEntitySpecialRenderer<? extends TileEntity> renderer : TileEntityRendererDispatcher.instance.renderers.values()) {
             if (renderer instanceof IItemRendererProviderSpace prov) {
                 for (Item item : prov.getItemsForRenderer()) {
-                    item.setTileEntityItemStackRenderer(prov.getRenderer(item));
+                    NTMClientRegistry.bindTeisr(item, prov.getRenderer(item));
                 }
             }
         }
@@ -74,23 +70,30 @@ public class ClientProxy extends ServerProxy {
         for (Item renderer : Item.REGISTRY) {
             if (renderer instanceof IItemRendererProviderSpace provider) {
                 for (Item item : provider.getItemsForRenderer()) {
-                    item.setTileEntityItemStackRenderer(provider.getRenderer(item));
+                    NTMClientRegistry.bindTeisr(item, provider.getRenderer(item));
                 }
             }
         }
-        Item.getItemFromBlock(ModBlocksSpace.rbmk_burner).setTileEntityItemStackRenderer(RBMKItemRenderers.RBMK_PASSIVE);
+
+        for (Item item : ModItemsSpace.ALL_ITEMS) {
+            TileEntityItemStackRenderer renderer = item.getTileEntityItemStackRenderer();
+            if (renderer != null) {
+                NTMClientRegistry.bindTeisr(item, renderer);
+            }
+        }
+
+        registerMissileItems(null);
     }
 
     @Override
     public void registerMissileItems(IRegistry<ModelResourceLocation, IBakedModel> reg) {
         RocketPart.registerClientParts();
 
-        RocketPart.parts.values().forEach(part -> registerItemRenderer(part.part, new ItemRenderMissilePart(part), reg));
+        RocketPart.parts.values().forEach(part -> NTMClientRegistry.bindTeisr(part.part, new ItemRenderMissilePart(part)));
     }
 
     public static void registerItemRenderer(Item i, TileEntityItemStackRenderer render, IRegistry<ModelResourceLocation, IBakedModel> reg) {
-        i.setTileEntityItemStackRenderer(render);
-        NTMClientRegistry.swapModels(i, reg);
+        NTMClientRegistry.bindTeisr(i, render);
     }
 
     @Override

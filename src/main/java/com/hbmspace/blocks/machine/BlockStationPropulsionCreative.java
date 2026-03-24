@@ -8,12 +8,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import static com.hbm.render.block.BlockBakeFrame.BlockForm.ALL;
-
 public class BlockStationPropulsionCreative extends BlockContainerBakeableSpace {
 
     public BlockStationPropulsionCreative(Material mat, String s, String tex) {
-        super(mat, s, new BlockBakeFrame(ALL, tex));
+        super(mat, s, BlockBakeFrame.cubeAll(tex));
     }
 
     @Override

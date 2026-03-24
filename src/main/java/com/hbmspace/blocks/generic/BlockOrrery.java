@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class BlockOrrery extends BlockContainerBakeableSpace {
 
     public BlockOrrery(Material mat, String name) {
-        super(mat, name, new BlockBakeFrame("dummy_orrery"));
+        super(mat, name, BlockBakeFrame.cubeAll("dummy_orrery"));
     }
 
     @Override

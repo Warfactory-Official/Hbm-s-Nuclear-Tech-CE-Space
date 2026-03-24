@@ -9,9 +9,6 @@ import com.hbm.items.special.ItemAutogen;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.render.icon.RGBMutatorInterpolatedComponentRemap;
 import com.hbm.render.icon.TextureAtlasSpriteMutatable;
-import com.hbm.render.item.BakedModelCustom;
-import com.hbm.render.item.BakedModelNoFPV;
-import com.hbm.render.item.TEISRBase;
 import com.hbm.sound.AudioWrapper;
 import com.hbm.util.Clock;
 import com.hbm.util.I18nUtil;
@@ -44,9 +41,6 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -86,28 +80,7 @@ public class ModEventHandlerClient {
 
     @SubscribeEvent
     public static void modelBaking(ModelBakeEvent evt) {
-        IRegistry<ModelResourceLocation, IBakedModel> reg = evt.getModelRegistry();
         IDynamicModelsSpace.bakeModels(evt);
-        for (TileEntitySpecialRenderer<? extends TileEntity> renderer : TileEntityRendererDispatcher.instance.renderers.values()) {
-            if (renderer instanceof IItemRendererProviderSpace prov) {
-                for (Item item : prov.getItemsForRenderer()) {
-                    swapModels(item, reg);
-                }
-            }
-        }
-
-        for (Item renderer : Item.REGISTRY) {
-            if (renderer instanceof IItemRendererProviderSpace provider) {
-                for (Item item : provider.getItemsForRenderer()) {
-                    swapModels(item, reg);
-                }
-            }
-        }
-
-        SpaceMain.proxy.registerMissileItems(reg);
-
-        swapModels(ModItemsSpace.swarm_member, reg);
-        swapModels(Item.getItemFromBlock(ModBlocksSpace.rbmk_burner), reg);
     }
 
     @SubscribeEvent
@@ -142,26 +115,6 @@ public class ModEventHandlerClient {
 
     private static void registerBlockModel(Block block, int meta) {
         registerModel(Item.getItemFromBlock(block), meta);
-    }
-
-    public static void swapModels(Item item, IRegistry<ModelResourceLocation, IBakedModel> reg) {
-        ModelResourceLocation loc = new ModelResourceLocation(item.getRegistryName(), "inventory");
-        IBakedModel model = reg.getObject(loc);
-        TileEntityItemStackRenderer render = item.getTileEntityItemStackRenderer();
-        if (render instanceof TEISRBase) {
-            ((TEISRBase) render).itemModel = model;
-            reg.putObject(loc, new BakedModelCustom((TEISRBase) render));
-        }
-    }
-
-    public static void swapModelsNoFPV(Item item, IRegistry<ModelResourceLocation, IBakedModel> reg) {
-        ModelResourceLocation loc = new ModelResourceLocation(item.getRegistryName(), "inventory");
-        IBakedModel model = reg.getObject(loc);
-        TileEntityItemStackRenderer render = item.getTileEntityItemStackRenderer();
-        if (render instanceof TEISRBase) {
-            ((TEISRBase) render).itemModel = model;
-            reg.putObject(loc, new BakedModelNoFPV((TEISRBase) render, model));
-        }
     }
 
     public static float lastFogDensity;

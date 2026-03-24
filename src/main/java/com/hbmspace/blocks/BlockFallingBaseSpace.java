@@ -20,8 +20,6 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 
-import static com.hbm.render.block.BlockBakeFrame.BlockForm.ALL;
-
 public class BlockFallingBaseSpace extends BlockFallingBase implements IDynamicModelsSpace {
     protected BlockBakeFrame blockFrame;
 
@@ -30,7 +28,7 @@ public class BlockFallingBaseSpace extends BlockFallingBase implements IDynamicM
         super(materialIn, name, type);
         ModBlocks.ALL_BLOCKS.remove(this);
         ModBlocksSpace.ALL_BLOCKS.add(this);
-        this.blockFrame = new BlockBakeFrame(ALL, name);
+        this.blockFrame = BlockBakeFrame.cubeAll(name);
         IDynamicModelsSpace.INSTANCES.add(this);
     }
 
@@ -50,7 +48,7 @@ public class BlockFallingBaseSpace extends BlockFallingBase implements IDynamicM
         super(materialIn, name, type);
         ModBlocks.ALL_BLOCKS.remove(this);
         ModBlocksSpace.ALL_BLOCKS.add(this);
-        this.blockFrame = new BlockBakeFrame(ALL, texture);
+        this.blockFrame = BlockBakeFrame.cubeAll(texture);
         IDynamicModels.INSTANCES.add(this);
 
     }
@@ -60,7 +58,7 @@ public class BlockFallingBaseSpace extends BlockFallingBase implements IDynamicM
         super(materialIn, name, type);
         ModBlocks.ALL_BLOCKS.remove(this);
         ModBlocksSpace.ALL_BLOCKS.add(this);
-        this.blockFrame = new BlockBakeFrame(textureTop, textureSide);
+        this.blockFrame = BlockBakeFrame.column(textureTop, textureSide);
         IDynamicModels.INSTANCES.add(this);
 
     }
@@ -69,7 +67,7 @@ public class BlockFallingBaseSpace extends BlockFallingBase implements IDynamicM
     public void bakeModel(ModelBakeEvent event) {
 
         try {
-            IModel baseModel = ModelLoaderRegistry.getModel(new ResourceLocation(blockFrame.getBaseModel()));
+            IModel baseModel = ModelLoaderRegistry.getModel(blockFrame.getBaseModelLocation());
             ImmutableMap.Builder<String, String> textureMap = ImmutableMap.builder();
 
             blockFrame.putTextures(textureMap);

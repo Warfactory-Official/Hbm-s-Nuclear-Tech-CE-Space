@@ -54,8 +54,8 @@ public class BlockKelp extends BlockBase implements IDynamicModelsSpace {
         IDynamicModelsSpace.INSTANCES.add(this);
 
         this.frames = new BlockBakeFrame[] {
-                new BlockBakeFrame(BlockBakeFrame.BlockForm.CROSS, "laythe_kelp"),
-                new BlockBakeFrame(BlockBakeFrame.BlockForm.CROSS, "laythe_kelp_top")
+                BlockBakeFrame.cross("laythe_kelp"),
+                BlockBakeFrame.cross("laythe_kelp_top")
         };
         this.setTickRandomly(true);
     }
@@ -182,7 +182,7 @@ public class BlockKelp extends BlockBase implements IDynamicModelsSpace {
 
             for (int i = 0; i < frames.length; i++) {
                 BlockBakeFrame frame = frames[i];
-                IModel baseModel = ModelLoaderRegistry.getModel(new ResourceLocation(frame.getBaseModel()));
+                IModel baseModel = ModelLoaderRegistry.getModel(frame.getBaseModelLocation());
 
                 ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
                 frame.putTextures(builder);
@@ -198,7 +198,7 @@ public class BlockKelp extends BlockBase implements IDynamicModelsSpace {
             }
 
             BlockBakeFrame itemFrame = frames[0];
-            String texture = itemFrame.getSpriteLoc(0).toString();
+            String texture = itemFrame.getTextureLocation(0).toString();
             IBakedModel bakedItem = itemBaseModel.retexture(ImmutableMap.of("layer0", texture)).bake(
                     ModelRotation.X0_Y0,
                     DefaultVertexFormats.ITEM,

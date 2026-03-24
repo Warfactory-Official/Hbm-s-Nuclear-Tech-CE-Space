@@ -18,7 +18,7 @@ import net.minecraftforge.fluids.BlockFluidBase;
 public class RubberGrass extends BlockBakeBaseSpace {
 
     public RubberGrass(Material m, String s, boolean tick) {
-        super(m, s, new BlockBakeFrame("rubber_grass_top", "rubber_grass_side", "rubber_silt"));
+        super(m, s, BlockBakeFrame.cubeBottomTop("rubber_grass_top", "rubber_grass_side", "rubber_silt"));
     }
 
     @Override

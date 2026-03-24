@@ -39,7 +39,7 @@ import java.util.List;
 public class BlockGeysierDCM extends BlockContainerBakeableSpace {
 
     public BlockGeysierDCM(String s, String tex) {
-        super(Material.ROCK, s, new BlockBakeFrame(BlockBakeFrame.BlockForm.ALL, tex));
+        super(Material.ROCK, s, BlockBakeFrame.cubeAll(tex));
     }
 
     @Override
@@ -115,7 +115,7 @@ public class BlockGeysierDCM extends BlockContainerBakeableSpace {
     public void bakeModel(ModelBakeEvent event) {
 
         try {
-            IModel baseModel = ModelLoaderRegistry.getModel(new ResourceLocation(blockFrame.getBaseModel()));
+            IModel baseModel = ModelLoaderRegistry.getModel(blockFrame.getBaseModelLocation());
             ImmutableMap.Builder<String, String> textureMap = ImmutableMap.builder();
 
             blockFrame.putTextures(textureMap);

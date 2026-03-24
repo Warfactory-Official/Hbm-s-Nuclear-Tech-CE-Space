@@ -19,6 +19,7 @@ public class ResourceManagerSpace {
     public static final IModelCustom mp_f_20_3_usa = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_f_20_3_usa.obj")).asVBO();
     public static final IModelCustom mp_f_20_1_usa = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_f_20_1_usa.obj")).asVBO();
     public static final IModelCustom mp_f_20_neo = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_f_20_neo.obj")).asVBO();
+    public static final IModelCustom sat_dock = new HFRWavefrontObject(new ResourceLocation("hbm", "models/sat_dock.obj")).asVBO();
     public static final IModelCustom rp_s_20_leggy = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/rp_s_20_leggy.obj")).asVBO();
     public static final IModelCustom rp_s_20_leggy_deployed = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/rp_s_20_leggy_deployed.obj")).asVBO();
     //Space
@@ -70,10 +71,13 @@ public class ResourceManagerSpace {
     public static final ResourceLocation landing_capsule_tex = new ResourceLocation("hbm", "textures/models/missile_parts/warheads/rp_landing_capsule.png");
     public static final ResourceLocation mp_w_fairing_tex = new ResourceLocation("hbm", "textures/models/missile_parts/warheads/mp_w_fairing.png");
     public static final ResourceLocation mp_f_20_hydrazine_tex = new ResourceLocation("hbm", "textures/models/missile_parts/fuselages/mp_f_20_hydrazine.png");
+    public static final ResourceLocation mp_f_20_kerolox_tex = mp_f_20_hydrazine_tex;
+    public static final ResourceLocation mp_f_20_kerolox_usa_tex = mp_f_20_hydrazine_tex;
     public static final ResourceLocation mp_t_20_methalox_tex = new ResourceLocation("hbm", "textures/models/missile_parts/thrusters/mp_t_20_methalox.png");
     public static final ResourceLocation mp_t_20_methalox_dual_tex = new ResourceLocation("hbm", "textures/models/missile_parts/thrusters/mp_t_20_methalox_dual.png");
     public static final ResourceLocation mp_t_20_hydrogen_tex = new ResourceLocation("hbm", "textures/models/missile_parts/thrusters/mp_t_20_hydrogen.png");
     public static final ResourceLocation mp_t_20_hydrogen_dual_tex = new ResourceLocation("hbm", "textures/models/missile_parts/thrusters/mp_t_20_hydrogen_dual.png");
+    public static final ResourceLocation sat_dock_tex = new ResourceLocation("hbm", "textures/models/missile_parts/sat_dock.png");
     //Space
     public static final ResourceLocation solarp_tex = new ResourceLocation("hbm", "textures/models/machines/solar_panel.png"); //haha... "larp"
     public static final ResourceLocation stardar_tex = new ResourceLocation("hbm", "textures/models/machines/antenna.png");

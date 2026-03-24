@@ -72,12 +72,12 @@ public class BlockTallPlantWater extends BlockEnumMetaSpace<BlockTallPlantWater.
         for (int i = 0; i < 8; i++) {
             int enumIndex = i % EnumTallPlantWater.VALUES.length;
             String textureName = registryName + "." + EnumTallPlantWater.VALUES[enumIndex].name().toLowerCase(Locale.US) + ".lower";
-            frames[i] = new BlockBakeFrame(BlockBakeFrame.BlockForm.CROP, textureName);
+            frames[i] = BlockBakeFrame.crop(textureName);
         }
         for (int i = 8; i < 16; i++) {
             int enumIndex = (i - 8) % EnumTallPlantWater.VALUES.length;
             String textureName = registryName + "." + EnumTallPlantWater.VALUES[enumIndex].name().toLowerCase(Locale.US) + ".upper";
-            frames[i] = new BlockBakeFrame(BlockBakeFrame.BlockForm.CROP, textureName);
+            frames[i] = BlockBakeFrame.crop(textureName);
         }
         return frames;
     }
@@ -135,7 +135,7 @@ public class BlockTallPlantWater extends BlockEnumMetaSpace<BlockTallPlantWater.
                 if (i >= this.blockFrames.length) break;
 
                 BlockBakeFrame frame = this.blockFrames[i];
-                String texture = frame.getSpriteLoc(0).toString();
+                String texture = frame.getTextureLocation(0).toString();
 
                 ImmutableMap<String, String> textures = ImmutableMap.of(
                         "crop", texture,
@@ -158,7 +158,7 @@ public class BlockTallPlantWater extends BlockEnumMetaSpace<BlockTallPlantWater.
 
             for (int i = 0; i < EnumTallPlantWater.VALUES.length; i++) {
                 BlockBakeFrame frame = this.blockFrames[i];
-                String texture = frame.getSpriteLoc(0).toString();
+                String texture = frame.getTextureLocation(0).toString();
 
                 ImmutableMap<String, String> textures = ImmutableMap.of(
                         "layer0", texture

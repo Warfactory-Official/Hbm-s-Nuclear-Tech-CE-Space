@@ -58,7 +58,7 @@ public class BlockRubberLeaves extends BlockLeaves implements IDynamicModelsSpac
                 .withProperty(CHECK_DECAY, true)
                 .withProperty(DECAYABLE, true));
 
-        this.bakeFrame = new BlockBakeFrame(BlockBakeFrame.BlockForm.ALL_UNTINTED, name);
+        this.bakeFrame = BlockBakeFrame.cubeAll(name);
 
         ModBlocksSpace.ALL_BLOCKS.add(this);
         IDynamicModelsSpace.INSTANCES.add(this);
@@ -191,7 +191,7 @@ public class BlockRubberLeaves extends BlockLeaves implements IDynamicModelsSpac
         if (bakeFrame == null) return;
 
         try {
-            IModel baseModel = ModelLoaderRegistry.getModel(new ResourceLocation(bakeFrame.getBaseModel()));
+            IModel baseModel = ModelLoaderRegistry.getModel(bakeFrame.getBaseModelLocation());
 
             ImmutableMap.Builder<String, String> textureMap = ImmutableMap.builder();
             bakeFrame.putTextures(textureMap);

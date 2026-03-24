@@ -44,7 +44,7 @@ public class BlockWaterPlant extends BlockMeta implements IDynamicModelsSpace {
 
     public BlockWaterPlant(String name) {
         super(Material.WATER, name, (short) 1, true,
-                new BlockBakeFrame(BlockBakeFrame.BlockForm.CROP, name));
+                BlockBakeFrame.crop(name));
         setSoundType(SoundType.PLANT);
         ModBlocks.ALL_BLOCKS.remove(this);
         ModBlocksSpace.ALL_BLOCKS.add(this);
@@ -123,11 +123,11 @@ public class BlockWaterPlant extends BlockMeta implements IDynamicModelsSpace {
     public void bakeModel(ModelBakeEvent event) {
         // The frame is stored in the superclass array
         BlockBakeFrame frame = this.blockFrames[0];
-        String texture = frame.getSpriteLoc(0).toString();
+        String texture = frame.getTextureLocation(0).toString();
 
         try {
             // 1. Bake the Block Model (CROP form, 3D cross)
-            IModel blockBaseModel = ModelLoaderRegistry.getModel(new ResourceLocation(frame.getBaseModel()));
+            IModel blockBaseModel = ModelLoaderRegistry.getModel(frame.getBaseModelLocation());
             ImmutableMap.Builder<String, String> blockTextureMap = ImmutableMap.builder();
             frame.putTextures(blockTextureMap);
 

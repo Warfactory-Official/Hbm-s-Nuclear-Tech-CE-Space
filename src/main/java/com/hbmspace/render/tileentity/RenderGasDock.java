@@ -1,7 +1,8 @@
 package com.hbmspace.render.tileentity;
 
-import com.hbm.main.ResourceManager;
 import com.hbm.render.item.ItemRenderBase;
+import com.hbm.main.ResourceManager;
+import com.hbmspace.main.ResourceManagerSpace;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.interfaces.AutoRegister;
 import com.hbmspace.tileentity.machine.TileEntityMachineGasDock;
@@ -24,8 +25,8 @@ public class RenderGasDock extends TileEntitySpecialRenderer<TileEntityMachineGa
         GlStateManager.rotate(180, 0F, 0F, 1F);
         GlStateManager.translate(0, -1.5F, 0);
 
-        this.bindTexture(ResourceManager.satdock_tex);
-        ResourceManager.satDock.renderAll();
+        this.bindTexture(ResourceManagerSpace.sat_dock_tex);
+        ResourceManagerSpace.sat_dock.renderAll();
 
         if (tileentity.launchTicks < 100) {
             GlStateManager.pushMatrix();
@@ -59,7 +60,7 @@ public class RenderGasDock extends TileEntitySpecialRenderer<TileEntityMachineGa
             }
             public void renderCommon() {
                 GlStateManager.rotate(90, 0, -1, 0);
-                bindTexture(ResourceManager.satdock_tex); ResourceManager.satDock.renderAll();
+                bindTexture(ResourceManagerSpace.sat_dock_tex); ResourceManagerSpace.sat_dock.renderAll();
             }
         };
     }

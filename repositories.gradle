@@ -2,7 +2,32 @@
 
 repositories {
     maven {
-        name "Warfactory Releases"
-        url "https://repo.warfactory.co/releases/"
+        name = "Minecraft Libraries"
+        url = "https://libraries.minecraft.net/"
+    }
+    maven {
+        name = "Forge Maven"
+        url = "https://maven.minecraftforge.net/"
+    }
+    maven {
+        name = "Warfactory Releases"
+        url = "https://repo.warfactory.co/releases"
+    }
+    maven {
+        name = "Warfactory Snapshots"
+        url = "https://repo.warfactory.co/snapshots"
+    }
+    mavenCentral()
+    maven {
+        name = "thiakil"
+        url = "https://maven.thiakil.com"
+    }
+    maven {
+        name = "CoFH Maven"
+        url = "https://maven.covers1624.net"
+    }
+    maven {
+        name = "OC Maven"
+        url = "https://maven.cil.li"
     }
 }

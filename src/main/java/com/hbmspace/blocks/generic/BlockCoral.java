@@ -68,7 +68,7 @@ public class BlockCoral extends BlockEnumMetaSpace<BlockCoral.EnumCoral> impleme
         BlockBakeFrame[] frames = new BlockBakeFrame[EnumCoral.values().length];
         for (int i = 0; i < EnumCoral.values().length; i++) {
             String textureName = registryName + "." + EnumCoral.values()[i].name().toLowerCase(Locale.US);
-            frames[i] = new BlockBakeFrame(BlockBakeFrame.BlockForm.CROSS, textureName);
+            frames[i] = BlockBakeFrame.cross(textureName);
         }
         return frames;
     }
@@ -201,7 +201,7 @@ public class BlockCoral extends BlockEnumMetaSpace<BlockCoral.EnumCoral> impleme
             for (int meta = 0; meta < EnumCoral.values().length; meta++) {
                 EnumCoral coral = EnumCoral.values()[meta];
                 BlockBakeFrame blockFrame = blockFrames[meta % blockFrames.length];
-                String texture = blockFrame.getSpriteLoc(0).toString();
+                String texture = blockFrame.getTextureLocation(0).toString();
 
                 ImmutableMap<String, String> itemTextures = ImmutableMap.of("layer0", texture);
                 IBakedModel bakedItemModel = itemBaseModel.retexture(itemTextures).bake(
@@ -213,7 +213,7 @@ public class BlockCoral extends BlockEnumMetaSpace<BlockCoral.EnumCoral> impleme
                 ModelResourceLocation itemLoc = new ModelResourceLocation(this.getRegistryName(), "inventory_variant=" + coral.name().toLowerCase(Locale.US));
                 event.getModelRegistry().putObject(itemLoc, bakedItemModel);
 
-                IModel blockBaseModel = ModelLoaderRegistry.getModel(new ResourceLocation(blockFrame.getBaseModel()));
+                IModel blockBaseModel = ModelLoaderRegistry.getModel(blockFrame.getBaseModelLocation());
                 ImmutableMap.Builder<String, String> blockTextureMap = ImmutableMap.builder();
                 blockFrame.putTextures(blockTextureMap);
                 IModel retexturedBlock = blockBaseModel.retexture(blockTextureMap.build());
