@@ -3,6 +3,7 @@ package com.hbmspace.handler.atmosphere;
 import com.hbm.blocks.BlockDummyable;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.config.GeneralConfig;
+import com.hbm.interfaces.IDoor;
 import com.hbmspace.dim.trait.CBT_Atmosphere;
 import com.hbm.handler.ThreeInts;
 import com.hbm.inventory.fluid.FluidType;
@@ -17,6 +18,7 @@ import net.minecraft.block.IGrowable;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -78,14 +80,22 @@ public class AtmosphereBlob implements Runnable {
 		if(block.isAir(state, world, pos)) return false;
 		if(block == ModBlocks.sliding_seal_door) return true; // fuck it, I'll put a temporary bandaid
 
-		if(state.isFullCube() || state.isOpaqueCube()) return true;
-
-		if (block instanceof BlockFarmland || block instanceof BlockFence || block instanceof BlockDummyable) {
+		if (block instanceof BlockFarmland || block instanceof BlockFence) {
 			return false;
 		}
 		if (block instanceof IBlockSealable) {
 			return ((IBlockSealable) block).isSealed(world, x, y, z);
 		}
+		// Th3_Sl1ze: considering I'm not keen on doing mixins to make BlockGenericDoor IBlockSealable..
+		if (block instanceof BlockDummyable dummyable) {
+			TileEntity core = dummyable.findCoreTE(world, x, y, z);
+			if (core instanceof IDoor door) {
+				return door.getState() == IDoor.DoorState.CLOSED;
+			}
+			return false;
+		}
+
+		if(state.isFullCube() || state.isOpaqueCube()) return true;
 
 		Material material = state.getMaterial();
 		if(material.isLiquid() || !material.isSolid()) return false;

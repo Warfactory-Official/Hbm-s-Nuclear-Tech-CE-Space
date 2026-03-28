@@ -38,7 +38,7 @@ public class ChunkAtmosphereHandler {
 	// ah who feckin cares, for all you need to know, this is _magic_
 	// Breathe easy, bub
 
-	private HashMap<Integer, HashMap<IAtmosphereProvider, AtmosphereBlob>> worldBlobs = new HashMap<>();
+	private final HashMap<Integer, HashMap<IAtmosphereProvider, AtmosphereBlob>> worldBlobs = new HashMap<>();
 	private final int MAX_BLOB_RADIUS = 256;
 
     // How much CO2 is converted into O2 from various growing
@@ -63,6 +63,8 @@ public class ChunkAtmosphereHandler {
 	public CBT_Atmosphere getAtmosphere(World world, int x, int y, int z, AtmosphereBlob excludeBlob) {
 		ThreeInts pos = new ThreeInts(x, y, z);
 		HashMap<IAtmosphereProvider, AtmosphereBlob> blobs = worldBlobs.get(world.provider.getDimension());
+
+		if (blobs == null) return null;
 
 		CBT_Atmosphere atmosphere = getCelestialAtmosphere(world);
 
@@ -154,7 +156,7 @@ public class ChunkAtmosphereHandler {
 		if(GeneralConfig.enableDebugMode && entity instanceof EntityPlayer && entity.world.getTotalWorldTime() % 20 == 0) {
 			if(atmosphere != null && atmosphere.fluids.size() > 0) {
 				for(FluidEntry entry : atmosphere.fluids) {
-					MainRegistry.logger.info("Atmosphere: " + entry.fluid.getTranslationKey() + " - " + entry.pressure + "bar");
+                    MainRegistry.logger.info("Atmosphere: {} - {}bar", entry.fluid.getTranslationKey(), entry.pressure);
 				}
 			} else {
 				MainRegistry.logger.info("Atmosphere: TOTAL VACUUM");

@@ -55,8 +55,8 @@ public class TileEntityAirScrubber extends TileEntityMachineBase implements ITic
 
                     for(AtmosphereBlob blob : blobs) {
                         if(blob != null) {
-                            ThreeInts pos = blob.getRootPosition();
-                            TileEntity te = world.getTileEntity(new BlockPos(pos.x, pos.y, pos.z));
+                            ThreeInts rootPos = blob.getRootPosition();
+                            TileEntity te = world.getTileEntity(new BlockPos(rootPos.x, rootPos.y, rootPos.z));
                             if(te instanceof TileEntityAirPump) {
                                 pump = (TileEntityAirPump) te;
                                 if(!pump.registerScrubber(this)) {
