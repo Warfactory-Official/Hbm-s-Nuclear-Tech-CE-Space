@@ -8,6 +8,8 @@ import com.hbmspace.inventory.OreDictManagerSpace;
 
 import java.util.ListIterator;
 
+import static com.hbm.inventory.material.MaterialShapes.INGOT;
+
 public class RotaryFurnaceRecipesTweaker {
 
     public static void init() {
@@ -33,7 +35,7 @@ public class RotaryFurnaceRecipesTweaker {
 
             if (matchCu && matchAl) {
                 it.set(new RotaryFurnaceRecipes.RotaryFurnaceRecipe(
-                        new Mats.MaterialStack(Mats.MAT_GUNMETAL, 4), 200, 100,
+                        new Mats.MaterialStack(Mats.MAT_GUNMETAL, INGOT.q(4)), 200, 100,
                         new RecipesCommon.OreDictStack(OreDictManager.CU.ingot(), 3),
                         new RecipesCommon.OreDictStack(OreDictManagerSpace.ZI.ingot(), 1)
                 ));
