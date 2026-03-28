@@ -132,7 +132,7 @@ public class GUIMachineRocketAssembly extends GuiInfoContainerLayered {
             drawTexturedModalRect(17, 98, xSize, 44, 18, 8);
         }
 
-        if(machine.rocket.validate()) {
+        if(machine.rocket != null && machine.rocket.validate()) {
             drawTexturedModalRect(41, 62, xSize + 18, 8, 18, 18);
         }
 
@@ -158,14 +158,14 @@ public class GUIMachineRocketAssembly extends GuiInfoContainerLayered {
         if(checkClick(x, y, 17, 98, 18, 8)) {
             mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
-            if(getLayer() < Math.min(machine.rocket.stages.size(), RocketStruct.MAX_STAGES - 1)) {
+            if(machine.rocket != null && getLayer() < Math.min(machine.rocket.stages.size(), RocketStruct.MAX_STAGES - 1)) {
                 setLayer(getLayer() + 1);
             }
         }
 
         // Construct rocket
         if(checkClick(x, y, 41, 62, 18, 18)) {
-            if(machine.rocket.validate()) {
+            if(machine.rocket != null && machine.rocket.validate()) {
                 mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 NBTTagCompound data = new NBTTagCompound();
                 data.setBoolean("construct", true);
