@@ -567,7 +567,10 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 		float[] sunColor = { 1.0F, 1.0F, 1.0F };
 
 		// Adjust the sun colour based on atmospheric composition
-		for(FluidEntry entry : atmosphere.fluids) {
+		for(int i = 0; i < atmosphere.fluids.size(); i++) {
+			FluidEntry entry = atmosphere.fluids.get(i);
+			if(entry == null) continue;
+
 			// Chlorines all redden the sun by absorbing blue and green
 			if(entry.fluid == com.hbmspace.inventory.fluid.Fluids.TEKTOAIR
 					|| entry.fluid == Fluids.CHLORINE

@@ -62,7 +62,7 @@ public class RocketPronter {
                     }
 
                     if(stage.thruster != null) {
-                        if(hasShroud && stage.fuselage != null) {
+                        if(hasShroud && stage.fuselage != null && stage.fuselage.getShroud() != null) {
                             if(shroudTimer > 0) {
                                 float shroudLerp = shroudTimer + interp;
                                 GlStateManager.pushMatrix();
@@ -85,20 +85,24 @@ public class RocketPronter {
 
                         if(!hasShroud || shroudTimer > 0) {
                             tex.bindTexture(stage.thruster.texture);
-                            stage.thruster.getModel(isDeployed).renderAll();
+                            if(stage.thruster.getModel(isDeployed) != null) {
+                                stage.thruster.getModel(isDeployed).renderAll();
+                            }
                         }
                         GlStateManager.translate(0, stage.thruster.height, 0);
                     }
 
                     if(stage.fuselage != null) {
-                        if(stage.fins != null) {
+                        if(stage.fins != null && stage.fins.getModel(isDeployed) != null) {
                             tex.bindTexture(stage.fins.texture);
                             stage.fins.getModel(isDeployed).renderAll();
                         }
 
                         for(int s = 0; s < stack; s++) {
                             tex.bindTexture(stage.fuselage.texture);
-                            stage.fuselage.getModel(isDeployed).renderAll();
+                            if(stage.fuselage.getModel(isDeployed) != null) {
+                                stage.fuselage.getModel(isDeployed).renderAll();
+                            }
                             GlStateManager.translate(0, stage.fuselage.height, 0);
                         }
                     }
@@ -121,7 +125,7 @@ public class RocketPronter {
         if(rocket.capsule != null) {
             if(entity != null && rocket.capsule.renderer != null) {
                 rocket.capsule.renderer.render(tex, entity, interp);
-            } else {
+            } else if(rocket.capsule.model != null) {
                 tex.bindTexture(rocket.capsule.texture);
                 rocket.capsule.model.renderAll();
             }

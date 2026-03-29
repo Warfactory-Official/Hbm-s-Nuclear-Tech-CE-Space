@@ -7,8 +7,11 @@ import com.hbm.inventory.material.NTMMaterial;
 import com.hbm.items.ModItems;
 import com.hbm.items.special.ItemAutogen;
 import com.hbm.lib.HBMSoundHandler;
+import com.hbm.main.client.NTMClientRegistry;
 import com.hbm.render.icon.RGBMutatorInterpolatedComponentRemap;
 import com.hbm.render.icon.TextureAtlasSpriteMutatable;
+import com.hbm.render.item.ItemRenderMissilePart;
+import com.hbm.render.misc.MissilePart;
 import com.hbm.sound.AudioWrapper;
 import com.hbm.util.Clock;
 import com.hbm.util.I18nUtil;
@@ -30,7 +33,7 @@ import com.hbmspace.items.IDynamicModelsSpace;
 import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.lib.HBMSpaceSoundHandler;
 import com.hbmspace.particle.ParticleGlow;
-import com.hbmspace.render.tileentity.IItemRendererProviderSpace;
+import com.hbmspace.render.misc.RocketPart;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.client.Minecraft;
@@ -48,12 +51,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.*;
@@ -99,6 +100,20 @@ public class ModEventHandlerClient {
 
         IDynamicModelsSpace.registerModels();
         IDynamicModelsSpace.registerCustomStateMappers();
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void registerMissilePartModels(ModelRegistryEvent event) {
+        RocketPart.registerClientParts();
+
+        for (MissilePart part : RocketPart.parts.values()) {
+            if (part.part != null) {
+                NTMClientRegistry.bindTeisr(part.part, new ItemRenderMissilePart(part));
+
+                ModelResourceLocation loc = NTMClientRegistry.getSyntheticTeisrModelLocation(part.part);
+                ModelLoader.setCustomModelResourceLocation(part.part, 0, loc);
+            }
+        }
     }
 
     @SubscribeEvent
@@ -315,7 +330,7 @@ public class ModEventHandlerClient {
                     Vec3NT lodestarHeading = new Vec3NT(0, 0, -1D).rotateAroundXDeg(-15).multiply(25);
                     Vec3NT nextPos = new Vec3NT(pos).add(lodestarHeading.x, lodestarHeading.y, lodestarHeading.z);
                     RayTraceResult mop = world.rayTraceBlocks(pos, nextPos, false, true, false);
-                    if(mop != null && mop.typeOfHit == mop.typeOfHit.BLOCK && world.getBlockState(mop.getBlockPos()).getBlock() == ModBlocks.glass_polarized) {
+                    if(mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK && world.getBlockState(mop.getBlockPos()).getBlock() == ModBlocks.glass_polarized) {
                         renderLodeStar = true;
                     }
                 }
