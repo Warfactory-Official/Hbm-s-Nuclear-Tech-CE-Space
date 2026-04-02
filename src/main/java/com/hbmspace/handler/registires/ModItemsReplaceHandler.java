@@ -58,6 +58,10 @@ public class ModItemsReplaceHandler {
         if(ModItems.fau_plate instanceof ICanSealAccessor fau_seal) fau_seal.setSealed(true);
         if(ModItems.fau_legs instanceof ICanSealAccessor fau_seal) fau_seal.setSealed(true);
         if(ModItems.fau_boots instanceof ICanSealAccessor fau_seal) fau_seal.setSealed(true);
+        if(ModItems.ncrpa_helmet instanceof ICanSealAccessor ncrpa_seal) ncrpa_seal.setSealed(true);
+        if(ModItems.ncrpa_plate instanceof ICanSealAccessor ncrpa_seal) ncrpa_seal.setSealed(true);
+        if(ModItems.ncrpa_legs instanceof ICanSealAccessor ncrpa_seal) ncrpa_seal.setSealed(true);
+        if(ModItems.ncrpa_boots instanceof ICanSealAccessor ncrpa_seal) ncrpa_seal.setSealed(true);
         if(ModItems.rpa_helmet instanceof ICanSealAccessor rpa_seal) rpa_seal.setSealed(true);
         if(ModItems.rpa_plate instanceof ICanSealAccessor rpa_seal) rpa_seal.setSealed(true);
         if(ModItems.rpa_legs instanceof ICanSealAccessor rpa_seal) rpa_seal.setSealed(true);
