@@ -1,5 +1,6 @@
 package com.hbmspace.dim.moho;
 
+import com.hbm.blocks.ModBlocks;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.dim.ChunkProviderCelestial;
 import com.hbmspace.dim.mapgen.*;
@@ -31,6 +32,7 @@ public class ChunkProviderMoho extends ChunkProviderCelestial {
 		smallCrater.setSize(8, 32);
 		largeCrater.setSize(96, 128);
 		volcano.setSize(64, 128);
+		volcano.setMaterial(ModBlocks.volcano_core, ModBlocks.basalt);
 
 		smallCrater.regolith = largeCrater.regolith = ModBlocksSpace.moho_regolith;
 		smallCrater.rock = largeCrater.rock = ModBlocksSpace.moho_stone;

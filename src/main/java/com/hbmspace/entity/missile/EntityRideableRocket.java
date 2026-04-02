@@ -54,6 +54,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
@@ -1007,12 +1008,13 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
     }
 
     @AutoRegister(name = "entity_rideable_rocket_dummy", trackingRange = 1000)
-    public static class EntityRideableRocketDummy extends Entity implements ILookOverlay {
+    public static class EntityRideableRocketDummy extends Entity implements ILookOverlay, IEntityAdditionalSpawnData {
 
         private static final DataParameter<Integer> DP_PARENT_ID =
                 EntityDataManager.createKey(EntityRideableRocketDummy.class, DataSerializers.VARINT);
 
         public EntityRideableRocket parent;
+        private int serverParentId = -1;
 
         public EntityRideableRocketDummy(World world) {
             super(world);
@@ -1036,13 +1038,36 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
             if(!world.isRemote) {
                 if(parent == null || parent.isDead) {
                     setDead();
+                } else if(this.dataManager.get(DP_PARENT_ID) != parent.getEntityId()) {
+                    this.dataManager.set(DP_PARENT_ID, parent.getEntityId());
                 }
             } else if(parent == null) {
-                Entity entity = world.getEntityByID(this.dataManager.get(DP_PARENT_ID));
-                if(entity instanceof EntityRideableRocket) {
-                    parent = (EntityRideableRocket) entity;
+                int id = this.serverParentId;
+
+                try {
+                    if (id == -1) {
+                        id = this.dataManager.get(DP_PARENT_ID);
+                    }
+                } catch (ClassCastException e) {
+                }
+
+                if(id > 0) {
+                    Entity entity = world.getEntityByID(id);
+                    if(entity instanceof EntityRideableRocket) {
+                        parent = (EntityRideableRocket) entity;
+                    }
                 }
             }
+        }
+
+        @Override
+        public void writeSpawnData(ByteBuf buffer) {
+            buffer.writeInt(this.parent != null ? this.parent.getEntityId() : -1);
+        }
+
+        @Override
+        public void readSpawnData(ByteBuf additionalData) {
+            this.serverParentId = additionalData.readInt();
         }
 
         @Override

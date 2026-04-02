@@ -36,22 +36,30 @@ public class CBT_Atmosphere extends CelestialBodyTrait {
 	}
 
 	public CBT_Atmosphere and(FluidType fluid, double pressure) {
+		if (fluids == null) fluids = new ArrayList<>();
 		fluids.add(new FluidEntry(fluid, pressure));
 		return this;
 	}
 
 	public CBT_Atmosphere clone() {
 		CBT_Atmosphere clone = new CBT_Atmosphere();
-		for(FluidEntry entry : fluids) {
-			clone.fluids.add(new FluidEntry(entry.fluid, entry.pressure));
+		if (fluids != null) {
+			for (int i = 0; i < fluids.size(); i++) {
+				FluidEntry entry = fluids.get(i);
+				if (entry != null) {
+					clone.fluids.add(new FluidEntry(entry.fluid, entry.pressure));
+				}
+			}
 		}
 		return clone;
 	}
 
 	// Add to the pressure by incrementing existing fluid entries
 	public void add(FluidType fluid, double pressure) {
-		for(FluidEntry entry : fluids) {
-			if(entry.fluid == fluid) {
+		if (fluids == null) fluids = new ArrayList<>();
+		for (int i = 0; i < fluids.size(); i++) {
+			FluidEntry entry = fluids.get(i);
+			if (entry != null && entry.fluid == fluid) {
 				entry.pressure += pressure;
 				return;
 			}
@@ -69,9 +77,13 @@ public class CBT_Atmosphere extends CelestialBodyTrait {
 		}
 
 		double pressureRatio = pressure / totalPressure;
-
-		for(FluidEntry entry : fluids) {
-			entry.pressure *= pressureRatio;
+		if (fluids != null) {
+			for (int i = 0; i < fluids.size(); i++) {
+				FluidEntry entry = fluids.get(i);
+				if (entry != null) {
+					entry.pressure *= pressureRatio;
+				}
+			}
 		}
 	}
 
@@ -81,8 +93,10 @@ public class CBT_Atmosphere extends CelestialBodyTrait {
 	}
 
 	public boolean hasFluid(FluidType fluid, double abovePressure) {
-		for(FluidEntry entry : fluids) {
-			if(entry.fluid == fluid) {
+		if (fluids == null) return false;
+		for (int i = 0; i < fluids.size(); i++) {
+			FluidEntry entry = fluids.get(i);
+			if (entry != null && entry.fluid == fluid) {
 				return entry.pressure >= abovePressure;
 			}
 		}
@@ -95,8 +109,10 @@ public class CBT_Atmosphere extends CelestialBodyTrait {
 	}
 
 	public boolean hasTrait(Class<? extends FluidTrait> trait, double abovePressure) {
-		for(FluidEntry entry : fluids) {
-			if(entry.pressure >= abovePressure && entry.fluid.hasTrait(trait)) {
+		if (fluids == null) return false;
+		for (int i = 0; i < fluids.size(); i++) {
+			FluidEntry entry = fluids.get(i);
+			if (entry != null && entry.pressure >= abovePressure && entry.fluid != null && entry.fluid.hasTrait(trait)) {
 				return true;
 			}
 		}
@@ -106,28 +122,36 @@ public class CBT_Atmosphere extends CelestialBodyTrait {
 
 	// Get the highest pressure fluid
 	public FluidType getMainFluid() {
+		if (fluids == null || fluids.isEmpty()) return Fluids.NONE;
 		sortDescending();
 		FluidEntry first = fluids.getFirst();
 		return first != null ? first.fluid : Fluids.NONE;
 	}
 
 	public void sortDescending() {
-		fluids.sort((a, b) -> Double.compare(b.pressure, a.pressure));
+		if (fluids != null) {
+			fluids.sort((a, b) -> Double.compare(b.pressure, a.pressure));
+		}
 	}
 
 	// FluidEntries store PARTIAL pressure, to get the total atmospheric pressure, use this method
 	public double getPressure() {
+		if (fluids == null) return 0;
 		double pressure = 0;
-        for (FluidEntry fluid : fluids) {
-            pressure += fluid.pressure;
-        }
-
+		for (int i = 0; i < fluids.size(); i++) {
+			FluidEntry entry = fluids.get(i);
+			if (entry != null) {
+				pressure += entry.pressure;
+			}
+		}
 		return pressure;
 	}
 
 	public double getPressure(FluidType fluid) {
-		for(FluidEntry entry : fluids) {
-			if(entry.fluid == fluid) {
+		if (fluids == null) return 0;
+		for (int i = 0; i < fluids.size(); i++) {
+			FluidEntry entry = fluids.get(i);
+			if (entry != null && entry.fluid == fluid) {
 				return entry.pressure;
 			}
 		}
@@ -137,8 +161,13 @@ public class CBT_Atmosphere extends CelestialBodyTrait {
 
 	public List<Integer> getFluidColors() {
 		List<Integer> colors = new ArrayList<>();
-		for (FluidEntry entry : fluids) {
-			colors.add(entry.fluid.getColor());
+		if (fluids != null) {
+			for (int i = 0; i < fluids.size(); i++) {
+				FluidEntry entry = fluids.get(i);
+				if (entry != null && entry.fluid != null) {
+					colors.add(entry.fluid.getColor());
+				}
+			}
 		}
 		return colors;
 	}
@@ -146,11 +175,16 @@ public class CBT_Atmosphere extends CelestialBodyTrait {
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		NBTTagList fluidList = new NBTTagList();
-		for (FluidEntry entry : fluids) {
-			NBTTagCompound fluidTag = new NBTTagCompound();
-			fluidTag.setInteger("type", entry.fluid.getID());
-			fluidTag.setDouble("percentage", entry.pressure);
-			fluidList.appendTag(fluidTag);
+		if (fluids != null) {
+			for (int i = 0; i < fluids.size(); i++) {
+				FluidEntry entry = fluids.get(i);
+				if (entry != null && entry.fluid != null) {
+					NBTTagCompound fluidTag = new NBTTagCompound();
+					fluidTag.setInteger("type", entry.fluid.getID());
+					fluidTag.setDouble("percentage", entry.pressure);
+					fluidList.appendTag(fluidTag);
+				}
+			}
 		}
 		nbt.setTag("fluids", fluidList);
 	}
@@ -170,21 +204,29 @@ public class CBT_Atmosphere extends CelestialBodyTrait {
 	// These methods are for client syncing, the precision loss is intentional
 	@Override
 	public void writeToBytes(ByteBuf buf) {
+		if (fluids == null) {
+			buf.writeInt(0);
+			return;
+		}
 		buf.writeInt(fluids.size());
-		for (FluidEntry entry : fluids) {
-			buf.writeInt(entry.fluid.getID());
-			buf.writeFloat((float)entry.pressure);
+		for (int i = 0; i < fluids.size(); i++) {
+			FluidEntry entry = fluids.get(i);
+			if (entry != null && entry.fluid != null) {
+				buf.writeInt(entry.fluid.getID());
+				buf.writeFloat((float)entry.pressure);
+			}
 		}
 	}
 
 	@Override
 	public void readFromBytes(ByteBuf buf) {
 		int size = buf.readInt();
-		fluids = new ArrayList<>();
+		ArrayList<FluidEntry> newFluids = new ArrayList<>();
 		for (int i = 0; i < size; i++) {
 			FluidType fluid = Fluids.fromID(buf.readInt());
 			double percentage = buf.readFloat();
-			fluids.add(new FluidEntry(fluid, percentage));
+			newFluids.add(new FluidEntry(fluid, percentage));
 		}
+		this.fluids = newFluids;
 	}
 }

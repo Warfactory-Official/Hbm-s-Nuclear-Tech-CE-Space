@@ -212,17 +212,16 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 		float sunG = sun;
 		float sunB = sun;
 
-		if(!GeneralConfig.enableHardcoreDarkness) {
-			sunR *= 0.94F;
-			sunG *= 0.94F;
-			sunB *= 0.91F;
-		}
+		sunR *= 0.94F;
+		sunG *= 0.94F;
+		sunB *= 0.91F;
 
 		float totalPressure = (float)atmosphere.getPressure();
 		Vec3d color = new Vec3d(0, 0, 0);
 
 		for(int i = 0; i < atmosphere.fluids.size(); i++) {
 			FluidEntry entry = atmosphere.fluids.get(i);
+			if (entry == null || entry.fluid == null) continue;
 			Vec3d fluidColor;
 
 			if(entry.fluid == com.hbmspace.inventory.fluid.Fluids.EVEAIR) {
@@ -246,10 +245,8 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 		}
 
 		// Add minimum fog colour, for night-time glow
-		if(!GeneralConfig.enableHardcoreDarkness) {
-			float nightDensity = MathHelper.clamp(totalPressure, 0.0F, 1.0F);
-			color = color.add(0.06F * nightDensity, 0.06F * nightDensity, 0.09F * nightDensity);
-		}
+		float nightDensity = MathHelper.clamp(totalPressure, 0.0F, 1.0F);
+		color = color.add(0.06F * nightDensity, 0.06F * nightDensity, 0.09F * nightDensity);
 
 		// Fog intensity remains high to simulate a thin looking atmosphere on low pressure planets
 		float pressureFactor = MathHelper.clamp(totalPressure * 10.0F, 0.0F, 1.0F);
@@ -333,6 +330,7 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 
 		for (int i = 0; i < atmosphere.fluids.size(); i++) {
 			FluidEntry entry = atmosphere.fluids.get(i);
+			if (entry == null || entry.fluid == null) continue; // ADD THIS CHECK!
 			Vec3d fluidColor;
 
 			if (entry.fluid == com.hbmspace.inventory.fluid.Fluids.EVEAIR) {
@@ -569,7 +567,7 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 		// Adjust the sun colour based on atmospheric composition
 		for(int i = 0; i < atmosphere.fluids.size(); i++) {
 			FluidEntry entry = atmosphere.fluids.get(i);
-			if(entry == null) continue;
+			if (entry == null || entry.fluid == null) continue; // ADD THIS CHECK!
 
 			// Chlorines all redden the sun by absorbing blue and green
 			if(entry.fluid == com.hbmspace.inventory.fluid.Fluids.TEKTOAIR

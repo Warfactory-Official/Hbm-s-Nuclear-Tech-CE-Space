@@ -2,6 +2,7 @@ package com.hbmspace.items;
 
 import com.hbm.blocks.ICustomBlockItem;
 import com.hbm.config.VersatileConfig;
+import com.hbm.inventory.fluid.Fluids;
 import com.hbm.items.ItemEnums;
 import com.hbm.items.ModItems;
 import com.hbm.items.armor.ItemModInsert;
@@ -20,10 +21,7 @@ import com.hbmspace.items.food.ItemEnergySpace;
 import com.hbmspace.items.food.ItemLemonSpace;
 import com.hbmspace.items.food.ItemPillSpace;
 import com.hbmspace.items.food.ModItemSeedFood;
-import com.hbmspace.items.machine.ItemRBMKPelletSpace;
-import com.hbmspace.items.machine.ItemRBMKRodSpace;
-import com.hbmspace.items.machine.ItemRTGPelletSpace;
-import com.hbmspace.items.machine.ItemSatelliteSpace;
+import com.hbmspace.items.machine.*;
 import com.hbmspace.items.special.ItemConsumableSpace;
 import com.hbmspace.items.special.ItemMineralOre;
 import com.hbmspace.items.special.ItemModRecordSpace;
@@ -216,6 +214,7 @@ public class ModItemsSpace {
     public static final Item heavy_boots = new ItemModHeavyBoots("heavy_boots");
 
     public static final Item coin_airliner = new ItemCustomLoreSpace("coin_airliner").setRarity(EnumRarity.UNCOMMON).setCreativeTab(MainRegistry.consumableTab);
+    public static final Item oxy_pinwheel = new ItemInfiniteFluidSpace(Fluids.OXYGEN, 1, "oxy_pinwheel").setCreativeTab(MainRegistry.partsTab);
 
     // TODO hazard registry
     public static final ItemRBMKPelletSpace rbmk_pellet_lecm = new ItemRBMKPelletSpace("Low Enriched Curium-245", "rbmk_pellet_lecm");
