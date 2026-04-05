@@ -117,9 +117,11 @@ public class MixinPermaSyncHandler {
 
                 OrbitalStation.orbitingStations.clear();
                 int count = buf.readInt();
+                List<OrbitalStation> newStations = new ArrayList<>();
                 for(int i = 0; i < count; i++) {
-                    OrbitalStation.orbitingStations.add(new OrbitalStation(null, buf.readInt(), buf.readInt()));
+                    newStations.add(new OrbitalStation(null, buf.readInt(), buf.readInt()));
                 }
+                OrbitalStation.orbitingStations = newStations;
             } catch (Exception ex) {
                 MainRegistry.logger.catching(ex);
                 SolarSystemWorldSavedData.updateClientTraits(null);
