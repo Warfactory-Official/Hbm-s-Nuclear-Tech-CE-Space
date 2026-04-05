@@ -62,9 +62,11 @@ public class ResourceManagerSpace {
 
     public static final ResourceLocation lpw2_tex = new ResourceLocation("hbm", "textures/models/machines/lpw2.png");
     public static final ResourceLocation lpw2_error_tex = new ResourceLocation("hbm", "textures/models/machines/lpw2_term_error.png");//Xenon
+    // HTRF4
+    public static final ResourceLocation htrf4_neo_tex = new ResourceLocation("hbm", "textures/models/fusion/htrf4.png");
+    public static final ResourceLocation htrf4_exhaust_tex = new ResourceLocation("hbm", "textures/models/fusion/htrf4_trail.png");//Xenon
     public static final ResourceLocation xenon_thruster_tex = new ResourceLocation("hbm", "textures/models/machines/xenon_thruster.png");
     public static final ResourceLocation xenon_exhaust_tex = new ResourceLocation("hbm", "textures/models/machines/xenon_trail.png");
-    public static final ResourceLocation htrtex = new ResourceLocation("hbm", "textures/models/fusion/htfr4.png");
     public static final ResourceLocation docking_port_tex = new ResourceLocation("hbm", "textures/models/machines/docking_port.png");
     public static final ResourceLocation docking_port_launcher_tex = new ResourceLocation("hbm", "textures/models/machines/docking_port_launcher.png");
     public static final ResourceLocation drop_pod_tex = new ResourceLocation("hbm", "textures/models/missile_parts/warheads/rp_drop_pod.png");

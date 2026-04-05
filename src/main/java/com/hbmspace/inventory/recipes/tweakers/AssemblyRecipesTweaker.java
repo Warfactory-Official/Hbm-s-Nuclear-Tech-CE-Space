@@ -60,6 +60,9 @@ public class AssemblyRecipesTweaker {
                         new ComparableStack(ModItemsSpace.billet_gaas, 1),
                         new ComparableStack(ModItems.magnetron, 4)));*/
 
+        recs.register(new GenericRecipe("ass.htrf4neo").setup(1_200, 100).outputItems(new ItemStack(ModBlocksSpace.machine_htrf4neo, 1))
+                .inputItems(new RecipesCommon.OreDictStack(ANY_RESISTANTALLOY.plateWelded(), 16), new RecipesCommon.OreDictStack(CU.plateWelded(), 64), new RecipesCommon.OreDictStack(SBD.wireDense(), 64), new RecipesCommon.OreDictStack(STAINLESS.plateWelded(), 16), new RecipesCommon.ComparableStack(ModItems.circuit, 2, ItemEnums.EnumCircuitType.BISMOID), new RecipesCommon.ComparableStack(ModItemsSpace.circuit, 4, ItemEnumsSpace.EnumCircuitType.GASCHIP)));
+
         // dyson
         recs.register(new GenericRecipe("ass.dysonlauncher").setup(6_000, 100).outputItems(new ItemStack(ModBlocksSpace.dyson_launcher, 1))
                 .inputItems(

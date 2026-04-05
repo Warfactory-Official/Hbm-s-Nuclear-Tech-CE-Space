@@ -1,80 +1,64 @@
 package com.hbmspace.tileentity.machine;
 
-import com.hbm.api.energymk2.IEnergyReceiverMK2;
-import com.hbm.api.fluid.IFluidStandardReceiver;
-import com.hbm.api.fluidmk2.IFluidStandardTransceiverMK2;
 import com.hbm.blocks.BlockDummyable;
-import com.hbm.inventory.fluid.Fluids;
-import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.lib.DirPos;
 import com.hbm.lib.ForgeDirection;
+import com.hbm.lib.HBMSoundHandler;
 import com.hbm.main.MainRegistry;
 import com.hbm.sound.AudioWrapper;
-import com.hbm.tileentity.TileEntityMachineBase;
+import com.hbm.tileentity.machine.albion.TileEntityCooledBase;
 import com.hbm.tileentity.machine.fusion.IFusionPowerReceiver;
 import com.hbm.uninos.UniNodespace;
 import com.hbm.uninos.networkproviders.PlasmaNetwork;
 import com.hbm.util.BobMathUtil;
 import com.hbmspace.api.tile.IPropulsion;
 import com.hbmspace.dim.SolarSystem;
+import com.hbmspace.handler.atmosphere.IBlockSealable;
 import com.hbmspace.interfaces.AutoRegister;
+import com.hbmspace.lib.HBMSpaceSoundHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 @AutoRegister
-public class TileEntityMachineHTRNeo extends TileEntityMachineBase
-        implements ITickable, IPropulsion, IFluidStandardTransceiverMK2, IFluidStandardReceiver, IEnergyReceiverMK2, IFusionPowerReceiver{
+public class TileEntityMachineHTRNeo extends TileEntityCooledBase implements ITickable, IPropulsion, IFusionPowerReceiver, IBlockSealable {
 
     //i smushed these together because i need you so bad
     protected PlasmaNetwork.PlasmaNode plasmaNode;
 
     public long plasmaEnergy;
     public long plasmaEnergySync;
-    public long power;
-    private boolean hasRegistered;
 
-    public static long maxPower = 1_000_000_000L;
+    public static long maxPower = 200_000_000L;
 
-    public static final int COOLANT_USE = 50;
-    public static final double PLASMA_EFFICIENCY = 1.35D;
-    public static long MINIMUM_PLASMA = 5_000_000L;
-    private float speed;
-    public double lastTime;
-    public double time;
+    public float rotor;
+    public float prevRotor;
+    public float rotorSpeed;
     private float soundtime;
     private AudioWrapper audio;
 
-    public FluidTankNTM[] tanks = new FluidTankNTM[]{
-            new FluidTankNTM(Fluids.PERFLUOROMETHYL_COLD, 4_000),
-            new FluidTankNTM(Fluids.PERFLUOROMETHYL, 4_000)
-    };
-
-
-
+    private boolean hasRegistered;
     public boolean isOn;
     public int fuelCost;
+    public float thrustAmount;
+
+    public float plasmaR;
+    public float plasmaG;
+    public float plasmaB;
 
     public TileEntityMachineHTRNeo() {
-        super(0, true, true);
+        super(0);
     }
-
-    public boolean hasMinimumPlasma() {
-        return plasmaEnergy >= MINIMUM_PLASMA;
-    }
-
-    public boolean isCool() {
-        return tanks[0].getFill() >= COOLANT_USE &&
-                tanks[1].getFill() + COOLANT_USE <= tanks[1].getMaxFill();
-    }
-
 
     @Override
     public void update() {
@@ -85,10 +69,45 @@ public class TileEntityMachineHTRNeo extends TileEntityMachineBase
                 hasRegistered = true;
                 isOn = false;
             }
-            for(DirPos pos : getConPos()) {
-                this.trySubscribe(tanks[0].getTankType(), world, pos);
+            for(DirPos pos : this.getConPos()) {
+                this.trySubscribe(world, pos);
+                this.trySubscribe(coolantTanks[0].getTankType(), world, pos);
+                this.tryProvide(coolantTanks[1], world, pos);
             }
+
             plasmaEnergySync = plasmaEnergy;
+
+            this.temperature += temp_passive_heating;
+            if(this.temperature > KELVIN + 20) this.temperature = KELVIN + 20;
+
+            if(this.temperature > temperature_target) {
+                int cyclesTemp = (int) Math.ceil((Math.min(this.temperature - temperature_target, temp_change_max)) / temp_change_per_mb);
+                int cyclesCool = coolantTanks[0].getFill();
+                int cyclesHot = coolantTanks[1].getMaxFill() - coolantTanks[1].getFill();
+                int cycles = BobMathUtil.min(cyclesTemp, cyclesCool, cyclesHot);
+
+                coolantTanks[0].setFill(coolantTanks[0].getFill() - cycles);
+                coolantTanks[1].setFill(coolantTanks[1].getFill() + cycles);
+                this.temperature -= temp_change_per_mb * cycles;
+            }
+
+            if(isOn) {
+                soundtime++;
+
+                if(soundtime == 1) {
+                    this.world.playSound(null, this.pos.getX(), this.pos.getY(), this.pos.getZ(), HBMSpaceSoundHandler.htrfstart, SoundCategory.BLOCKS, 1.5F, 1F);
+                } else if(soundtime > 30) {
+                    soundtime = 30;
+                }
+            } else {
+                soundtime--;
+
+                if(soundtime == 29) {
+                    this.world.playSound(null, this.pos.getX(), this.pos.getY(), this.pos.getZ(), HBMSoundHandler.htrstop, SoundCategory.BLOCKS, 2.0F, 1F);
+                } else if(soundtime <= 0) {
+                    soundtime = 0;
+                }
+            }
 
 
             if(plasmaNode == null || plasmaNode.expired) {
@@ -108,20 +127,24 @@ public class TileEntityMachineHTRNeo extends TileEntityMachineBase
 
             }
             if(plasmaNode != null && plasmaNode.hasValidNet()) plasmaNode.net.addReceiver(this);
-            //world.setBlock(pos.getX() - rot.offsetX * 5 - dir.offsetX * 3, pos.getY() - 2, pos.getZ() - rot.offsetZ * 0 - dir.offsetZ * 3,ModBlocks.absorber);
-            //world.setBlock(pos.getX() - rot.offsetX * -1 - dir.offsetX * 3, pos.getY() - 2, pos.getZ() - rot.offsetZ * 0 - dir.offsetZ * 3,ModBlocks.absorber);
-            //world.setBlock(pos.getX() - rot.offsetX * 5 - dir.offsetX * 3, pos.getY() - 2, pos.getZ() - rot.offsetZ * 0 - dir.offsetZ * -3,ModBlocks.absorber);
-            //world.setBlock(pos.getX() - rot.offsetX * -1 - dir.offsetX * 3, pos.getY() - 2, pos.getZ() - rot.offsetZ * 0 - dir.offsetZ * -3,ModBlocks.absorber);
-
 
             this.networkPackNT(200);
             this.plasmaEnergy = 0;
-        }		 else {
-            if(isOn) {
-                speed += 0.05F;
-                if(speed > 1) speed = 1;
+        } else {
+            if(power >= maxPower || isOn) this.rotorSpeed += 0.125F;
+            else this.rotorSpeed -= 0.125F;
 
-                if(soundtime > 18) {
+            this.rotorSpeed = MathHelper.clamp(this.rotorSpeed, 0F, 15F);
+
+            this.prevRotor = this.rotor;
+            this.rotor += this.rotorSpeed;
+
+            if(this.rotor >= 360F) {
+                this.rotor -= 360F;
+                this.prevRotor -= 360F;
+            }
+            if(isOn) {
+                if(soundtime > 28) {
                     if(audio == null) {
                         audio = createAudioLoop();
                         audio.startSound();
@@ -131,39 +154,26 @@ public class TileEntityMachineHTRNeo extends TileEntityMachineBase
 
                     audio.updateVolume(getVolume(1F));
                     audio.keepAlive();
-
-                    ForgeDirection dir = ForgeDirection.getOrientation(this.getBlockMetadata() - BlockDummyable.offset).getRotation(ForgeDirection.UP);
-
-                    NBTTagCompound data = new NBTTagCompound();
-                    data.setDouble("posX", pos.getX() + dir.offsetX * 12);
-                    data.setDouble("posY", pos.getY() + 1);
-                    data.setDouble("posZ", pos.getZ() + dir.offsetZ * 12);
-                    data.setString("type", tanks[0].getTankType() == Fluids.PLASMA_BF ? "missileContrailbf" :"missileContrailf");
-                    data.setFloat("scale", 3);
-                    data.setDouble("moX", dir.offsetX * 10);
-                    data.setDouble("moY", 0);
-                    data.setDouble("moZ", dir.offsetZ * 10);
-                    data.setInteger("maxAge", 40 + world.rand.nextInt(40));
-                    MainRegistry.proxy.effectNT(data);
                 }
-            } else {
-                speed -= 0.05F;
-                if(speed < 0) speed = 0;
 
+                thrustAmount += 0.01F;
+                if(thrustAmount > 1) thrustAmount = 1;
+            } else {
                 if(audio != null) {
                     audio.stopSound();
                     audio = null;
                 }
+
+                thrustAmount -= 0.01F;
+                if(thrustAmount < 0) thrustAmount = 0;
             }
         }
-
-        lastTime = time;
-        time += speed;
     }
 
-
-
-
+    @Override
+    public AudioWrapper createAudioLoop() {
+        return MainRegistry.proxy.getLoopedSound(HBMSoundHandler.htrloop, SoundCategory.BLOCKS, pos.getX(), pos.getY(), pos.getZ(), 0.25F, 27.5F, 1.0F, 20);
+    }
 
     @Override
     public void onChunkUnload() {
@@ -173,11 +183,6 @@ public class TileEntityMachineHTRNeo extends TileEntityMachineBase
             unregisterPropulsion();
             hasRegistered = false;
         }
-
-        //if(audio != null) {
-        //audio.stopSound();
-        //audio = null;
-        //}
     }
     @Override
     public void invalidate() {
@@ -197,51 +202,45 @@ public class TileEntityMachineHTRNeo extends TileEntityMachineBase
     }
 
     @Override
-    public void receiveFusionPower(long fusionPower, double neutronPower) {
+    public void receiveFusionPower(long fusionPower, double neutronPower, float r, float g, float b) {
         plasmaEnergy = fusionPower;
-
+        // genuinely useful method refactor
+        plasmaR = r;
+        plasmaG = g;
+        plasmaB = b;
     }
 
-    private DirPos[] getConPos() {
+    @Override
+    public DirPos[] getConPos() {
         ForgeDirection dir = ForgeDirection.getOrientation(this.getBlockMetadata() - BlockDummyable.offset);
         ForgeDirection rot = dir.getRotation(ForgeDirection.UP);
-        //world.setBlock(pos.getX() - rot.offsetX * 5 - dir.offsetX * 3, pos.getY() - 2, pos.getZ() - rot.offsetZ * 0 - dir.offsetZ * 3,ModBlocks.absorber);
-        //world.setBlock(pos.getX() - rot.offsetX * -1 - dir.offsetX * 3, pos.getY() - 2, pos.getZ() - rot.offsetZ * 0 - dir.offsetZ * 3,ModBlocks.absorber);
-        //world.setBlock(pos.getX() - rot.offsetX * 5 - dir.offsetX * 3, pos.getY() - 2, pos.getZ() - rot.offsetZ * 0 - dir.offsetZ * -3,ModBlocks.absorber);
-        //world.setBlock(pos.getX() - rot.offsetX * -1 - dir.offsetX * 3, pos.getY() - 2, pos.getZ() - rot.offsetZ * 0 - dir.offsetZ * -3,ModBlocks.absorber);
-
 
         return new DirPos[] {
-                new DirPos(pos.getX() - rot.offsetX * 5 - dir.offsetX * 3, pos.getY() - 2, pos.getZ() - dir.offsetZ * 3, rot),
-                new DirPos(pos.getX() - rot.offsetX * -1 - dir.offsetX * 3, pos.getY() - 2, pos.getZ() - dir.offsetZ * 3, rot),
-                new DirPos(pos.getX() - rot.offsetX * 5 - dir.offsetX * 3, pos.getY() - 2, pos.getZ() - dir.offsetZ * -3, rot),
-                new DirPos(pos.getX() - rot.offsetX * -1 - dir.offsetX * 3, pos.getY() - 2, pos.getZ() - dir.offsetZ * -3, rot), //this is ass but since it only faces one direction its "excusable"
+                new DirPos(pos.getX() - rot.offsetX * 5 - dir.offsetX * 3, pos.getY() - 2, pos.getZ() - rot.offsetZ * 5 - dir.offsetZ * 3, dir.getOpposite()),
+                new DirPos(pos.getX() - rot.offsetX * -1 - dir.offsetX * 3, pos.getY() - 2, pos.getZ() - rot.offsetZ * -1 - dir.offsetZ * 3, dir.getOpposite()),
+                new DirPos(pos.getX() - rot.offsetX * 5 - dir.offsetX * -3, pos.getY() - 2, pos.getZ() - rot.offsetZ * 5 - dir.offsetZ * -3, dir),
+                new DirPos(pos.getX() - rot.offsetX * -1 - dir.offsetX * -3, pos.getY() - 2, pos.getZ() - rot.offsetZ * -1 - dir.offsetZ * -3, dir),
 
         };
     }
 
     @Override
     public boolean canPerformBurn(int shipMass, double deltaV) {
+        fuelCost = SolarSystem.getFuelCost(deltaV, shipMass, 250); // i think this engine *itself* would have a base ISP..?
 
-
-        fuelCost = SolarSystem.getFuelCost(deltaV, shipMass, 100); //static temporary lolegaloge
-
-        if(plasmaEnergySync < fuelCost) {
-            System.out.println("false");
-            System.out.println(plasmaEnergySync);
-            System.out.println(fuelCost);
-
-            return false;
-        }
-
-        return true;
+        if(plasmaEnergySync < fuelCost) return false;
+        if(power < maxPower) return false;
+        return isCool();
     }
 
     @Override
     public void addErrors(List<String> errors) {
-
         if(plasmaEnergySync < fuelCost) {
-            errors.add(TextFormatting.RED + "Insufficient power: needs " + BobMathUtil.getShortNumber(fuelCost) + " HE");
+            errors.add(TextFormatting.RED + "Insufficient plasma energy: needs " + BobMathUtil.getShortNumber(fuelCost) + " TU");
+        }
+
+        if(power < maxPower) {
+            errors.add(TextFormatting.RED + "Insufficient power");
         }
 
         if(!isCool()) {
@@ -257,11 +256,7 @@ public class TileEntityMachineHTRNeo extends TileEntityMachineBase
     @Override
     public int startBurn() {
         isOn = true;
-        plasmaEnergy -= fuelCost;
-        if(isCool()) {
-            tanks[0].setFill(-COOLANT_USE);
-            tanks[1].setFill(+COOLANT_USE);
-        }
+        power = 0;
 
         return 180;
     }
@@ -272,39 +267,43 @@ public class TileEntityMachineHTRNeo extends TileEntityMachineBase
         return 180;
     }
 
+    @Override
+    public long getMaxPower() {
+        return maxPower;
+    }
 
-
-    @Override public FluidTankNTM[] getAllTanks() { return tanks; }
-    @Override public FluidTankNTM[] getReceivingTanks() { return new FluidTankNTM[]{ tanks[0] }; }
-    @Override public FluidTankNTM[] getSendingTanks() { return new FluidTankNTM[]{ tanks[1] }; }
-
-    @Override public long getPower() { return power; }
-    @Override public void setPower(long p) { power = p; }
-    @Override public long getMaxPower() { return maxPower; }
-
-    /* -------------------------
-     *   NBT / Sync
-     * ------------------------- */
+    /*
+     * -------------------------
+     * NBT / Sync
+     * -------------------------
+     */
 
     @Override
     public void serialize(ByteBuf buf) {
         super.serialize(buf);
+
         buf.writeLong(plasmaEnergySync);
         buf.writeBoolean(isOn);
         buf.writeInt(fuelCost);
-        tanks[0].serialize(buf);
-        tanks[1].serialize(buf);
+        buf.writeFloat(soundtime);
 
+        buf.writeFloat(plasmaR);
+        buf.writeFloat(plasmaG);
+        buf.writeFloat(plasmaB);
     }
 
     @Override
     public void deserialize(ByteBuf buf) {
         super.deserialize(buf);
+
         plasmaEnergy = buf.readLong();
         isOn = buf.readBoolean();
         fuelCost = buf.readInt();
-        tanks[0].deserialize(buf);
-        tanks[1].deserialize(buf);
+        soundtime = buf.readFloat();
+
+        plasmaR = buf.readFloat();
+        plasmaG = buf.readFloat();
+        plasmaB = buf.readFloat();
     }
 
     @Override
@@ -312,9 +311,6 @@ public class TileEntityMachineHTRNeo extends TileEntityMachineBase
 
         nbt.setLong("plasma", plasmaEnergy);
         nbt.setBoolean("on", isOn);
-
-        tanks[0].writeToNBT(nbt, "t0");
-        tanks[1].writeToNBT(nbt, "t1");
         return super.writeToNBT(nbt);
     }
 
@@ -324,9 +320,6 @@ public class TileEntityMachineHTRNeo extends TileEntityMachineBase
 
         plasmaEnergy = nbt.getLong("plasma");
         isOn = nbt.getBoolean("on");
-
-        tanks[0].readFromNBT(nbt, "t0");
-        tanks[1].readFromNBT(nbt, "t1");
     }
 
     @Override
@@ -338,7 +331,16 @@ public class TileEntityMachineHTRNeo extends TileEntityMachineBase
 
     @Override
     public @NotNull AxisAlignedBB getRenderBoundingBox() {
-        if(bb == null) bb = new AxisAlignedBB(pos.getX() - 11, pos.getY() - 2, pos.getZ() - 11, pos.getX() + 12, pos.getY() + 3, pos.getZ() + 12);
+        if(bb == null)
+            bb = new AxisAlignedBB(
+                    pos.getX() - 11,
+                    pos.getY() - 2,
+                    pos.getZ() - 11,
+                    pos.getX() + 12,
+                    pos.getY() + 3,
+                    pos.getZ() + 12
+            );
+
         return bb;
     }
 
@@ -349,6 +351,11 @@ public class TileEntityMachineHTRNeo extends TileEntityMachineBase
 
     public boolean isFacingPrograde() {
         return ForgeDirection.getOrientation(this.getBlockMetadata() - BlockDummyable.offset) == ForgeDirection.SOUTH;
+    }
+
+    @Override
+    public boolean isSealed(World world, int x, int y, int z) {
+        return true;
     }
 
 }

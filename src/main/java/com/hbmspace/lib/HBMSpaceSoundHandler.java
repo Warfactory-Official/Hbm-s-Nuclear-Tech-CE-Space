@@ -21,6 +21,7 @@ public class HBMSpaceSoundHandler {
     public static SoundEvent recordGodSpeed;
     public static SoundEvent recordGoop;
     public static SoundEvent recordEthereal;
+    public static SoundEvent htrfstart;
 
     public static void init() {
         plssBreathing = register("player.plss_breathing");
@@ -28,6 +29,7 @@ public class HBMSpaceSoundHandler {
         spinCharge = register("misc.spincharge");
         spinShot = register("misc.spinshot");
         fireFlash = register("misc.fireflash");
+        htrfstart = register("misc.htrfstart");
         dysonBeam = register("block.dysonBeam");
         stationHum = register("misc.stationhum");
         oil = register("player.oil");

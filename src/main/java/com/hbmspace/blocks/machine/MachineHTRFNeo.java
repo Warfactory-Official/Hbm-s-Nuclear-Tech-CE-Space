@@ -1,7 +1,7 @@
 package com.hbmspace.blocks.machine;
 
 import com.hbm.blocks.ILookOverlay;
-import com.hbm.inventory.fluid.tank.FluidTankNTM;
+import com.hbm.blocks.ITooltipProvider;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.TileEntityProxyCombo;
 import com.hbm.util.BobMathUtil;
@@ -10,6 +10,8 @@ import com.hbmspace.blocks.BlockDummyableSpace;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.tileentity.machine.TileEntityMachineHTRNeo;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -20,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MachineHTRFNeo extends BlockDummyableSpace implements ILookOverlay {
+public class MachineHTRFNeo extends BlockDummyableSpace implements ILookOverlay, ITooltipProvider {
 
     public MachineHTRFNeo(String s) {
         super(Material.IRON, s);
@@ -63,8 +65,6 @@ public class MachineHTRFNeo extends BlockDummyableSpace implements ILookOverlay 
         z += dir.offsetZ * o;
 
         this.makeExtra(world, x - rot.offsetX * 9, y, z - rot.offsetZ * 9);
-        //this.makeExtra(world, x - rot.offsetX * 9 + dir.offsetX, y, z - rot.offsetZ * 9 + dir.offsetZ);
-        //this.makeExtra(world, x - rot.offsetX * 9 - dir.offsetX, y, z - rot.offsetZ * 9 - dir.offsetZ);
         this.makeExtra(world, x - rot.offsetX * 5 - dir.offsetX * 3, y - 2, z - rot.offsetZ * 5 - dir.offsetZ * 2);
         this.makeExtra(world, x + rot.offsetX - dir.offsetX * 3, y - 2, z + rot.offsetZ - dir.offsetZ * 2);
         this.makeExtra(world, x - rot.offsetX * 5 - dir.offsetX * 3, y - 2, z - rot.offsetZ * 5 + dir.offsetZ * 2);
@@ -90,22 +90,32 @@ public class MachineHTRFNeo extends BlockDummyableSpace implements ILookOverlay 
         if(!thruster.isFacingPrograde()) {
             text.add("&[" + (BobMathUtil.getBlink() ? 0xff0000 : 0xffff00) + "&]! ! ! " + I18nUtil.resolveKey("atmosphere.engineFacing") + " ! ! !");
         } else {
-            text.add((thruster.plasmaEnergy == 0 ? TextFormatting.RED : TextFormatting.GREEN) + BobMathUtil.getShortNumber(thruster.plasmaEnergy) + "HE");
-            for(int i = 0; i < thruster.tanks.length; i++) {
-                FluidTankNTM tank = thruster.tanks[i];
-                text.add(TextFormatting.GREEN + "-> " + TextFormatting.RESET + tank.getTankType().getLocalizedName() + ": " + tank.getFill() + "/" + tank.getMaxFill() + "mB");
-            }
+            text.add("Plasma Energy: " + (thruster.plasmaEnergy == 0 ? TextFormatting.RED : TextFormatting.GREEN) + BobMathUtil.getShortNumber(thruster.plasmaEnergy) + "TU");
+
+            text.add("Power: " + (thruster.power < thruster.getMaxPower() ? TextFormatting.RED : TextFormatting.GREEN) + BobMathUtil.getShortNumber(thruster.power) + "HE");
+
+            int heat = (int) Math.ceil(thruster.temperature);
+            String label = (heat > 123 ? TextFormatting.RED : TextFormatting.AQUA) + "" + heat + "K";
+            text.add("Temperature: " + label);
+
+            text.add(TextFormatting.GREEN + "-> " + TextFormatting.RESET + thruster.coolantTanks[0].getTankType().getLocalizedName() + ": " + thruster.coolantTanks[0].getFill() + "/" + thruster.coolantTanks[0].getMaxFill() + "mB");
+            text.add(TextFormatting.RED + "<- " + TextFormatting.RESET + thruster.coolantTanks[1].getTankType().getLocalizedName() + ": " + thruster.coolantTanks[1].getFill() + "/" + thruster.coolantTanks[1].getMaxFill() + "mB");
+
+            if(!thruster.isCool()) text.add("&[" + (BobMathUtil.getBlink() ? 0xff0000 : 0xffff00) + "&]! ! ! INSUFFICIENT COOLING ! ! !");
 
             if(world.getTileEntity(pos) instanceof TileEntityProxyCombo) {
                 if(posC[0] == pos.getX() || posC[2] == pos.getZ()) {
-                    text.add("Connect to Plasma Heater from here");
-                } else {
-                    text.add("Connect to power from here");
+                    text.add("Connect to Fusion Reactor from here");
                 }
             }
         }
 
         ILookOverlay.printGeneric(event, I18nUtil.resolveKey(getTranslationKey() + ".name"), 0xffff00, 0x404000, text);
+    }
+
+    @Override
+    public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> list, @NotNull ITooltipFlag flagIn) {
+        this.addStandardInfo(list);
     }
 
 }
