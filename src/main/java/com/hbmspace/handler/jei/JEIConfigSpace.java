@@ -18,9 +18,11 @@ public class JEIConfigSpace implements IModPlugin {
     public static final String VACUUM_CIRCUIT = "hbm.vacuum_circuit";
     public static final String DAIRY = "hbm.dairy";
     public static final String CRYO = "hbm.cryodistill";
+    public static final String ALKYLATION = "hbm.alkylation";
     private VacuumCircuitHandler vacuumCircuitHandler;
     private DairyHandler dairyHandler;
     private CryoHandler cryoHandler;
+    private AlkylationHandler alkylationHandler;
 
     @Override
     public void register(@NotNull IModRegistry registry) {
@@ -30,10 +32,12 @@ public class JEIConfigSpace implements IModPlugin {
         registry.addRecipeCatalyst(new ItemStack(ModBlocksSpace.machine_vacuum_circuit), VACUUM_CIRCUIT);
         registry.addRecipeCatalyst(new ItemStack(ModBlocksSpace.machine_milk_reformer), DAIRY);
         registry.addRecipeCatalyst(new ItemStack(ModBlocksSpace.machine_cryo_distill), CRYO);
+        registry.addRecipeCatalyst(new ItemStack(ModBlocksSpace.machine_alkylation), ALKYLATION);
 
         registry.addRecipes(vacuumCircuitHandler.getRecipes(), VACUUM_CIRCUIT);
         registry.addRecipes(dairyHandler.getRecipes(), DAIRY);
         registry.addRecipes(cryoHandler.getRecipes(), CRYO);
+        registry.addRecipes(alkylationHandler.getRecipes(), ALKYLATION);
 
         IIngredientBlacklist blacklist = registry.getJeiHelpers().getIngredientBlacklist();
         blacklist.addIngredientToBlacklist(new ItemStack(ModBlocksSpace.dummy_beam));
@@ -53,7 +57,8 @@ public class JEIConfigSpace implements IModPlugin {
         registry.addRecipeCategories(
                 vacuumCircuitHandler = new VacuumCircuitHandler(help),
                 dairyHandler = new DairyHandler(help),
-                cryoHandler = new CryoHandler(help)
+                cryoHandler = new CryoHandler(help),
+                alkylationHandler = new AlkylationHandler(help)
         );
     }
 }
