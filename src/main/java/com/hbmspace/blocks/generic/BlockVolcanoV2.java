@@ -1,6 +1,7 @@
 package com.hbmspace.blocks.generic;
 
 import com.google.common.collect.ImmutableMap;
+import com.hbm.handler.threading.PacketThreading;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.lib.ModDamageSource;
 import com.hbm.packet.PacketDispatcher;
@@ -115,7 +116,7 @@ public class BlockVolcanoV2 extends BlockContainerBakeableSpace {
                     chargetime = world.rand.nextInt(400) + 100;
                 }
 
-                PacketDispatcher.wrapper.sendToAllAround(new BufPacket(pos.getX(), pos.getY(), pos.getZ(), this), new TargetPoint(this.world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+                PacketThreading.createAllAroundThreadedPacket(new BufPacket(pos.getX(), pos.getY(), pos.getZ(), this), new TargetPoint(this.world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
             }
         }
 
