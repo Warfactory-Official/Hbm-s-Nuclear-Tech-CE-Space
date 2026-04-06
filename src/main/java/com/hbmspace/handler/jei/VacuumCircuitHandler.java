@@ -17,7 +17,7 @@ import java.util.Map;
 public class VacuumCircuitHandler extends JEIUniversalHandler {
 
     public VacuumCircuitHandler(IGuiHelper helper) {
-        super(helper, JEIConfigSpace.VACUUM_CIRCUIT, ModBlocksSpace.machine_vacuum_circuit.getTranslationKey(),
+        super(helper, JEIConfigSpace.VACUUM_CIRCUIT, "jei.vacuum_solderer",
                 new ItemStack[]{new ItemStack(ModBlocksSpace.machine_vacuum_circuit)}, VacuumCircuitRecipes.getRecipes());
     }
 

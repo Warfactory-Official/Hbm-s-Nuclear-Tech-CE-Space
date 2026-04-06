@@ -9,6 +9,6 @@ import net.minecraft.item.ItemStack;
 public class AlkylationHandler extends JEIUniversalHandler {
 
     public AlkylationHandler(IGuiHelper helper) {
-        super(helper, JEIConfigSpace.ALKYLATION, "Alkylation", new ItemStack[]{new ItemStack(ModBlocksSpace.machine_alkylation)}, wrapRecipes2(AlkylationRecipes.getRecipes()));
+        super(helper, JEIConfigSpace.ALKYLATION, "jei.alkylation", new ItemStack[]{new ItemStack(ModBlocksSpace.machine_alkylation)}, wrapRecipes2(AlkylationRecipes.getRecipes()));
     }
 }

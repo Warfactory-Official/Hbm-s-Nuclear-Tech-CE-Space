@@ -1,5 +1,6 @@
 package com.hbmspace.handler.jei;
 
+import com.hbm.blocks.ModBlocks;
 import com.hbm.config.GeneralConfig;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.items.ModItemsSpace;
@@ -19,10 +20,18 @@ public class JEIConfigSpace implements IModPlugin {
     public static final String DAIRY = "hbm.dairy";
     public static final String CRYO = "hbm.cryodistill";
     public static final String ALKYLATION = "hbm.alkylation";
+    public static final String ATMO = "hbm.atmo_compress";
+    public static final String BEDROCK = "hbm.bedrock_drill";
+    public static final String OIL = "hbm.oil_extraction";
+    public static final String WATER = "hbm.water_table";
     private VacuumCircuitHandler vacuumCircuitHandler;
     private DairyHandler dairyHandler;
     private CryoHandler cryoHandler;
     private AlkylationHandler alkylationHandler;
+    private AtmosphericCompressorHandler atmosphericCompressorHandler;
+    private BedrockDrillHandler bedrockDrillHandler;
+    private OilExtractionHandler oilExtractionHandler;
+    private WaterTableHandler waterTableHandler;
 
     @Override
     public void register(@NotNull IModRegistry registry) {
@@ -33,11 +42,22 @@ public class JEIConfigSpace implements IModPlugin {
         registry.addRecipeCatalyst(new ItemStack(ModBlocksSpace.machine_milk_reformer), DAIRY);
         registry.addRecipeCatalyst(new ItemStack(ModBlocksSpace.machine_cryo_distill), CRYO);
         registry.addRecipeCatalyst(new ItemStack(ModBlocksSpace.machine_alkylation), ALKYLATION);
+        registry.addRecipeCatalyst(new ItemStack(ModBlocksSpace.machine_atmo_vent), ATMO);
+        registry.addRecipeCatalyst(new ItemStack(ModBlocks.machine_excavator), BEDROCK);
+        registry.addRecipeCatalyst(new ItemStack(ModBlocks.machine_well), OIL);
+        registry.addRecipeCatalyst(new ItemStack(ModBlocks.machine_pumpjack), OIL);
+        registry.addRecipeCatalyst(new ItemStack(ModBlocks.machine_fracking_tower), OIL);
+        registry.addRecipeCatalyst(new ItemStack(ModBlocks.pump_electric), WATER);
+        registry.addRecipeCatalyst(new ItemStack(ModBlocks.pump_steam), WATER);
 
         registry.addRecipes(vacuumCircuitHandler.getRecipes(), VACUUM_CIRCUIT);
         registry.addRecipes(dairyHandler.getRecipes(), DAIRY);
         registry.addRecipes(cryoHandler.getRecipes(), CRYO);
         registry.addRecipes(alkylationHandler.getRecipes(), ALKYLATION);
+        registry.addRecipes(atmosphericCompressorHandler.getRecipes(), ATMO);
+        registry.addRecipes(bedrockDrillHandler.getRecipes(), BEDROCK);
+        registry.addRecipes(oilExtractionHandler.getRecipes(), OIL);
+        registry.addRecipes(waterTableHandler.getRecipes(), WATER);
 
         IIngredientBlacklist blacklist = registry.getJeiHelpers().getIngredientBlacklist();
         blacklist.addIngredientToBlacklist(new ItemStack(ModBlocksSpace.dummy_beam));
@@ -58,7 +78,11 @@ public class JEIConfigSpace implements IModPlugin {
                 vacuumCircuitHandler = new VacuumCircuitHandler(help),
                 dairyHandler = new DairyHandler(help),
                 cryoHandler = new CryoHandler(help),
-                alkylationHandler = new AlkylationHandler(help)
+                alkylationHandler = new AlkylationHandler(help),
+                atmosphericCompressorHandler = new AtmosphericCompressorHandler(help),
+                bedrockDrillHandler = new BedrockDrillHandler(help),
+                oilExtractionHandler = new OilExtractionHandler(help),
+                waterTableHandler = new WaterTableHandler(help)
         );
     }
 }

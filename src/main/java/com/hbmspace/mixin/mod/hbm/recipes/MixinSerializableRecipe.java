@@ -1,6 +1,7 @@
 package com.hbmspace.mixin.mod.hbm.recipes;
 
 import com.hbm.inventory.recipes.loader.SerializableRecipe;
+import com.hbmspace.inventory.recipes.AlkylationRecipes;
 import com.hbmspace.inventory.recipes.CryoRecipes;
 import com.hbmspace.inventory.recipes.VacuumCircuitRecipes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,5 +21,6 @@ public class MixinSerializableRecipe {
     private static void registerSpaceHandlers(CallbackInfo ci) {
         recipeHandlers.add(new VacuumCircuitRecipes());
         recipeHandlers.add(new CryoRecipes());
+        recipeHandlers.add(new AlkylationRecipes());
     }
 }

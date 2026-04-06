@@ -9,6 +9,6 @@ import net.minecraft.item.ItemStack;
 public class CryoHandler extends JEIUniversalHandler {
 
     public CryoHandler(IGuiHelper helper) {
-        super(helper, JEIConfigSpace.CRYO, "Cryogenic Distillation", new ItemStack[]{new ItemStack(ModBlocksSpace.machine_cryo_distill)}, CryoRecipes.getCryoRecipes());
+        super(helper, JEIConfigSpace.CRYO, "jei.cryogen", new ItemStack[]{new ItemStack(ModBlocksSpace.machine_cryo_distill)}, CryoRecipes.getCryoRecipes());
     }
 }

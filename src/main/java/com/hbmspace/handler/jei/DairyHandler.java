@@ -13,7 +13,7 @@ import java.util.HashMap;
 public class DairyHandler extends JEIUniversalHandler {
 
     public DairyHandler(IGuiHelper helper) {
-        super(helper, JEIConfigSpace.DAIRY, "Dairy", new ItemStack[]{new ItemStack(ModBlocksSpace.machine_milk_reformer)}, getDairyRecipesForJEI());
+        super(helper, JEIConfigSpace.DAIRY, "jei.dairy", new ItemStack[]{new ItemStack(ModBlocksSpace.machine_milk_reformer)}, getDairyRecipesForJEI());
     }
 
     public static HashMap<Object, Object> getDairyRecipesForJEI() {
