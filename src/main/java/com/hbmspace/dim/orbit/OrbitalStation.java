@@ -20,6 +20,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class OrbitalStation {
 
@@ -58,7 +59,9 @@ public class OrbitalStation {
 	private final HashSet<IPropulsion> engines = new HashSet<>();
 
 	public static OrbitalStation clientStation = new OrbitalStation(CelestialBody.getBody(0));
-	public static volatile List<OrbitalStation> orbitingStations = new ArrayList<>();
+
+	// Th3_Sl1ze: afaik, volatile + CopyOnWriteArrayList are redundant here. I'll leave it like that just to guarantee another fucking CME prevention
+	public static volatile List<OrbitalStation> orbitingStations = new CopyOnWriteArrayList<>();
 
 	public static final int STATION_SIZE = 1024; // total area for each station
 	public static final int BUFFER_SIZE = 256; // size of the buffer region that drops you out of orbit (preventing seeing other stations)

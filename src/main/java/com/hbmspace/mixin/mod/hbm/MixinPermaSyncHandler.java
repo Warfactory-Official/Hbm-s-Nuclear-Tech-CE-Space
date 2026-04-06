@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Mixins using ordinals are brittle and must be updated when PermaSyncHandler changes.
@@ -115,13 +116,12 @@ public class MixinPermaSyncHandler {
                     }
                 }
 
-                OrbitalStation.orbitingStations.clear();
                 int count = buf.readInt();
                 List<OrbitalStation> newStations = new ArrayList<>();
                 for(int i = 0; i < count; i++) {
                     newStations.add(new OrbitalStation(null, buf.readInt(), buf.readInt()));
                 }
-                OrbitalStation.orbitingStations = newStations;
+                OrbitalStation.orbitingStations = new CopyOnWriteArrayList<>(newStations);
             } catch (Exception ex) {
                 MainRegistry.logger.catching(ex);
                 SolarSystemWorldSavedData.updateClientTraits(null);
