@@ -1,12 +1,16 @@
 package com.hbmspace.inventory;
 
+import com.hbm.blocks.ModBlocks;
 import com.hbm.inventory.OreDictManager;
 import com.hbm.items.ItemEnums;
 import com.hbmspace.blocks.BlockEnumsSpace;
 import com.hbmspace.hazard.HazardRegistrySpace;
 import com.hbmspace.items.enums.ItemEnumsSpace;
 import net.minecraft.init.Items;
+import net.minecraftforge.oredict.OreDictionary;
 
+import static com.hbm.blocks.ModBlocks.basalt;
+import static com.hbm.blocks.ModBlocks.basalt_smooth;
 import static com.hbm.inventory.OreDictManager.DictFrame.fromAll;
 import static com.hbm.inventory.OreDictManager.DictFrame.fromOne;
 import static com.hbm.inventory.material.MaterialShapes.DUST;
@@ -34,6 +38,10 @@ public class OreDictManagerSpace {
     public static final DictFrame ZI = new DictFrame("Zinc");
     public static final DictFrame GALLIUM = new DictFrame("Gallium");
     public static final DictFrame GAAS = new DictFrame("GalliumArsenide");
+
+    /** MINT */
+    public static final DictFrame MEN = new DictFrame("Menthol");
+
     public static final DictFrame STAINLESS = new DictFrame("StainlessSteel");
 
     public static final DictFrame GLOWSTONE = new DictFrame("Glowstone");
@@ -101,14 +109,16 @@ public class OreDictManagerSpace {
         ((IDictFrameAddon) AUSTRALIUM).oreAll(ore_australium);
         ((IDictFrameAddon) ASBESTOS).oreAll(ore_asbestos);
         ((IDictFrameAddon) U).oreAll(ore_uranium);
-        ((IDictFrameAddon) LA).oreAll(ore_lanthanium);
+        ((IDictFrameAddon) LA).oreAll(ore_lanthanium).nugget(nugget_lanthanium);
         ((IDictFrameAddon) NB).oreAll(ore_niobium);
         ((IDictFrameAddon) I).oreAll(ore_iodine);
+        ((IDictFrameAddon) P_RED).oreAll(ore_fire);
 
         // TODO: neutron type for hazard registry
         ((IDictFrameAddon) NI.ingot(ingot_nickel).dust(powder_nickel).plate(plate_nickel).block(block_nickel)).oreAll(ore_nickel).nugget(nugget_nickel);
         NIM																	.dust(fromOne(chunk_ore, ItemEnumsSpace.EnumChunkType.PENTLANDITE)); // dust selected for compat reasons
         CONGLOMERATE.ore(fromOne(stone_resource, BlockEnumsSpace.EnumStoneType.CONGLOMERATE));
+        RICHMAGMA						.ingot(ingot_magma);
         ((IDictFrameAddon)ZI			.nugget(nugget_zinc)									.ingot(ingot_zinc)													.dust(powder_zinc))		.oreAll(ore_zinc);
         GALLIUM		.nugget(nugget_gallium)									.ingot(ingot_gallium)												.dust(powder_gallium)		.dustSmall(powder_gallium_tiny);
         GAAS		.nugget(nugget_gaas)									.ingot(ingot_gaas)													.billet(billet_gaas);
@@ -118,6 +128,7 @@ public class OreDictManagerSpace {
         AYERITE		.nugget(nugget_australium_greater)	.billet(billet_australium_greater)	.ingot(ingot_australium_greater);
         GLOWSTONE.dust(Items.GLOWSTONE_DUST);
         STAINLESS															.ingot(ingot_stainless)			 																	.plate(plate_stainless);
+        SEMTEX																.ingot(ingot_semtex)																												.block(ModBlocks.block_semtex);
         PENTLANDITE	.crystal(fromOne(chunk_ore, ItemEnumsSpace.EnumChunkType.PENTLANDITE));
         COALCOKE.dust(fromOne(powder_coke, ItemEnums.EnumCokeType.COAL));
         PETCOKE.dust(fromOne(powder_coke, ItemEnums.EnumCokeType.PETROLEUM));
@@ -138,5 +149,36 @@ public class OreDictManagerSpace {
         ES253	.rad(HazardRegistrySpace.es253)/*.neutron(HazardRegistry.es253/40).hot(4)*/                          .nugget(nugget_es253)	   	.billet(billet_es253)       .ingot(ingot_es253);
         ES255	.rad(HazardRegistrySpace.es255)																					.ingot(ingot_es255);
         CN989   .rad(HazardRegistrySpace.cn989)  .hot(4F)                .nugget(nugget_cn989)       .billet(billet_cn989)       .ingot(ingot_cn989)         .dust(powder_cn989)         .plate(plate_cn989);
+
+        OreDictionary.registerOre(KEY_SAND, duna_sands);
+        OreDictionary.registerOre(KEY_SAND, laythe_silt);
+        OreDictionary.registerOre(KEY_SAND, eve_silt);
+        OreDictionary.registerOre(KEY_SAND, ModBlocks.moon_turf);
+        OreDictionary.registerOre(KEY_SAND, rubber_silt);
+        OreDictionary.registerOre(KEY_SAND, vinyl_sand);
+
+        OreDictionary.registerOre(KEY_STONE, duna_rock);
+        OreDictionary.registerOre(KEY_COBBLESTONE, duna_cobble);
+        OreDictionary.registerOre(KEY_COBBLESTONE, dres_rock);
+        OreDictionary.registerOre(KEY_COBBLESTONE, ike_regolith);
+        OreDictionary.registerOre(KEY_STONE, ike_stone);
+        OreDictionary.registerOre(KEY_COBBLESTONE, eve_rock);
+        OreDictionary.registerOre(KEY_COBBLESTONE, moho_regolith);
+        OreDictionary.registerOre(KEY_STONE, moho_stone);
+        OreDictionary.registerOre(KEY_COBBLESTONE, moon_rock);
+        OreDictionary.registerOre(KEY_COBBLESTONE, minmus_regolith);
+        OreDictionary.registerOre(KEY_STONE, minmus_smooth);
+        OreDictionary.registerOre(KEY_STONE, minmus_stone);
+        OreDictionary.registerOre(KEY_COBBLESTONE, basalt);
+        OreDictionary.registerOre(KEY_STONE, basalt_smooth);
+
+        OreDictionary.registerOre(KEY_LOG, vinyl_log);
+        OreDictionary.registerOre(KEY_LOG, pvc_log);
+
+        OreDictionary.registerOre(KEY_PLANKS, vinyl_planks);
+        OreDictionary.registerOre(KEY_PLANKS, pvc_planks);
+
+        OreDictionary.registerOre(KEY_STICK, stick_vinyl);
+        OreDictionary.registerOre(KEY_STICK, stick_pvc);
     }
 }

@@ -23,6 +23,7 @@ import com.hbmspace.lib.HBMSpaceSoundHandler;
 import com.hbmspace.packet.PacketRegistry;
 import com.hbmspace.potion.HbmPotion;
 import com.hbmspace.render.misc.RocketPart;
+import com.hbmspace.tileentity.machine.TileEntityMachinePumpBaseTweaks;
 import com.hbmspace.world.PlanetGen;
 import com.hbmspace.world.feature.OreLayer3DSpace;
 import net.minecraft.block.Block;
@@ -94,6 +95,7 @@ public class SpaceMain {
         ModFluidsSpace.init();
         ModItemsSpace.preInit();
         ModBlocksSpace.preInit();
+        TileEntityMachinePumpBaseTweaks.addSpaceBlocks();
 
         proxy.registerRenderInfo();
         proxy.preInit(event);
