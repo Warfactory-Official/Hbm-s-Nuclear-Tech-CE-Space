@@ -46,6 +46,7 @@ public class ModBlocksSpace {
     public static final Block block_nickel = new BlockBakeBaseSpace(Material.IRON, "block_nickel").setSoundType(SoundType.METAL).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block block_osmiridium = new BlockBakeBaseSpace(Material.IRON, "block_osmiridium").setCreativeTab(MainRegistry.blockTab).setSoundType(SoundType.METAL).setHardness(5.0F).setResistance(10.0F);
     public static final Block deco_stainless = new BlockBaseSpace(Material.IRON, "deco_stainless").setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
+    public static final Block combat_drop = new CombatDropPod(Material.IRON, "combat_drop").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.missileTab);
     public static final Block ore_iron = new BlockOre("ore_iron", null, Blocks.IRON_ORE).setCreativeTab(MainRegistry.blockTab).setHardness(3.0F).setResistance(5.0F);
     public static final Block ore_gold = new BlockOre("ore_gold", null, Blocks.GOLD_ORE).setCreativeTab(MainRegistry.blockTab).setHardness(3.0F).setResistance(5.0F);
     public static final Block ore_redstone = new BlockOre("ore_redstone", OreEnumUtilSpace.SpaceOreEnum.REDSTONE, Blocks.REDSTONE_ORE, 2).setCreativeTab(MainRegistry.blockTab).setHardness(3.0F).setResistance(5.0F);

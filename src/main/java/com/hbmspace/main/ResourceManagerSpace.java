@@ -12,6 +12,7 @@ public class ResourceManagerSpace {
     public static final IModelCustom htrf4_neo = new HFRWavefrontObject(new ResourceLocation("hbm", "models/fusion/htrf4.obj")).asVBO();
     public static final IModelCustom xenon_thruster = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/xenon_thruster.obj")).asVBO();
     public static final IModelCustom drop_pod = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/rp_drop_pod.obj")).asVBO();
+    public static final IModelCustom combat_pod = new HFRWavefrontObject(new ResourceLocation("hbm", "models/bombs/combat_drop_pod.obj")).asVBO();
     public static final IModelCustom landing_capsule = (new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/rp_landing_capsule.obj"))).asVBO();
     public static final IModelCustom mp_w_fairing = (new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_w_fairing.obj"))).asVBO();
     public static final IModelCustom mp_f_20_12_usa = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_f_20_usa.obj")).asVBO();
@@ -51,6 +52,9 @@ public class ResourceManagerSpace {
     public static final IModelCustom dyson_spinlaunch = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/dyson_spinlaunch.obj")).asVBO();
     public static final IModelCustom dyson_swarm_member = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/dyson_swarm_satellite.obj"));
 
+    public static final IModelCustom mini_ufo = new HFRWavefrontObject(new ResourceLocation("hbm", "models/mobs/mini_ufo.obj")).asVBO();
+    public static final IModelCustom siege_ufo = new HFRWavefrontObject(new ResourceLocation("hbm", "models/mobs/siege_ufo.obj")).asVBO();
+
     //Laythies
     public static final IModelCustom scutterfish = new HFRWavefrontObject(new ResourceLocation("hbm", "models/mobs/scutterfish.obj")).asVBO();
     public static final IModelCustom scuttlecrab = new HFRWavefrontObject(new ResourceLocation("hbm", "models/mobs/scuttlecrab.obj")).asVBO();
@@ -70,6 +74,9 @@ public class ResourceManagerSpace {
     public static final ResourceLocation docking_port_tex = new ResourceLocation("hbm", "textures/models/machines/docking_port.png");
     public static final ResourceLocation docking_port_launcher_tex = new ResourceLocation("hbm", "textures/models/machines/docking_port_launcher.png");
     public static final ResourceLocation drop_pod_tex = new ResourceLocation("hbm", "textures/models/missile_parts/warheads/rp_drop_pod.png");
+    public static final ResourceLocation combat_pod_skin_yellow = new ResourceLocation("hbm", "textures/models/bombs/combat_drop_pod.yellow.png");
+    public static final ResourceLocation combat_pod_skin_white = new ResourceLocation("hbm", "textures/models/bombs/combat_drop_pod.white.png");
+    public static final ResourceLocation combat_pod_skin_red = new ResourceLocation("hbm", "textures/models/bombs/combat_drop_pod.red.png");
     public static final ResourceLocation landing_capsule_tex = new ResourceLocation("hbm", "textures/models/missile_parts/warheads/rp_landing_capsule.png");
     public static final ResourceLocation mp_w_fairing_tex = new ResourceLocation("hbm", "textures/models/missile_parts/warheads/mp_w_fairing.png");
     public static final ResourceLocation mp_f_20_hydrazine_tex = new ResourceLocation("hbm", "textures/models/missile_parts/fuselages/mp_f_20_hydrazine.png");
@@ -108,6 +115,9 @@ public class ResourceManagerSpace {
     public static final ResourceLocation dyson_tu_converter_tex = new ResourceLocation("hbm", "textures/models/machines/dyson_tu_converter.png");
     public static final ResourceLocation dyson_spinlaunch_tex = new ResourceLocation("hbm", "textures/models/machines/dyson_spinlaunch.png");
     public static final ResourceLocation dyson_swarm_member_tex = new ResourceLocation("hbm", "textures/models/dyson_swarm_satellite.png");
+
+    public static final IModelCustom plane = new HFRWavefrontObject(new ResourceLocation("hbm", "models/misc/plane.obj")).asVBO();
+    public static final IModelCustom sphere_v2 = new HFRWavefrontObject(new ResourceLocation("hbm", "models/misc/spherev2.obj")).asVBO();
 
     public static final ResourceLocation universal = new ResourceLocation("hbm", "textures/models/TheGadget3_.png");
 }

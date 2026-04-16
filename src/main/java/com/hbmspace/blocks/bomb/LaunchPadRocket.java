@@ -9,8 +9,10 @@ import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.items.ModItems;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.TileEntityProxyCombo;
+import com.hbm.util.BobMathUtil;
 import com.hbm.util.I18nUtil;
 import com.hbmspace.blocks.BlockDummyableSpace;
+import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.tileentity.bomb.TileEntityLaunchPadRocket;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -85,6 +87,12 @@ public class LaunchPadRocket extends BlockDummyableSpace implements ILookOverlay
 
     @Override
     public void printHook(RenderGameOverlayEvent.Pre event, World world, BlockPos pos) {
+        if(CelestialBody.inOrbit(world)) {
+            List<String> text = new ArrayList<>();
+            text.add("&[" + (BobMathUtil.getBlink() ? 0xff0000 : 0xffff00) + "&]! ! ! " + I18nUtil.resolveKey("atmosphere.yesOrbit") + " ! ! !");
+            ILookOverlay.printGeneric(event, I18nUtil.resolveKey(getTranslationKey() + ".name"), 0xffff00, 0x404000, text);
+            return;
+        }
 
         int[] posC = this.findCore(world, pos.getX(), pos.getY(), pos.getZ());
 

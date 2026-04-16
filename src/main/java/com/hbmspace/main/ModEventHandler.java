@@ -1,5 +1,6 @@
 package com.hbmspace.main;
 
+import com.hbm.blocks.machine.BlockBeamBase;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toclient.PlayerInformPacketLegacy;
 import com.hbmspace.inventory.recipes.tweakers.CraftingManagerTweaker;
@@ -141,7 +142,7 @@ public class ModEventHandler {
 
         Block block = world.getBlockState(pos).getBlock();
 
-        if(/*block == ModBlocksSpace.rubber_grass ||*/ block == ModBlocksSpace.rubber_silt) {
+        if(block == ModBlocksSpace.rubber_grass || block == ModBlocksSpace.rubber_silt) {
             world.setBlockState(pos, ModBlocksSpace.rubber_farmland.getDefaultState());
             world.playSound(null, pos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1F, 1F);
             event.getCurrent().damageItem(1, event.getEntityPlayer());
@@ -153,9 +154,7 @@ public class ModEventHandler {
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         if(event.getPos().getY() > event.getWorld().provider.getHorizon()) {
             if(event.getState().getLightValue() > 10) {
-                // Placing blocks onto beams counts as a break, but doesn't reduce light count
-                // TODO
-                /*if(!(event.getState().getBlock() instanceof BlockBeamBase)) {
+                if(!(event.getState().getBlock() instanceof BlockBeamBase)) {
                     CelestialBody body = CelestialBody.getBody(event.getWorld());
                     CBT_Lights lights = body.getTrait(CBT_Lights.class);
 
@@ -163,7 +162,7 @@ public class ModEventHandler {
                     lights.removeLight(event.getState().getBlock(), event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
 
                     body.modifyTraits(lights);
-                }*/
+                }
 
             }
         }
@@ -474,7 +473,7 @@ public class ModEventHandler {
             for(CelestialBody body : CelestialBody.getAllBodies()) {
                 List<CelestialBodyTrait> traits = new ArrayList<>(body.getTraits().values());
                 for (CelestialBodyTrait trait : traits) {
-                    trait.update(false);
+                    trait.update(false, body);
                 }
             }
 

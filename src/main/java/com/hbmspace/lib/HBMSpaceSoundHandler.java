@@ -22,6 +22,9 @@ public class HBMSpaceSoundHandler {
     public static SoundEvent recordGoop;
     public static SoundEvent recordEthereal;
     public static SoundEvent htrfstart;
+    public static SoundEvent hatchImpact;
+    public static SoundEvent bfaShoot;
+    public static SoundEvent alertPing;
 
     public static void init() {
         plssBreathing = register("player.plss_breathing");
@@ -36,6 +39,9 @@ public class HBMSpaceSoundHandler {
         recordGodSpeed = register("music.recordGodSpeed");
         recordGoop = register("music.recordGoop");
         recordEthereal = register("music.recordEthereal");
+        hatchImpact = register("block.hatchImpact");
+        bfaShoot = register("entity.bfashoot");
+        alertPing = register("alarm.ping");
     }
 
     public static SoundEvent register(String name) {

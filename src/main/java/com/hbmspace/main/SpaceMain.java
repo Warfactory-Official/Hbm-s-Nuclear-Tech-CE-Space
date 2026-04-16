@@ -32,12 +32,16 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
 
@@ -52,7 +56,7 @@ import java.io.File;
  *
  * @author Th3_Sl1ze
 */
-@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:hbm@[2.1.1.0,);required-after:mixinbooter@[10.6,)")
+@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:hbm@[2.2.0.0,);required-after:mixinbooter@[10.6,)")
 @Mod.EventBusSubscriber
 public class SpaceMain {
 
@@ -156,5 +160,21 @@ public class SpaceMain {
     @EventHandler
     public void serverStarting(FMLServerStartingEvent evt) {
         evt.registerServerCommand(new CommandSpaceTP());
+    }
+
+    // Th3_Sl1ze: Either I'm blind or there are no annotations for specifying dependency version..
+    // This is for reverse compat. Yes, I'm gonna do that. Cuz why not?
+    public static boolean checkNTMVersion(String versionSpec) {
+        ModContainer mod = Loader.instance().getIndexedModList().get("hbm");
+        if (mod != null) {
+            ArtifactVersion currentVersion = mod.getProcessedVersion();
+            try {
+                VersionRange range = VersionRange.createFromVersionSpec(versionSpec);
+                return range.containsVersion(currentVersion);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return false;
     }
 }

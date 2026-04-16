@@ -3,11 +3,14 @@ package com.hbmspace.dim;
 import com.hbm.config.GeneralConfig;
 import com.hbm.handler.ImpactWorldHandler;
 import com.hbm.inventory.fluid.FluidStack;
+import com.hbm.inventory.fluid.FluidType;
+import com.hbm.main.MainRegistry;
 import com.hbm.saveddata.satellites.Satellite;
 import com.hbm.saveddata.satellites.SatelliteSavedData;
 import com.hbmspace.dim.trait.CBT_Atmosphere;
 import com.hbmspace.dim.trait.CBT_Atmosphere.FluidEntry;
 import com.hbmspace.dim.trait.CBT_Destroyed;
+import com.hbmspace.dim.trait.CBT_Invasion;
 import com.hbmspace.dim.trait.CBT_War;
 import com.hbmspace.handler.atmosphere.ChunkAtmosphereManager;
 import com.hbm.inventory.fluid.Fluids;
@@ -16,12 +19,14 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.BossInfoServer;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
@@ -32,15 +37,21 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public abstract class WorldProviderCelestial extends WorldProvider {
 	public List<SolarSystem.AstroMetric> metrics;
 
 	private double eclipseAmount;
 	private long localTime = -1;
-	
+
+	public static ArrayList<Meteor> meteors = new ArrayList<>();
+
+	private BossInfoServer invasionBossBar;
+
 	@Override
 	public abstract void init();
 
@@ -69,6 +80,27 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 	@Override
 	public void updateWeather() {
 		CBT_Atmosphere atmosphere = CelestialBody.getTrait(world, CBT_Atmosphere.class);
+
+		if(world.isRemote) {
+			EntityPlayer player = MainRegistry.proxy.me();
+			CBT_Invasion invasion = CelestialBody.getTrait(world, CBT_Invasion.class);
+
+			if(invasion != null) {
+				for(int i = 0; i < meteors.size(); i++) {
+					meteors.get(i).update();
+				}
+
+				if(world.rand.nextInt(Math.max(1, 5 - invasion.wave)) == 0 && invasion.isInvading) {
+					Meteor meteor = new Meteor((player.posX + world.rand.nextInt(16000)) - 8000, 2017, (player.posZ + world.rand.nextInt(16000)) - 8000);
+					meteors.add(meteor);
+				}
+
+				meteors.removeIf(x -> x.isDead);
+			} else {
+				meteors.removeAll(meteors);
+			}
+		}
+
 		if(atmosphere != null && atmosphere.getPressure() > 0.5F) {
 			super.updateWeather();
 			return;
@@ -80,6 +112,34 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 		this.world.getWorldInfo().setThundering(false);
 		this.world.rainingStrength = 0.0F;
 		this.world.thunderingStrength = 0.0F;
+
+		handleInvasionBossBar();
+	}
+
+	private void handleInvasionBossBar() {
+		CBT_Invasion invasion = CelestialBody.getTrait(world, CBT_Invasion.class);
+
+		if(invasion != null && invasion.isInvading) {
+			if(invasionBossBar == null) {
+				invasionBossBar = invasion.getBossInfo();
+			}
+
+			for(EntityPlayer player : world.playerEntities) {
+				if(player instanceof EntityPlayerMP mpPlayer) {
+					invasionBossBar.addPlayer(mpPlayer);
+				}
+			}
+
+			invasionBossBar.setPercent(invasion.getHealth() / invasion.getMaxHealth());
+
+		} else if(invasionBossBar != null) {
+			for(EntityPlayer player : world.playerEntities) {
+				if(player instanceof EntityPlayerMP mpPlayer) {
+					invasionBossBar.removePlayer(mpPlayer);
+				}
+			}
+			invasionBossBar = null;
+		}
 	}
 
 	@Override
@@ -411,7 +471,36 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 		return new Vec3d(cX, cY, cZ);
 	}
 
-	private Vec3d getColorFromHex(int hexColor) {
+	// Might refactor all the separate fluid color calcs into using just this one (but they all vary slightly so not yet)
+	// For now, it'll go here, next to the other fluid color stuff, so we don't forget about it
+	// also, lightning sky tinting doesn't actually work outside of earth air/oxygen/nitrogen so uh yeah we should fix that lmao
+	public static Vec3d getAtmosphereFluidColor(FluidType fluid) {
+		if(fluid == null) {
+			return new Vec3d(1.0D, 1.0D, 1.0D);
+		}
+
+		if(fluid == com.hbmspace.inventory.fluid.Fluids.EVEAIR) {
+			return new Vec3d(53F / 255F, 32F / 255F, 74F / 255F);
+		}
+
+		// Slightly redder "red sand" tint for Duna-like atmospheres.
+		if(fluid == com.hbmspace.inventory.fluid.Fluids.DUNAAIR) {
+			return new Vec3d(198F / 255F, 96F / 255F, 64F / 255F);
+		}
+
+		// Neutral/desaturated CO2 tint.
+		if(fluid == Fluids.CARBONDIOXIDE) {
+			return new Vec3d(188F / 255F, 192F / 255F, 198F / 255F);
+		}
+
+		if(fluid == com.hbmspace.inventory.fluid.Fluids.EARTHAIR || fluid == Fluids.OXYGEN || fluid == com.hbmspace.inventory.fluid.Fluids.NITROGEN) {
+			return new Vec3d(0.7529412F, 0.84705883F, 1.0F);
+		}
+
+		return getColorFromHex(fluid.getColor());
+	}
+
+	private static Vec3d getColorFromHex(int hexColor) {
 		float red = ((hexColor >> 16) & 0xFF) / 255.0F;
 		float green = ((hexColor >> 8) & 0xFF) / 255.0F;
 		float blue = (hexColor & 0xFF) / 255.0F;
@@ -792,5 +881,67 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 		return null;
 	}*/
 	/// FISH ///
+
+	public static class Meteor {
+
+		public double posX;
+		public double posY;
+		public double posZ;
+		public double prevPosX;
+		public double prevPosY;
+		public double prevPosZ;
+		public double motionX;
+		public double motionY;
+		public double motionZ;
+		public boolean isDead = false;
+		public long age;
+		public MeteorType type;
+
+		public Meteor(double posX, double posY, double posZ) {
+			this(posX, posY, posZ, MeteorType.STANDARD, -31.2, -20.8, 20);
+		}
+
+		public Meteor(double posX, double posY, double posZ, MeteorType type, double motionX, double motionY, double motionZ) {
+			this.posX = posX;
+			this.posY = posY;
+			this.posZ = posZ;
+			this.type = type;
+			this.motionX = motionX;
+			this.motionY = motionY;
+			this.motionZ = motionZ;
+		}
+
+		private void update() {
+			Random rand = new Random();
+
+			if(this.type != MeteorType.SMOKE && this.type != MeteorType.FRAGMENT) {
+				Meteor meteor = new Meteor((this.posX + rand.nextInt(16)) - 8, (this.posY + rand.nextInt(16)), (this.posZ + rand.nextInt(16)) - 8, MeteorType.SMOKE, 0, 0, 0);
+				meteors.add(meteor);
+			}
+
+			if(this.posY <= 500 && this.type != MeteorType.SMOKE) {
+				this.isDead = true;
+			}
+
+			if(this.type == MeteorType.SMOKE) {
+				this.age++;
+				if(this.age >= 60)
+					this.isDead = true;
+			}
+
+			this.prevPosX = this.posX;
+			this.prevPosY = this.posY;
+			this.prevPosZ = this.posZ;
+			this.posX += this.motionX;
+			this.posY += this.motionY;
+			this.posZ += this.motionZ;
+		}
+	}
+
+	public enum MeteorType {
+		STANDARD,
+		FRAGMENT,
+		SMOKE
+	}
 
 }

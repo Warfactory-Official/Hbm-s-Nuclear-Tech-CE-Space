@@ -9,6 +9,7 @@ import com.hbm.saveddata.satellites.Satellite;
 import com.hbm.saveddata.satellites.SatelliteSavedData;
 import com.hbm.util.BobMathUtil;
 import com.hbmspace.main.ModEventHandlerClient;
+import com.hbmspace.main.ResourceManagerSpace;
 import com.hbmspace.render.shader.ShaderSpace;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -44,10 +45,16 @@ public class SkyProviderCelestial extends IRenderHandler {
 	private static final ResourceLocation ringTexture = new ResourceLocation("hbm", "textures/misc/space/rings.png");
 	private static final ResourceLocation destroyedBody = new ResourceLocation("hbm", "textures/misc/space/destroyed.png");
 
+	private static final ResourceLocation thatmoShield = new ResourceLocation("hbm", "textures/particle/cens.png");
+
+	private static final ShaderSpace fleshShader = new ShaderSpace(new ResourceLocation("hbm", "shaders/fle.frag"));
+
 	private static final ResourceLocation noise = new ResourceLocation("hbm", "shaders/iChannel1.png");
 
 	protected static final ShaderSpace planetShader = new ShaderSpace(new ResourceLocation("hbm", "shaders/crescent.frag"));
 	protected static final ShaderSpace swarmShader = new ShaderSpace(new ResourceLocation("hbm", "shaders/swarm.vert"), new ResourceLocation("hbm", "shaders/swarm.frag"));
+
+	private static final ResourceLocation particleBase = new ResourceLocation("hbm", "textures/particle/particle_base.png");
 
 	private static final ResourceLocation[] citylights = new ResourceLocation[] {
 			new ResourceLocation("hbm", "textures/misc/space/citylights_0.png"),
@@ -63,6 +70,8 @@ public class SkyProviderCelestial extends IRenderHandler {
 	public static int sky2VBO;
 
 	private static boolean gl13;
+
+	private static float currentFov = 70;
 
 	public SkyProviderCelestial() {
 		if (!displayListsInitialized) {
@@ -100,6 +109,8 @@ public class SkyProviderCelestial extends IRenderHandler {
 			lastBrightestPixel = lightmapColors[255] + lightmapColors[250];
 		}
 		float fogIntensity = ModEventHandlerClient.lastFogDensity * 30;
+		currentFov = mc.entityRenderer.getFOVModifier(partialTicks, true);
+
 		CelestialBody body = CelestialBody.getBody(world);
 		CelestialBody sun = body.getStar();
 		CBT_Atmosphere atmosphere = body.getTrait(CBT_Atmosphere.class);
@@ -225,6 +236,112 @@ public class SkyProviderCelestial extends IRenderHandler {
 		}
 		GlStateManager.popMatrix();
 
+		render3DModel(partialTicks, world, mc);
+
+		// CBT_War projectiles
+		CBT_War war = body.getTrait(CBT_War.class);
+		if(war != null) {
+			for(int i = 0; i < war.getProjectiles().size(); i++) {
+				CBT_War.Projectile projectile = war.getProjectiles().get(i);
+				float thing = projectile.getFlashtime() + partialTicks;
+
+				if(projectile.getTravel() <= 0) {
+					float alpd = 1.0F - Math.min(1.0F, thing / 100);
+
+					GlStateManager.pushMatrix();
+					render3DModel(partialTicks, world, mc);
+					GlStateManager.translate(projectile.getTranslateX() + 70, projectile.getTranslateY(), projectile.getTranslateZ() + 50);
+					GlStateManager.scale(thing, thing, thing);
+					GlStateManager.rotate(90.0F, -10.0F, -1.0F, 50.0F);
+					GlStateManager.rotate(20.0F, 0.0F, -1.0F, 1.0F);
+					GlStateManager.color(1, 1, 1, alpd);
+					mc.getTextureManager().bindTexture(shockwaveTexture);
+					ResourceManagerSpace.plane.renderAll();
+					GlStateManager.popMatrix();
+
+					GlStateManager.pushMatrix();
+					GlStateManager.translate(projectile.getTranslateX() + 70, projectile.getTranslateY(), projectile.getTranslateZ() + 50);
+					GlStateManager.scale(thing * 0.4f, thing * 0.4f, thing * 0.4f);
+					GlStateManager.rotate(90.0F, -10.0F, -1.0F, 50.0F);
+					GlStateManager.rotate(20.0F, 0.0F, -1.0F, 1.0F);
+					GlStateManager.color(1, 1, 1, alpd);
+					mc.getTextureManager().bindTexture(thatmoShield);
+					ResourceManagerSpace.plane.renderAll();
+					GlStateManager.popMatrix();
+				}
+			}
+		}
+
+		// Meteors
+		Vec3d pos = mc.player.getPositionVector();
+		float rainStrength = world.getRainStrength(partialTicks);
+
+		for(WorldProviderCelestial.Meteor meteor : WorldProviderCelestial.meteors) {
+			GlStateManager.pushMatrix();
+
+			Vec3d offset = new Vec3d(meteor.posX - pos.x, meteor.posY - pos.y, meteor.posZ - pos.z);
+			double offsetLength = offset.length();
+			double distance = Math.min(mc.gameSettings.renderDistanceChunks * 16, offsetLength);
+			Vec3d offsetNormal = offsetLength >= 1.0E-4D ? offset.normalize() : offset;
+			Vec3d renderOffset = offsetNormal.scale(distance);
+
+			GlStateManager.translate(renderOffset.x, renderOffset.y, renderOffset.z);
+
+			double descent = 2017d - meteor.posY;
+			double quadratic = (-(descent * descent) + (1517 * descent)) / 41;
+			float scalar = (float) (quadratic / offsetLength);
+			GlStateManager.scale(scalar, scalar, scalar);
+
+			if(meteor.type == WorldProviderCelestial.MeteorType.SMOKE) {
+				GlStateManager.color(1, 0, 0, 1);
+				mc.getTextureManager().bindTexture(particleBase);
+				renderSmoke(meteor.age);
+			} else {
+				GlStateManager.color(1, 1, 1, 1);
+				mc.getTextureManager().bindTexture(shockFlareTexture);
+				renderGlow(1, 1, rainStrength);
+			}
+			GlStateManager.popMatrix();
+		}
+
+		// Rings
+		if(body.hasRings) {
+			GlStateManager.pushMatrix();
+			GlStateManager.rotate(body.axialTilt - body.ringTilt, 1.0F, 0.0F, 0.0F);
+			GlStateManager.translate(0, -100, 0);
+			GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
+			renderRings(mc, body.ringColor, 200, visibility);
+			GlStateManager.popMatrix();
+		}
+
+		renderSpecialEffects(partialTicks, world, mc);
+
+		// Compromised flesh effect
+		CelestialBodyTrait.CBT_COMPROMISED compromised = body.getTrait(CelestialBodyTrait.CBT_COMPROMISED.class);
+		if(compromised != null) {
+			GlStateManager.pushMatrix();
+			float time = ((float)world.getWorldTime() + partialTicks) * 0.2F;
+
+			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+			GlStateManager.disableCull();
+
+			fleshShader.use();
+			GlStateManager.scale(194.5, 70.5, 94.5);
+			GlStateManager.rotate(90, 0, 0, 1);
+
+			mc.getTextureManager().bindTexture(noise);
+			ResourceManagerSpace.sphere_v2.renderAll();
+
+			GlStateManager.rotate(-90.0F, 0, 1, 0);
+
+			fleshShader.setUniform1f("iTime", time * 0.05F);
+			fleshShader.setUniform1i("iChannel1", 0);
+			fleshShader.stop();
+
+			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+			GlStateManager.popMatrix();
+		}
+
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.disableBlend();
 		GlStateManager.enableAlpha();
@@ -233,16 +350,12 @@ public class SkyProviderCelestial extends IRenderHandler {
 		GlStateManager.disableTexture2D();
 		GlStateManager.color(0.0F, 0.0F, 0.0F);
 
-		Vec3d pos = mc.player.getPositionVector();
 		double heightAboveHorizon = pos.y - world.getHorizon();
 
 		if(heightAboveHorizon < 0.0D) {
 			GlStateManager.pushMatrix();
-			{
-				GlStateManager.translate(0.0F, 12.0F, 0.0F);
-
-				GlStateManager.callList(sky2VBO);
-			}
+			GlStateManager.translate(0.0F, 12.0F, 0.0F);
+			GlStateManager.callList(sky2VBO);
 			GlStateManager.popMatrix();
 
 			float f8 = 1.0F;
@@ -280,44 +393,36 @@ public class SkyProviderCelestial extends IRenderHandler {
 		}
 
 		GlStateManager.pushMatrix();
-		{
-			GlStateManager.translate(0.0F, -((float) (heightAboveHorizon - 16.0D)), 0.0F);
-
-			GlStateManager.callList(sky2VBO);
-		}
+		GlStateManager.translate(0.0F, -((float) (heightAboveHorizon - 16.0D)), 0.0F);
+		GlStateManager.callList(sky2VBO);
 		GlStateManager.popMatrix();
 
 		double sc = 1 / (pos.y / 1000);
 		double uvOffset = (pos.x / 1024) % 1;
 		GlStateManager.pushMatrix();
-		{
-			GlStateManager.enableTexture2D();
-			GlStateManager.disableAlpha();
-			GlStateManager.disableFog();
-			GlStateManager.enableBlend();
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableAlpha();
+		GlStateManager.disableFog();
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
-			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+		float sunBrightness = world.getSunBrightness(partialTicks);
+		GlStateManager.color(sunBrightness, sunBrightness, sunBrightness, ((float)pos.y - 200.0F) / 300.0F);
+		mc.getTextureManager().bindTexture(body.texture);
+		GlStateManager.rotate(180, 1, 0, 0);
 
-			float sunBrightness = world.getSunBrightness(partialTicks);
+		bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		bufferBuilder.pos(-115 * sc, 100.0D, -115 * sc).tex(0.0D + uvOffset, 0.0D).endVertex();
+		bufferBuilder.pos(115 * sc, 100.0D, -115 * sc).tex(1.0D + uvOffset, 0.0D).endVertex();
+		bufferBuilder.pos(115 * sc, 100.0D, 115 * sc).tex(1.0D + uvOffset, 1.0D).endVertex();
+		bufferBuilder.pos(-115 * sc, 100.0D, 115 * sc).tex(0.0D + uvOffset, 1.0D).endVertex();
+		tessellator.draw();
 
-			GlStateManager.color(sunBrightness, sunBrightness, sunBrightness, ((float)pos.y - 200.0F) / 300.0F);
-			mc.getTextureManager().bindTexture(body.texture);
-			GlStateManager.rotate(180, 1, 0, 0);
-
-			bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-			bufferBuilder.pos(-115 * sc, 100.0D, -115 * sc).tex(0.0D + uvOffset, 0.0D).endVertex();
-			bufferBuilder.pos(115 * sc, 100.0D, -115 * sc).tex(1.0D + uvOffset, 0.0D).endVertex();
-			bufferBuilder.pos(115 * sc, 100.0D, 115 * sc).tex(1.0D + uvOffset, 1.0D).endVertex();
-			bufferBuilder.pos(-115 * sc, 100.0D, 115 * sc).tex(0.0D + uvOffset, 1.0D).endVertex();
-			tessellator.draw();
-
-			GlStateManager.disableTexture2D();
-			GlStateManager.enableAlpha();
-			GlStateManager.enableFog();
-			GlStateManager.disableBlend();
-
-			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-		}
+		GlStateManager.disableTexture2D();
+		GlStateManager.enableAlpha();
+		GlStateManager.enableFog();
+		GlStateManager.disableBlend();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 		GlStateManager.popMatrix();
 
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -563,8 +668,8 @@ public class SkyProviderCelestial extends IRenderHandler {
 			renderSwarm(partialTicks, world, mc, sunSize * 0.5, swarmCount);
 
 			// Clear and disable the depth buffer once again, buffer has to be writable to clear it
-			GlStateManager.depthMask(true);
-			GlStateManager.clear(256); // GL_DEPTH_BUFFER_BIT
+			// GlStateManager.depthMask(true);
+			// GlStateManager.clear(256); // GL_DEPTH_BUFFER_BIT
 			GlStateManager.depthMask(false);
 		}
 	}
@@ -581,7 +686,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 		// swarm members render as pixels, which can vary based on screen resolution
 		// because of this, we make the pixels more transparent based on their apparent size, which varies by a fair few factors
 		// this isn't a foolproof solution, analyzing the projection matrices would be best, but it works for now.
-		float swarmScreenSize = (float)((mc.displayHeight / mc.gameSettings.fovSetting) * swarmRadius * 0.002);
+		float swarmScreenSize = (float)((mc.displayHeight / currentFov) * swarmRadius * 0.002);
 		float time = ((float)world.getWorldTime() + partialTicks) / 800.0F;
 
 		swarmShader.setUniform1f("iTime", time);
@@ -664,13 +769,11 @@ public class SkyProviderCelestial extends IRenderHandler {
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		float blendDarken = 0.1F;
 
-		double transitionMinSize = 0.1D;
+		double transitionMinSize = 0.01D;
 		double transitionMaxSize = 0.5D;
 
 		for(AstroMetric metric : metrics) {
-			// Ignore self
-			if(metric.distance == 0)
-				continue;
+			if(metric.distance == 0) continue;
 
 			boolean orbitingThis = metric.body == orbiting;
 
@@ -688,48 +791,41 @@ public class SkyProviderCelestial extends IRenderHandler {
 				GlStateManager.rotate(axialTilt + 90.0F, 0.0F, 1.0F, 0.0F);
 
 				if(renderBody) {
-					// Draw the back half of the ring (obscured by body)
+					// Back half of rings
 					if(metric.body.hasRings) {
 						GlStateManager.pushMatrix();
-						{
-							GlStateManager.color(metric.body.ringColor[0], metric.body.ringColor[1], metric.body.ringColor[2], visibility);
-							mc.getTextureManager().bindTexture(ringTexture);
+						GlStateManager.color(metric.body.ringColor[0], metric.body.ringColor[1], metric.body.ringColor[2], visibility);
+						mc.getTextureManager().bindTexture(ringTexture);
+						GlStateManager.disableCull();
 
-							GlStateManager.disableCull();
+						double ringSize = size * metric.body.ringSize;
+						GlStateManager.translate(0.0F, 100.0F, 0.0F);
+						GlStateManager.rotate((float)-metric.angle, 0, 0, 1);
+						GlStateManager.rotate(90.0F - metric.body.ringTilt, 1, 0, 0);
+						GlStateManager.rotate((float)metric.angle, 0, 1, 0);
 
-							double ringSize = size * metric.body.ringSize;
+						bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+						bufferBuilder.pos(-ringSize, 0, -ringSize).tex(0, 0).endVertex();
+						bufferBuilder.pos(ringSize, 0, -ringSize).tex(1, 0).endVertex();
+						bufferBuilder.pos(ringSize, 0, 0).tex(1, 0.5).endVertex();
+						bufferBuilder.pos(-ringSize, 0, 0).tex(0, 0.5).endVertex();
+						tessellator.draw();
 
-							GlStateManager.translate(0.0F, 100.0F, 0.0F);
-							GlStateManager.rotate((float)-metric.angle, 0.0F, 0.0F, 1.0F);
-							GlStateManager.rotate(90.0F - metric.body.ringTilt, 1.0F, 0.0F, 0.0F);
-							GlStateManager.rotate((float)metric.angle, 0.0F, 1.0F, 0.0F);
-
-							bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-							bufferBuilder.pos(-ringSize, 0, -ringSize).tex(0.0D, 0.0D).endVertex();
-							bufferBuilder.pos(ringSize, 0, -ringSize).tex(1.0D, 0.0D).endVertex();
-							bufferBuilder.pos(ringSize, 0, 0).tex(1.0D, 0.5D).endVertex();
-							bufferBuilder.pos(-ringSize, 0, 0).tex(0.0D, 0.5D).endVertex();
-							tessellator.draw();
-
-							GlStateManager.enableCull();
-
-						}
+						GlStateManager.enableCull();
 						GlStateManager.popMatrix();
 					}
 
 					CBT_Destroyed d = metric.body.getTrait(CBT_Destroyed.class);
 
 					if(d != null) {
-						// Stop calling things "interp", that's a verb not a noun
-						double interpr = d.interp + size * 0.5;
+						double destroyedProgressClientInterpolation = d.destProgress + size * 0.5;
 
-						float alpd = (float) (1.0F - Math.min(1.0F, interpr / 100));
+						float alpha = (float) (1.0F - Math.min(1.0F, destroyedProgressClientInterpolation / 100));
 						Random random = new Random(12);
 
 						int numQuads = 30;
 						for (int i = 0; i < numQuads; i++) {
-							double radius = (random.nextDouble() * size) * d.interp;
-
+							double radius = (random.nextDouble() * size) * d.destProgress;
 							double randomTheta = random.nextDouble() * Math.PI * 2;
 							double randomPhi = random.nextDouble() * Math.PI;
 
@@ -739,125 +835,110 @@ public class SkyProviderCelestial extends IRenderHandler {
 
 							float randomRotation = random.nextFloat() * 360.0F;
 
-
 							double uMin = random.nextDouble();
 							double vMin = random.nextDouble();
 							double uMax = Math.min(uMin + (random.nextDouble() * 0.2), 1.0);
 							double vMax = Math.min(vMin + (random.nextDouble() * 0.2), 1.0);
 
 							GlStateManager.pushMatrix();
-							{
-								GlStateManager.translate(randomX * -0.05, randomY * 0.00, randomZ * -0.05);
+							GlStateManager.translate(randomX * -0.05, randomY * 0.00, randomZ * -0.05);
+							GlStateManager.rotate(randomRotation * d.destProgress * 0.05F, 0, 1, 0);
 
-								GlStateManager.rotate(randomRotation * d.interp * 0.05F, 0.0F, 1.0F, 0.0F);
+							mc.getTextureManager().bindTexture(metric.body.texture);
+							GlStateManager.color(1, 1, 1, 1);
 
-								mc.getTextureManager().bindTexture(metric.body.texture);
-								GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-
-								bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-								double qsize = size * random.nextDouble() * 0.1;
-								bufferBuilder.pos(-qsize, 100.0D, -qsize).tex(uMin, vMin).endVertex();
-								bufferBuilder.pos(qsize, 100.0D, -qsize).tex(uMax, vMin).endVertex();
-								bufferBuilder.pos(qsize, 100.0D, qsize).tex(uMax, vMax).endVertex();
-								bufferBuilder.pos(-qsize, 100.0D, qsize).tex(uMin, vMax).endVertex();
-
-								tessellator.draw();
-							}
+							bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+							double qsize = size * random.nextDouble() * 0.1;
+							bufferBuilder.pos(-qsize, 100, -qsize).tex(uMin, vMin).endVertex();
+							bufferBuilder.pos(qsize, 100, -qsize).tex(uMax, vMin).endVertex();
+							bufferBuilder.pos(qsize, 100, qsize).tex(uMax, vMax).endVertex();
+							bufferBuilder.pos(-qsize, 100, qsize).tex(uMin, vMax).endVertex();
+							tessellator.draw();
 							GlStateManager.popMatrix();
 
 							GlStateManager.pushMatrix();
-							{
-								GlStateManager.translate(randomX * 0.04, randomY * 0.00, randomZ * 0.04);
+							GlStateManager.translate(randomX * 0.04, randomY * 0.00, randomZ * 0.04);
+							GlStateManager.rotate(randomRotation * d.destProgress * 0.05F, 0, 1, 0);
+							mc.getTextureManager().bindTexture(destroyedBody);
+							GlStateManager.color(1, 1, 1, 1);
 
-								GlStateManager.rotate(randomRotation * d.interp * 0.05F, 0.0F, 1.0F, 0.0F);
-								mc.getTextureManager().bindTexture(destroyedBody);
-								GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-
-								bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-								double qsize = size * random.nextDouble() * 0.07;
-								bufferBuilder.pos(-qsize, 100.0D, -qsize).tex(uMin, vMin).endVertex();
-								bufferBuilder.pos(qsize, 100.0D, -qsize).tex(uMax, vMin).endVertex();
-								bufferBuilder.pos(qsize, 100.0D, qsize).tex(uMax, vMax).endVertex();
-								bufferBuilder.pos(-qsize, 100.0D, qsize).tex(uMin, vMax).endVertex();
-
-								tessellator.draw();
-							}
+							bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+							qsize = size * random.nextDouble() * 0.07;
+							bufferBuilder.pos(-qsize, 100, -qsize).tex(uMin, vMin).endVertex();
+							bufferBuilder.pos(qsize, 100, -qsize).tex(uMax, vMin).endVertex();
+							bufferBuilder.pos(qsize, 100, qsize).tex(uMax, vMax).endVertex();
+							bufferBuilder.pos(-qsize, 100, qsize).tex(uMin, vMax).endVertex();
+							tessellator.draw();
 							GlStateManager.popMatrix();
 						}
 
-
-						GlStateManager.color(1.0F, 1.0F, 1.0F, alpd);
+						GlStateManager.color(1.0F, 1.0F, 1.0F, alpha);
 						mc.getTextureManager().bindTexture(shockwaveTexture);
-						double interpe = (d.interp * 0.5) * size * 0.1;
+						double interpe = (d.destProgress * 0.5) * size * 0.1;
 						bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-						bufferBuilder.pos(-interpe, 100.0D, -interpe).tex(0.0D + uvOffset, 0.0D).endVertex();
-						bufferBuilder.pos(interpe, 100.0D, -interpe).tex(1.0D + uvOffset, 0.0D).endVertex();
-						bufferBuilder.pos(interpe, 100.0D, interpe).tex(1.0D + uvOffset, 1.0D).endVertex();
-						bufferBuilder.pos(-interpe, 100.0D, interpe).tex(0.0D + uvOffset, 1.0D).endVertex();
+						bufferBuilder.pos(-interpe, 100, -interpe).tex(0 + uvOffset, 0).endVertex();
+						bufferBuilder.pos(interpe, 100, -interpe).tex(1 + uvOffset, 0).endVertex();
+						bufferBuilder.pos(interpe, 100, interpe).tex(1 + uvOffset, 1).endVertex();
+						bufferBuilder.pos(-interpe, 100, interpe).tex(0 + uvOffset, 1).endVertex();
 						tessellator.draw();
 
-
-						GlStateManager.color(1.0F, 1.0F, 1.0F, alpd * 2);
+						GlStateManager.color(1.0F, 1.0F, 1.0F, alpha * 2);
 						mc.getTextureManager().bindTexture(shockFlareTexture);
-
-						interpr = size * 3;
+						destroyedProgressClientInterpolation = size * 3;
 						bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-						bufferBuilder.pos(-interpr, 100.0D, -interpr).tex(0.0D + uvOffset, 0.0D).endVertex();
-						bufferBuilder.pos(interpr, 100.0D, -interpr).tex(1.0D + uvOffset, 0.0D).endVertex();
-						bufferBuilder.pos(interpr, 100.0D, interpr).tex(1.0D + uvOffset, 1.0D).endVertex();
-						bufferBuilder.pos(-interpr, 100.0D, interpr).tex(0.0D + uvOffset, 1.0D).endVertex();
+						bufferBuilder.pos(-destroyedProgressClientInterpolation, 100, -destroyedProgressClientInterpolation).tex(0 + uvOffset, 0).endVertex();
+						bufferBuilder.pos(destroyedProgressClientInterpolation, 100, -destroyedProgressClientInterpolation).tex(1 + uvOffset, 0).endVertex();
+						bufferBuilder.pos(destroyedProgressClientInterpolation, 100, destroyedProgressClientInterpolation).tex(1 + uvOffset, 1).endVertex();
+						bufferBuilder.pos(-destroyedProgressClientInterpolation, 100, destroyedProgressClientInterpolation).tex(0 + uvOffset, 1).endVertex();
 						tessellator.draw();
 
 					} else {
+						renderAtmosphereGlow(tessellator, metric.body, size, visibility);
+
 						GlStateManager.disableBlend();
 						GlStateManager.color(1.0F, 1.0F, 1.0F, visibility);
 						mc.getTextureManager().bindTexture(metric.body.texture);
 
 						bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-						bufferBuilder.pos(-size, 100.0D, -size).tex(0.0D + uvOffset, 0.0D).endVertex();
-						bufferBuilder.pos(size, 100.0D, -size).tex(1.0D + uvOffset, 0.0D).endVertex();
-						bufferBuilder.pos(size, 100.0D, size).tex(1.0D + uvOffset, 1.0D).endVertex();
-						bufferBuilder.pos(-size, 100.0D, size).tex(0.0D + uvOffset, 1.0D).endVertex();
+						bufferBuilder.pos(-size, 100, -size).tex(0 + uvOffset, 0).endVertex();
+						bufferBuilder.pos(size, 100, -size).tex(1 + uvOffset, 0).endVertex();
+						bufferBuilder.pos(size, 100, size).tex(1 + uvOffset, 1).endVertex();
+						bufferBuilder.pos(-size, 100, size).tex(0 + uvOffset, 1).endVertex();
 						tessellator.draw();
 
-
+						// Phase shader + lights + impact code (kept from your old port but cleaned)
 						CBT_Impact impact = metric.body.getTrait(CBT_Impact.class);
 						CBT_Lights light = metric.body.getTrait(CBT_Lights.class);
 
 						double impactTime = impact != null ? (world.getTotalWorldTime() - impact.time) + partialTicks : 0;
 						int lightIntensity = light != null && impactTime < 40 ? light.getIntensity() : 0;
 
-						int blackoutInterval = 8;
-						int maxBlackouts = 5;
-
-						int activeBlackouts = Math.min((int)(impactTime / blackoutInterval), maxBlackouts);
+						int activeBlackouts = Math.min((int)(impactTime / 8), 5);
 
 						GlStateManager.enableBlend();
-						// Draw a shader on top to render celestial phase
 						GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-
-						GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
 						planetShader.use();
 						planetShader.setUniform1f("phase", (float)-metric.phase);
 						planetShader.setUniform1f("offset", (float)uvOffset);
+						planetShader.setUniform1i("bodyTex", 0);
+						planetShader.setUniform1i("useBodyAlphaMask", 0);
 						planetShader.setUniform1i("lights", 0);
 						planetShader.setUniform1i("cityMask", 1);
 						planetShader.setUniform1i("blackouts", activeBlackouts);
 
 						mc.getTextureManager().bindTexture(citylights[lightIntensity]);
-
 						if(gl13) {
 							GL13.glActiveTexture(GL13.GL_TEXTURE1);
-							mc.renderEngine.bindTexture(metric.body.cityMask != null ? metric.body.cityMask : defaultMask);
+							mc.getTextureManager().bindTexture(metric.body.cityMask != null ? metric.body.cityMask : defaultMask);
 							GL13.glActiveTexture(GL13.GL_TEXTURE0);
 						}
 
 						bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-						bufferBuilder.pos(-size, 100.0D, -size).tex(0.0D, 0.0D).endVertex();
-						bufferBuilder.pos(size, 100.0D, -size).tex(1.0D, 0.0D).endVertex();
-						bufferBuilder.pos(size, 100.0D, size).tex(1.0D, 1.0D).endVertex();
-						bufferBuilder.pos(-size, 100.0D, size).tex(0.0D, 1.0D).endVertex();
+						bufferBuilder.pos(-size, 100, -size).tex(0, 0).endVertex();
+						bufferBuilder.pos(size, 100, -size).tex(1, 0).endVertex();
+						bufferBuilder.pos(size, 100, size).tex(1, 1).endVertex();
+						bufferBuilder.pos(-size, 100, size).tex(0, 1).endVertex();
 						tessellator.draw();
 
 						if(gl13) {
@@ -872,6 +953,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 
 						GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
+						// Impact rendering (lava, shockwave, flare) - kept from your old port
 						if(impact != null) {
 							double lavaAlpha = Math.min(impactTime * 0.1, 1.0);
 
@@ -880,8 +962,8 @@ public class SkyProviderCelestial extends IRenderHandler {
 							double flareSize = size * 1.5;
 							double flareAlpha = 1.0 - Math.min(1.0, impactTime * 0.002);
 
-							if(lavaAlpha > 0) {
-								GlStateManager.color(1.0F, 1.0F, 1.0F, (float)lavaAlpha);
+							if (lavaAlpha > 0) {
+								GlStateManager.color(1.0F, 1.0F, 1.0F, (float) lavaAlpha);
 								mc.getTextureManager().bindTexture(impactTexture);
 
 								bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
@@ -943,7 +1025,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 						GlStateManager.enableTexture2D();
 					}
 
-					// Draw the front half of the ring (unobscured)
+					// Front half of rings
 					if(metric.body.hasRings) {
 						GlStateManager.color(metric.body.ringColor[0], metric.body.ringColor[1], metric.body.ringColor[2], visibility);
 						mc.getTextureManager().bindTexture(ringTexture);
@@ -975,16 +1057,205 @@ public class SkyProviderCelestial extends IRenderHandler {
 					mc.getTextureManager().bindTexture(planetTexture);
 
 					bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-					bufferBuilder.pos(-1.0D, 100.0D, -1.0D).tex(0.0D, 0.0D).endVertex();
-					bufferBuilder.pos(1.0D, 100.0D, -1.0D).tex(1.0D, 0.0D).endVertex();
-					bufferBuilder.pos(1.0D, 100.0D, 1.0D).tex(1.0D, 1.0D).endVertex();
-					bufferBuilder.pos(-1.0D, 100.0D, 1.0D).tex(0.0D, 1.0D).endVertex();
+					bufferBuilder.pos(-1, 100, -1).tex(0, 0).endVertex();
+					bufferBuilder.pos(1, 100, -1).tex(1, 0).endVertex();
+					bufferBuilder.pos(1, 100, 1).tex(1, 1).endVertex();
+					bufferBuilder.pos(-1, 100, 1).tex(0, 1).endVertex();
 					tessellator.draw();
 				}
 			}
 			GlStateManager.popMatrix();
 		}
 	}
+
+	protected void renderAtmosphereGlow(Tessellator tessellator, CelestialBody body, double size, float visibility) {
+		BufferBuilder buffer = tessellator.getBuffer();
+		float glowAlpha = getAtmosphereGlowAlpha(body) * visibility;
+		if(glowAlpha <= 0.001F) return;
+
+        Vec3d atmo = getBodyAtmosphereColor(body);
+		float r = MathHelper.clamp((float)atmo.x * 1.15F, 0.0F, 1.0F);
+		float g = MathHelper.clamp((float)atmo.y * 1.15F, 0.0F, 1.0F);
+		float b = MathHelper.clamp((float)atmo.z * 1.15F, 0.0F, 1.0F);
+
+		double innerSize = size * 0.98D;
+		double middleSize = size * 1.075D;
+		double outerSize = size * 1.15D * (1.0D + glowAlpha * 0.25D);
+
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		GlStateManager.disableTexture2D();
+		GlStateManager.disableCull();
+		GlStateManager.shadeModel(GL11.GL_SMOOTH);
+
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+
+		// Top band
+		buffer.pos(-outerSize, 100.0D, -outerSize).color(r, g, b, 0.0F).endVertex();
+		buffer.pos(outerSize, 100.0D, -outerSize).color(r, g, b, 0.0F).endVertex();
+		buffer.pos(middleSize, 100.0D, -middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+		buffer.pos(-middleSize, 100.0D, -middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+
+		buffer.pos(-middleSize, 100.0D, -middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+		buffer.pos(middleSize, 100.0D, -middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+		buffer.pos(innerSize, 100.0D, -innerSize).color(r, g, b, glowAlpha).endVertex();
+		buffer.pos(-innerSize, 100.0D, -innerSize).color(r, g, b, glowAlpha).endVertex();
+
+		// Left band
+		buffer.pos(outerSize, 100.0D, -outerSize).color(r, g, b, 0.0F).endVertex();
+		buffer.pos(outerSize, 100.0D, outerSize).color(r, g, b, 0.0F).endVertex();
+		buffer.pos(middleSize, 100.0D, middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+		buffer.pos(middleSize, 100.0D, -middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+
+		buffer.pos(middleSize, 100.0D, -middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+		buffer.pos(middleSize, 100.0D, middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+		buffer.pos(innerSize, 100.0D, innerSize).color(r, g, b, glowAlpha).endVertex();
+		buffer.pos(innerSize, 100.0D, -innerSize).color(r, g, b, glowAlpha).endVertex();
+
+		// Bottom band
+		buffer.pos(outerSize, 100.0D, outerSize).color(r, g, b, 0.0F).endVertex();
+		buffer.pos(-outerSize, 100.0D, outerSize).color(r, g, b, 0.0F).endVertex();
+		buffer.pos(-middleSize, 100.0D, middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+		buffer.pos(middleSize, 100.0D, middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+
+		buffer.pos(middleSize, 100.0D, middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+		buffer.pos(-middleSize, 100.0D, middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+		buffer.pos(-innerSize, 100.0D, innerSize).color(r, g, b, glowAlpha).endVertex();
+		buffer.pos(innerSize, 100.0D, innerSize).color(r, g, b, glowAlpha).endVertex();
+
+		// Right band
+		buffer.pos(-outerSize, 100.0D, outerSize).color(r, g, b, 0.0F).endVertex();
+		buffer.pos(-outerSize, 100.0D, -outerSize).color(r, g, b, 0.0F).endVertex();
+		buffer.pos(-middleSize, 100.0D, -middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+		buffer.pos(-middleSize, 100.0D, middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+
+		buffer.pos(-middleSize, 100.0D, middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+		buffer.pos(-middleSize, 100.0D, -middleSize).color(r, g, b, glowAlpha / 2).endVertex();
+		buffer.pos(-innerSize, 100.0D, -innerSize).color(r, g, b, glowAlpha).endVertex();
+		buffer.pos(-innerSize, 100.0D, innerSize).color(r, g, b, glowAlpha).endVertex();
+
+		tessellator.draw();
+
+		GlStateManager.shadeModel(GL11.GL_FLAT);
+		GlStateManager.enableCull();
+		GlStateManager.enableTexture2D();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+	}
+
+	private float getAtmosphereGlowAlpha(CelestialBody body) {
+		if(body == null) return 0.0F;
+		if(body.gas != null) return 0.35F;
+
+		CBT_Atmosphere atmosphere = body.getTrait(CBT_Atmosphere.class);
+		if(atmosphere != null) {
+			float pressure = MathHelper.clamp((float)atmosphere.getPressure(), 0.0F, 3.0F);
+			if(pressure <= 0.02F) return 0.0F;
+			return MathHelper.clamp(0.08F + pressure * 0.16F, 0.08F, 0.5F);
+		}
+		return 0.0F;
+	}
+
+	private Vec3d getBodyAtmosphereColor(CelestialBody body) {
+		if(body == null) return new Vec3d(1.0D, 1.0D, 1.0D);
+		if(body.gas != null) return WorldProviderCelestial.getAtmosphereFluidColor(body.gas);
+
+		CBT_Atmosphere atmosphere = body.getTrait(CBT_Atmosphere.class);
+		if(atmosphere != null && !atmosphere.fluids.isEmpty()) {
+			double totalPressure = 0.0D;
+			double r = 0.0D, g = 0.0D, b = 0.0D;
+
+			for(CBT_Atmosphere.FluidEntry entry : atmosphere.fluids) {
+				if(entry == null || entry.fluid == null || entry.pressure <= 0.0D) continue;
+				Vec3d fluidColor = WorldProviderCelestial.getAtmosphereFluidColor(entry.fluid);
+				r += fluidColor.x * entry.pressure;
+				g += fluidColor.y * entry.pressure;
+				b += fluidColor.z * entry.pressure;
+				totalPressure += entry.pressure;
+			}
+
+			if(totalPressure > 0.0D) {
+				return new Vec3d(
+						MathHelper.clamp(r / totalPressure, 0.0D, 1.0D),
+						MathHelper.clamp(g / totalPressure, 0.0D, 1.0D),
+						MathHelper.clamp(b / totalPressure, 0.0D, 1.0D)
+				);
+			}
+		}
+		return new Vec3d(1.0D, 1.0D, 1.0D);
+	}
+
+	protected void renderRings(Minecraft mc, float[] ringColor, float ringSize, float visibility) {
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder buffer = tessellator.getBuffer();
+
+		GlStateManager.color(ringColor[0], ringColor[1], ringColor[2], visibility);
+		mc.getTextureManager().bindTexture(ringTexture);
+
+		double offset = -20.0D;
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		buffer.pos(offset, -ringSize, -ringSize).tex(0.0D, 0.0D).endVertex();
+		buffer.pos(offset, ringSize, -ringSize).tex(1.0D, 0.0D).endVertex();
+		buffer.pos(offset, ringSize, ringSize).tex(1.0D, 1.0D).endVertex();
+		buffer.pos(offset, -ringSize, ringSize).tex(0.0D, 1.0D).endVertex();
+		tessellator.draw();
+	}
+
+	public void renderSmoke(long age) {
+		GlStateManager.pushMatrix();
+		GlStateManager.enableBlend();
+
+		float f4 = 1.0F;
+		float f5 = 0.5F;
+		float f6 = 0.25F;
+		float dark = 1f - Math.min(((float)age / (100f * 0.35F)), 1f);
+
+		GlStateManager.rotate(180.0F - Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
+		GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
+		GlStateManager.color(0.6F * dark, 0.6F * dark, dark, 1F);
+
+		Tessellator tess = Tessellator.getInstance();
+		BufferBuilder buffer = tess.getBuffer();
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		buffer.pos(0.0F - f5, 0.0F - f6, 0.0D).tex(1, 0).endVertex();
+		buffer.pos(f4 - f5, 0.0F - f6, 0.0D).tex(0, 0).endVertex();
+		buffer.pos(f4 - f5, f4 - f6, 0.0D).tex(0, 1).endVertex();
+		buffer.pos(0.0F - f5, f4 - f6, 0.0D).tex(1, 1).endVertex();
+		tess.draw();
+
+		GlStateManager.disableBlend();
+		GlStateManager.popMatrix();
+	}
+
+	public void renderGlow(double x, double y, float rainStrength) {
+		GlStateManager.pushMatrix();
+		GlStateManager.enableBlend();
+
+		float f4 = 1.0F;
+		float f5 = 0.5F;
+		float f6 = 0.25F;
+		double near = 0.51d * (Math.min(40000f, Math.max(0d, y - 35000d)) / 40000d);
+		double entry = near * (1d - rainStrength) + (1d - (Math.min(200d, Math.max(0d, x - 2017d)) / 200f));
+
+		GlStateManager.rotate(180.0F - Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
+		GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
+		GlStateManager.color((float)entry, (float)entry, (float)entry, (float)entry);
+
+		Tessellator tess = Tessellator.getInstance();
+		BufferBuilder buffer = tess.getBuffer();
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		buffer.pos(0.0F - f5, 0.0F - f6, 0.0D).tex(1, 0).endVertex();
+		buffer.pos(f4 - f5, 0.0F - f6, 0.0D).tex(0, 0).endVertex();
+		buffer.pos(f4 - f5, f4 - f6, 0.0D).tex(0, 1).endVertex();
+		buffer.pos(0.0F - f5, f4 - f6, 0.0D).tex(1, 1).endVertex();
+		tess.draw();
+
+		GlStateManager.disableBlend();
+		GlStateManager.popMatrix();
+	}
+
+	protected void render3DModel(float partialTicks, WorldClient world, Minecraft mc) {}
+
+	protected void renderSpecialEffects(float partialTicks, WorldClient world, Minecraft mc) {}
 
 	protected void renderDigamma(WorldClient world, Minecraft mc, float solarAngle) {
 		Tessellator tessellator = Tessellator.getInstance();

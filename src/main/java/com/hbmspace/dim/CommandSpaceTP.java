@@ -6,76 +6,93 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class CommandSpaceTP extends CommandBase {
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "dimtp";
     }
 
     @Override
-    public String getUsage(ICommandSender sender) {
-        return "/dimtp <dimension_id>";
+    public @NotNull String getUsage(@NotNull ICommandSender sender) {
+        return "/dimtp <dimension_id_or_name> [player]";
     }
 
     @Override
-    public List<String> getAliases() {
+    public @NotNull List<String> getAliases() {
         return Collections.singletonList("dimtp");
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, String[] args) throws CommandException {
         if (args.length < 1) {
-            throw new CommandException("commands.dimtp.usage");
+            throw new CommandException(TextFormatting.RED + getUsage(sender));
         }
 
-        int dimensionId;
+        int dimensionId = -1;
         try {
             dimensionId = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
-            throw new CommandException("commands.dimtp.invalid_dimension", args[0]);
-        }
-
-        if (sender instanceof EntityPlayerMP) {
-            Side sidex = FMLCommonHandler.instance().getEffectiveSide();
-            if (sidex == Side.SERVER) {
-                MinecraftServer mServer = FMLCommonHandler.instance().getMinecraftServerInstance();
-                EntityPlayerMP player = (EntityPlayerMP) sender;
-                WorldServer sourceServer = player.getServerWorld();
-                WorldServer targetWorld = mServer.getWorld(dimensionId);
-
-                if (targetWorld == null) {
-                    throw new CommandException("commands.dimtp.dimension_not_found", dimensionId);
+            for (WorldServer world : server.worlds) {
+                if (world.provider.getDimensionType().getName().equalsIgnoreCase(args[0])) {
+                    dimensionId = world.provider.getDimension();
+                    break;
                 }
-
-                BlockPos pos = player.getPosition();
-                player.changeDimension(dimensionId, new CelestialTeleporter(sourceServer, targetWorld, player, pos.getX(), pos.getY(), pos.getZ(), true));
             }
-        } else {
-            throw new CommandException("commands.dimtp.not_player");
+            if (dimensionId == -1) {
+                throw new CommandException(TextFormatting.RED + "commands.dimtp.dimension_not_found", args[0]);
+            }
         }
+
+        EntityPlayerMP targetPlayer;
+        if (args.length >= 2) {
+            targetPlayer = getPlayer(server, sender, args[1]);
+        } else {
+            if (sender instanceof EntityPlayerMP player) {
+                targetPlayer = player;
+            } else {
+                throw new CommandException(TextFormatting.RED + "commands.dimtp.not_player");
+            }
+        }
+
+        WorldServer targetWorld = server.getWorld(dimensionId);
+        if (targetWorld == null) {
+            throw new CommandException(TextFormatting.RED + "commands.dimtp.dimension_not_found", dimensionId);
+        }
+
+        BlockPos pos = targetPlayer.getPosition();
+        WorldServer sourceServer = server.getWorld(targetPlayer.dimension);
+        targetPlayer.changeDimension(dimensionId, new CelestialTeleporter(sourceServer, targetWorld, targetPlayer, pos.getX(), pos.getY(), pos.getZ(), true));
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+    public boolean checkPermission(@NotNull MinecraftServer server, ICommandSender sender) {
         return sender.canUseCommand(2, this.getName());
     }
 
     @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
+    public @NotNull List<String> getTabCompletions(@NotNull MinecraftServer server, @NotNull ICommandSender sender, String @NotNull [] args, @Nullable BlockPos targetPos) {
+        if (args.length == 1) {
+            List<String> suggestions = new ArrayList<>();
+            for (WorldServer world : server.worlds) {
+                suggestions.add(String.valueOf(world.provider.getDimension()));
+                suggestions.add(world.provider.getDimensionType().getName());
+            }
+            return getListOfStringsMatchingLastWord(args, suggestions);
+        } else if (args.length == 2) {
+            return getListOfStringsMatchingLastWord(args, Arrays.asList(server.getOnlinePlayerNames()));
+        }
         return Collections.emptyList();
     }
 
-    @Override
-    public boolean isUsernameIndex(String[] args, int index) {
-        return false;
-    }
 }

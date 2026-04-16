@@ -62,7 +62,7 @@ public class CBT_War extends CelestialBodyTrait {
     }
 
     @Override
-    public void update(boolean isremote) {
+    public void update(boolean isremote, CelestialBody body) {
         if(!isremote) {
             for(int i = 0; i < this.getProjectiles().size(); i++) {
                 Projectile projectile = this.getProjectiles().get(i);
