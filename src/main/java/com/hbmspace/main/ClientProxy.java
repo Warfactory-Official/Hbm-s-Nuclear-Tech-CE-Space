@@ -87,6 +87,8 @@ public class ClientProxy extends ServerProxy {
 
     @Override
     public void registerMissileItems(IRegistry<ModelResourceLocation, IBakedModel> reg) {
+        RocketPart.registerClientParts();
+
         RocketPart.parts.values().forEach(part -> NTMClientRegistry.bindTeisr(part.part, new ItemRenderMissilePart(part)));
     }
 
