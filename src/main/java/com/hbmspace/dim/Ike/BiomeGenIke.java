@@ -24,7 +24,7 @@ public class BiomeGenIke extends BiomeGenBaseCelestial {
 
         BiomeDecoratorCelestial decorator = new BiomeDecoratorCelestial(ModBlocksSpace.ike_stone);
         decorator.lakeChancePerChunk = 8;
-        decorator.lakeBlock = ModBlocks.bromine_block;
+        decorator.lakeBlock = ModBlocksSpace.bromine_block;
         this.decorator = decorator;
         this.decorator.generateFalls = false;
 

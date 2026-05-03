@@ -3,6 +3,7 @@ package com.hbmspace.main;
 import com.hbm.blocks.machine.BlockBeamBase;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toclient.PlayerInformPacketLegacy;
+import com.hbmspace.capability.HbmLivingPropsSpace;
 import com.hbmspace.inventory.recipes.tweakers.CraftingManagerTweaker;
 import com.hbmspace.util.AstronomyUtil;
 import com.hbm.util.ChatBuilder;
@@ -64,6 +65,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
@@ -94,6 +96,18 @@ public class ModEventHandler {
     public static void soundRegistering(RegistryEvent.Register<SoundEvent> evt) {
         for (SoundEvent e : HBMSpaceSoundHandler.ALL_SOUNDS) {
              evt.getRegistry().register(e);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if(event.player.world.getWorldInfo().getTerrainType() instanceof WorldTypeTeleport teleport) {
+            HbmLivingCapabilitySpace.IEntityHbmProps props = HbmLivingPropsSpace.getData(event.player);
+
+            if(!props.hasWarped()) {
+                teleport.onPlayerJoin(event.player);
+                props.setWarped(true);
+            }
         }
     }
 

@@ -1,7 +1,9 @@
 package com.hbmspace.main;
 
+import com.hbm.Tags;
 import com.hbm.render.loader.HFRWavefrontObject;
 import com.hbm.render.loader.IModelCustom;
+import com.hbm.render.loader.WaveFrontObjectVAO;
 import net.minecraft.util.ResourceLocation;
 
 public class ResourceManagerSpace {
@@ -23,6 +25,11 @@ public class ResourceManagerSpace {
     public static final IModelCustom sat_dock = new HFRWavefrontObject(new ResourceLocation("hbm", "models/sat_dock.obj")).asVBO();
     public static final IModelCustom rp_s_20_leggy = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/rp_s_20_leggy.obj")).asVBO();
     public static final IModelCustom rp_s_20_leggy_deployed = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/rp_s_20_leggy_deployed.obj")).asVBO();
+    // Duplicates from CE original to prevent crashes (IDFK WHY)
+    public static final IModelCustom mp_t_20_kerosene = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_t_20_kerosene.obj")).asVBO();
+    public static final IModelCustom mp_t_20_kerosene_dual = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_t_20_kerosene_dual.obj")).asVBO();
+    public static final IModelCustom mp_t_20_kerosene_triple = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_t_20_kerosene_triple.obj")).asVBO();
+
     //Space
     public static final IModelCustom solarp = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/solar_panel.obj")).asVBO();
     public static final IModelCustom stardar = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/antenna.obj")).asVBO();

@@ -45,6 +45,7 @@ entity.entity_scrapfish.name=Scrapfish
 entity.entity_scutterfish.name=Scutterfish
 entity.entity_scuttlecrab.name=Scuttlecrab
 entity.entity_siftereel.name=Sifter Eel
+generator.martian=The Martian
 hbmfluid.ammonia=Ammonia
 hbmfluid.aqueous_copper=Aqueous Copper
 hbmfluid.aqueous_nickel=Aqueous Nickel

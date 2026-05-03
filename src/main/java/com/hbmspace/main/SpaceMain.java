@@ -7,10 +7,13 @@ import com.hbmspace.blocks.BlockEnumsSpace;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.blocks.fluid.ModFluidsSpace;
 import com.hbmspace.capability.HbmLivingCapabilitySpace;
+import com.hbmspace.commands.CommandStations;
+import com.hbmspace.commands.CommandTotalTime;
 import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.config.WorldConfigSpace;
-import com.hbmspace.dim.CommandSpaceTP;
+import com.hbmspace.commands.CommandSpaceTP;
 import com.hbmspace.dim.SolarSystem;
+import com.hbmspace.dim.WorldTypeTeleport;
 import com.hbmspace.enums.EnumAddonTypes;
 import com.hbmspace.handler.registires.ModBlocksReplaceHandler;
 import com.hbmspace.handler.registires.ModItemsReplaceHandler;
@@ -155,11 +158,14 @@ public class SpaceMain {
         proxy.postInit(event);
         if(event.getSide() == Side.SERVER) RocketPart.registerServerParts(); // fuck me, parts were registered on client but NOT on server
 
+        WorldTypeTeleport.init();
     }
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent evt) {
         evt.registerServerCommand(new CommandSpaceTP());
+        evt.registerServerCommand(new CommandStations());
+        evt.registerServerCommand(new CommandTotalTime());
     }
 
     // Th3_Sl1ze: Either I'm blind or there are no annotations for specifying dependency version..

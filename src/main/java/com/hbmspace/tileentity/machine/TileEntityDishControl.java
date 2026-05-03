@@ -8,12 +8,11 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
@@ -106,18 +105,24 @@ public class TileEntityDishControl extends TileEntityMachineBase implements ITic
     }
 
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
+    public void serializeInitial(ByteBuf buf) {
+        super.serializeInitial(buf);
         NBTTagCompound nbt = new NBTTagCompound();
         this.writeToNBT(nbt);
-        return new SPacketUpdateTileEntity(this.pos, 0, nbt);
+        ByteBufUtils.writeTag(buf, nbt);
     }
 
     @Override
-    public void onDataPacket(@NotNull NetworkManager net, SPacketUpdateTileEntity pkt) {
-        this.readFromNBT(pkt.getNbtCompound());
+    public void deserializeInitial(ByteBuf buf) {
+        super.deserializeInitial(buf);
+        NBTTagCompound nbt = ByteBufUtils.readTag(buf);
+        if(nbt != null) {
+            this.readFromNBT(nbt);
+        }
+        this.dish = null;
     }
 
-    public void TryLink(ItemStack stack)
+    public void tryLink(ItemStack stack)
     {
         isLinked = linkWithSensor(stack);
     }

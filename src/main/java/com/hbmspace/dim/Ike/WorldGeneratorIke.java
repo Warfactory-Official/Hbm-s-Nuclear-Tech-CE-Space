@@ -24,7 +24,7 @@ import java.util.Random;
 public class WorldGeneratorIke implements IWorldGenerator {
 
     public WorldGeneratorIke() {
-        /*NBTStructure.registerStructure(com.hbm.config.SpaceConfig.ikeDimension, new SpawnCondition("ike_artifact") {{
+        /*NBTStructure.registerStructure(SpaceConfig.ikeDimension, new SpawnCondition("ike_artifact") {{
             structure = new JigsawPiece("ike_artifact", StructureManager.ike_artifact, -5);
             spawnWeight = 4;
         }});*/

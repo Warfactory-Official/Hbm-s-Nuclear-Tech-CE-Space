@@ -2,11 +2,13 @@ package com.hbmspace.blocks;
 
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.OreEnumUtil;
+import com.hbm.blocks.fluid.ModFluids;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.lib.ModDamageSource;
 import com.hbm.main.MainRegistry;
 import com.hbmspace.blocks.bomb.LaunchPadRocket;
 import com.hbmspace.blocks.fluid.GenericFluidBlockSpace;
+import com.hbmspace.blocks.fluid.ModFluidsSpace;
 import com.hbmspace.blocks.generic.*;
 import com.hbmspace.blocks.machine.*;
 import com.hbmspace.blocks.machine.rbmk.RBMKBurner;
@@ -97,8 +99,10 @@ public class ModBlocksSpace {
     public static final Block ore_arsenic = new BlockOre("ore_arsenic", null, 2).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_cadmium = new BlockOre("ore_cadmium", null, 2).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_silicon = new BlockOre("ore_silicon", null, 2).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
+    public static final Block ore_basalt = new BlockOreBasalt("ore_basalt").setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
 
     public static final Block stone_resource = new BlockEnumMetaSpace<>(Material.ROCK, SoundType.STONE, "stone_resource", BlockEnumsSpace.EnumStoneType.VALUES, true, true).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
+    public static final Block bromine_block = new GenericFluidBlockSpace(ModFluidsSpace.bromine_fluid, Material.WATER, "bromine_block").setResistance(500F);
 
     public static final Block spike_cacti = new BlockRubberCacti("rubber_tall").setCreativeTab(MainRegistry.blockTab).setSoundType(SoundType.GROUND).setHardness(0.0F);
     public static final Block vinyl_sand = new BlockFallingBaseSpace(Material.SAND, "vinyl_sand", SoundType.SAND, "sand_vinyl").setCreativeTab(MainRegistry.blockTab).setHardness(1.0F).setResistance(1.0F);
@@ -149,6 +153,7 @@ public class ModBlocksSpace {
     public static final Block gas_dock = new MachineGasDock(Material.IRON, "gas_dock").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.missileTab);
     public static final Block orrery = new BlockOrrery(Material.IRON, "orrery").setHardness(10.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block rbmk_burner = new RBMKBurner("rbmk_burner", "rbmk_burner").setCreativeTab(MainRegistry.machineTab);
+    public static final Block atmosphere_editor = new BlockAtmosphereEditor(Material.IRON, "atmosphere_editor").setHardness(1.0F).setCreativeTab(MainRegistry.machineTab);
 
     public static final Block dyson_launcher = new MachineDysonLauncher(Material.IRON, "dyson_launcher").setHardness(10.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block dyson_receiver = new MachineDysonReceiver(Material.IRON, "dyson_receiver").setHardness(10.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);

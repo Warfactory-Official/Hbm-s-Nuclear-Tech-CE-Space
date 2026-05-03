@@ -26,7 +26,7 @@ public class WorldGeneratorMinmus implements IWorldGenerator {
 
         JigsawPiece minmusBase = new JigsawPiece("minmus_base", StructureManager.mun_base) {{ alignToTerrain = true; heightOffset = -1; blockTable = concrete; }};
 
-        NBTStructure.registerStructure(com.hbm.config.SpaceConfig.minmusDimension, new SpawnCondition("minmus_base") {{
+        NBTStructure.registerStructure(SpaceConfig.minmusDimension, new SpawnCondition("minmus_base") {{
             spawnWeight = 6;
             sizeLimit = 32;
             startPool = "start";

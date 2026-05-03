@@ -1,7 +1,6 @@
 package com.hbmspace.dim.mapgen;
 
-import com.hbm.config.SpaceConfig;
-
+import com.hbmspace.config.SpaceConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;

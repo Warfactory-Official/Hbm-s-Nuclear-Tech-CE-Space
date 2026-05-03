@@ -76,7 +76,6 @@ public class BlockVolcanoV2 extends BlockContainerBakeableSpace {
             chargetime = (new Random()).nextInt(400) + 100;
         }
 
-        @Override // dummy method to satisfy IBufPacketReceiver
         public void networkPackNT(int range) {
         }
 

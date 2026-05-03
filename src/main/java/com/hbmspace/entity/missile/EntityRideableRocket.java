@@ -1158,7 +1158,6 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
         return entity instanceof EntityPlayer ? (EntityPlayer) entity : null;
     }
 
-    @Override // dummy method to satisfy IBufPacketReceiver
     public void networkPackNT(int range) {
     }
 }

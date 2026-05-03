@@ -19,7 +19,9 @@ public class HbmLivingCapabilitySpace {
         int getOxy();
         CBT_Atmosphere getAtmosphere();
         boolean hasGravity();
+        boolean hasWarped();
         void setOxy(int oxygen);
+        void setWarped(boolean warped);
         void setAtmosphere(CBT_Atmosphere atmosphere);
         void saveNBTData(NBTTagCompound tag);
         void loadNBTData(NBTTagCompound tag);
@@ -31,6 +33,7 @@ public class HbmLivingCapabilitySpace {
         private int oxygen = 100;
         private CBT_Atmosphere atmosphere;
         private boolean gravity = false;
+        private boolean hasWarped = false;
 
         @Override
         public int getOxy() {
@@ -48,8 +51,18 @@ public class HbmLivingCapabilitySpace {
         }
 
         @Override
+        public boolean hasWarped() {
+            return hasWarped;
+        }
+
+        @Override
         public void setOxy(int oxygen) {
             this.oxygen = oxygen;
+        }
+
+        @Override
+        public void setWarped(boolean warped) {
+            this.hasWarped = warped;
         }
 
         @Override
@@ -66,12 +79,14 @@ public class HbmLivingCapabilitySpace {
         public void saveNBTData(NBTTagCompound tag) {
             tag.setInteger("oxygen", oxygen);
             tag.setBoolean("gravity", gravity);
+            tag.setBoolean("warped", hasWarped);
         }
 
         @Override
         public void loadNBTData(NBTTagCompound tag) {
             setOxy(tag.getInteger("oxygen"));
             setGravity(tag.getBoolean("gravity"));
+            setWarped(tag.getBoolean("warped"));
         }
     }
 
@@ -112,7 +127,16 @@ public class HbmLivingCapabilitySpace {
             }
 
             @Override
+            public boolean hasWarped() {
+                return false;
+            }
+
+            @Override
             public void setOxy(int oxygen) {
+            }
+
+            @Override
+            public void setWarped(boolean warped) {
             }
 
             @Override

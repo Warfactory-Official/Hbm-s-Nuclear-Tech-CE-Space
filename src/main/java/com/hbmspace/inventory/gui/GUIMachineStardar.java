@@ -1,6 +1,5 @@
 package com.hbmspace.inventory.gui;
 
-import com.hbm.config.SpaceConfig;
 import com.hbm.lib.Library;
 import com.hbm.saveddata.satellites.*;
 import com.hbm.inventory.gui.GuiInfoContainer;
@@ -8,6 +7,7 @@ import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toserver.NBTControlPacket;
 import com.hbm.util.I18nUtil;
 import com.hbm.util.RenderUtil;
+import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.dim.trait.CBT_Impact;

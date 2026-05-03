@@ -25,7 +25,7 @@ import java.util.Random;
 public class WorldGeneratorMoho implements IWorldGenerator {
 
     public WorldGeneratorMoho() {
-        /*NBTStructure.registerStructure(com.hbm.config.SpaceConfig.mohoDimension, new SpawnCondition("moho_base") {{
+        /*NBTStructure.registerStructure(SpaceConfig.mohoDimension, new SpawnCondition("moho_base") {{
             spawnWeight = 4;
             minHeight = 63 - 11;
             maxHeight = 63;

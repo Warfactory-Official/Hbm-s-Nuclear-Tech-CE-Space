@@ -1,5 +1,7 @@
-package com.hbmspace.dim;
+package com.hbmspace.commands;
 
+import com.hbm.util.I18nUtil;
+import com.hbmspace.dim.CelestialTeleporter;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -50,7 +52,7 @@ public class CommandSpaceTP extends CommandBase {
                 }
             }
             if (dimensionId == -1) {
-                throw new CommandException(TextFormatting.RED + "commands.dimtp.dimension_not_found", args[0]);
+                throw new CommandException(TextFormatting.RED + I18nUtil.resolveKey("commands.dimtp.dimension_not_found"), args[0]);
             }
         }
 
@@ -61,13 +63,13 @@ public class CommandSpaceTP extends CommandBase {
             if (sender instanceof EntityPlayerMP player) {
                 targetPlayer = player;
             } else {
-                throw new CommandException(TextFormatting.RED + "commands.dimtp.not_player");
+                throw new CommandException(TextFormatting.RED + I18nUtil.resolveKey("commands.dimtp.not_player"));
             }
         }
 
         WorldServer targetWorld = server.getWorld(dimensionId);
         if (targetWorld == null) {
-            throw new CommandException(TextFormatting.RED + "commands.dimtp.dimension_not_found", dimensionId);
+            throw new CommandException(TextFormatting.RED + I18nUtil.resolveKey("commands.dimtp.dimension_not_found"), dimensionId);
         }
 
         BlockPos pos = targetPlayer.getPosition();

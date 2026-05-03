@@ -26,6 +26,7 @@ import com.hbmspace.dim.tekto.WorldProviderTekto;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.ArrayList;
@@ -35,8 +36,9 @@ public class PlanetGen {
     public static void init() {
         GameRegistry.registerWorldGenerator(new WorldGeneratorCelestial(), 2);
 
+        WorldGeneratorDuna duna = new WorldGeneratorDuna();
         GameRegistry.registerWorldGenerator(new WorldGeneratorMoon(), 1);
-        GameRegistry.registerWorldGenerator(new WorldGeneratorDuna(), 1);
+        GameRegistry.registerWorldGenerator(duna, 1);
         GameRegistry.registerWorldGenerator(new WorldGeneratorIke(), 1);
         GameRegistry.registerWorldGenerator(new WorldGeneratorEve(), 1);
         GameRegistry.registerWorldGenerator(new WorldGeneratorDres(), 1);
@@ -55,6 +57,8 @@ public class PlanetGen {
         registerDimension(SpaceConfig.laytheDimension, "Laythe", WorldProviderLaythe.class);
         registerDimension(SpaceConfig.orbitDimension, "Orbit", WorldProviderOrbit.class);
         registerDimension(SpaceConfig.tektoDimension, "Tekto", WorldProviderTekto.class);
+
+        MinecraftForge.EVENT_BUS.register(duna);
 
     }
 

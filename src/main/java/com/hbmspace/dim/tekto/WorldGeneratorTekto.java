@@ -2,10 +2,10 @@ package com.hbmspace.dim.tekto;
 
 import java.util.Random;
 
-import com.hbm.config.SpaceConfig;
 import com.hbm.config.WorldConfig;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.blocks.generic.BlockOre;
+import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.dim.WorldProviderCelestial;

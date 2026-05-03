@@ -129,10 +129,6 @@ public class TileEntityCombatDropPod extends TileEntity implements ITickable, IB
     }
 
     @Override
-    public void networkPackNT(int range) {
-    }
-
-    @Override
     public void serialize(ByteBuf buf) {
         buf.writeInt(color);
         buf.writeDouble(hatchopen);

@@ -40,8 +40,7 @@
 dependencies {
     annotationProcessor project(':processor')
     compileOnly project(':processor')
-
-    implementation 'com.hbm:ntm-ce:2.4.0.0:dev'
+    implementation 'com.hbm:ntm-ce:2.5.0.2:dev'
     implementation rfg.deobf("curse.maven:opencomputers-223008:6608365")
     implementation rfg.deobf("mezz:jei:4.29.8")
     implementation 'com.google.guava:guava:31.0.1-jre'

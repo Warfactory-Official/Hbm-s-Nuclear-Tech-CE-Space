@@ -1,7 +1,7 @@
 package com.hbmspace.dim;
 
+import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.inventory.fluid.trait.FluidTraitSimple;
-import com.hbm.util.Tuple;
 import com.hbmspace.capability.HbmLivingPropsSpace;
 import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.orbit.OrbitalStation;
@@ -9,6 +9,7 @@ import com.hbmspace.dim.trait.*;
 import com.hbmspace.dim.trait.CBT_Atmosphere.FluidEntry;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
+import com.hbmspace.inventory.recipes.AtmosphereRecipes;
 import com.hbmspace.items.ItemVOTVdrive.Target;
 import com.hbmspace.util.AstronomyUtil;
 import com.hbmspace.render.shader.ShaderSpace;
@@ -70,10 +71,10 @@ public class CelestialBody {
 
     public FluidType gas;
 	
-	public List<CelestialBody> satellites = new ArrayList<CelestialBody>(); // moon boyes
+	public List<CelestialBody> satellites = new ArrayList<>(); // moon boyes
 	public CelestialBody parent = null;
 
-	private HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait> traits = new HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait>();
+	private HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait> traits = new HashMap<>();
 
 	public String stoneTexture = "stone";
 	public ResourceLocation surfaceTexture;
@@ -420,15 +421,40 @@ public class CelestialBody {
         CelestialBody.consumeGas(world, type, mB);
     }
 
+    public static boolean reactAtmosphere(World world, Map.Entry<FluidStack, AtmosphereRecipes.AtmosphereRecipe> recipe) {
+        HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait> currentTraits = getTraits(world);
+        CBT_Atmosphere atmosphere = (CBT_Atmosphere) currentTraits.get(CBT_Atmosphere.class);
+
+        int scale = 64;
+
+        // because atmochem runs infrequently, we will automatically scale this to react all it can immediately
+        for(FluidStack recipeFluid : recipe.getValue().inputFluids) {
+            boolean hasInput = false;
+
+            for(CBT_Atmosphere.FluidEntry entry : atmosphere.fluids) {
+                if(entry.fluid == recipeFluid.type && entry.pressure * AstronomyUtil.MB_PER_ATM >= recipeFluid.fill * scale) hasInput = true;
+            }
+
+            if(!hasInput) return false;
+        }
+
+        for(FluidStack recipeFluid : recipe.getValue().inputFluids) {
+            capture(world, recipeFluid.type, recipeFluid.fill * scale);
+        }
+
+        release(world, recipe.getKey().type, recipe.getKey().fill * scale);
+
+        return true;
+    }
+
 	// Checks if we need to update any traits based on the current atmospheric constituents
 	public static void updateChemistry(World world) {
 		boolean hasUpdated = false;
 		HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait> currentTraits = getTraits(world);
+        CBT_Atmosphere atmosphere = (CBT_Atmosphere) currentTraits.get(CBT_Atmosphere.class);
 
 		CBT_Water water = (CBT_Water) currentTraits.get(CBT_Water.class);
 		if(water == null) {
-			CBT_Atmosphere atmosphere = (CBT_Atmosphere) currentTraits.get(CBT_Atmosphere.class);
-
 			if(atmosphere != null) {
 				double pressure = 0;
 				for(FluidEntry entry : atmosphere.fluids) {
@@ -447,6 +473,15 @@ public class CelestialBody {
 				}
 			}
 		}
+
+        if(atmosphere != null) {
+            for(Map.Entry<FluidStack, AtmosphereRecipes.AtmosphereRecipe> recipe : AtmosphereRecipes.getRecipesMap().entrySet()) {
+                if(reactAtmosphere(world, recipe)) {
+                    hasUpdated = true;
+                }
+            }
+
+        }
 
 		if(hasUpdated) setTraits(world, currentTraits);
 	}
@@ -486,8 +521,8 @@ public class CelestialBody {
 	// A lot of these are member getters but without having to check the celestial body exists
 	// If it doesn't exist, return the overworld as the default, may cause issues with terraforming the overworld
 
-	private static HashMap<Integer, CelestialBody> dimToBodyMap = new HashMap<Integer, CelestialBody>();
-	private static HashMap<String, CelestialBody> nameToBodyMap = new HashMap<String, CelestialBody>();
+	private static HashMap<Integer, CelestialBody> dimToBodyMap = new HashMap<>();
+	private static HashMap<String, CelestialBody> nameToBodyMap = new HashMap<>();
 
 	public static Collection<CelestialBody> getAllBodies() {
 		return nameToBodyMap.values();
@@ -641,7 +676,7 @@ public class CelestialBody {
 
 	// Processing level is based off of where you are processing from, so if you're on Duna, Ike will be tier 0
 	public int getProcessingLevel(CelestialBody from) {
-		int level = 3;
+		int level;
 
 		if(this == from) {
 			// If self, tier 0
