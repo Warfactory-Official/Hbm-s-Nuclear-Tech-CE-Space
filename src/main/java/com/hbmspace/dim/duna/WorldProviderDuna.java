@@ -1,5 +1,6 @@
 package com.hbmspace.dim.duna;
 
+import com.hbm.util.BobMathUtil;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.dim.WorldChunkManagerCelestial;
@@ -40,25 +41,28 @@ public class WorldProviderDuna extends WorldProviderCelestial {
 
 	private int dustStormTimer = 0;
 	private float dustStormIntensity = 1;
+    private float dustStormSmoothed = 0;
 
 	@Override
 	public void updateWeather() {
 		super.updateWeather();
 
+        dustStormSmoothed = (float) BobMathUtil.lerp(0.008, dustStormSmoothed, dustStormIntensity);
+
 		if(!world.isRemote) {
 			if(dustStormTimer <= 0) {
-				if(dustStormIntensity >= 0.5F) {
+                if(dustStormIntensity >= 0.05F) {
 					dustStormIntensity = 0;
 					dustStormTimer = world.rand.nextInt(168000) + 12000;
 				} else {
-					dustStormIntensity = world.rand.nextFloat() * 0.5F + 0.5F;
+                    dustStormIntensity = world.rand.nextFloat() * 0.75F + 0.25F;
 					dustStormTimer = world.rand.nextInt(12000) + 12000;
 				}
 			}
 
 			dustStormTimer--;
 		} else {
-			if(dustStormIntensity >= 0.5F) {
+			if(dustStormSmoothed >= 0.05F && world.rand.nextFloat() < dustStormSmoothed) {
 				Entity viewEntity = Minecraft.getMinecraft().getRenderViewEntity();
 				Vec3d vec = new Vec3d(20, 0, 50);
 				vec = Vec3dUtil.rotateRoll(vec, (float)(world.rand.nextDouble() * Math.PI * 10));
@@ -70,15 +74,15 @@ public class WorldProviderDuna extends WorldProviderCelestial {
 
 	@Override
 	public float fogDensity(EntityViewRenderEvent.FogDensity event) {
-		if(dustStormIntensity >= 0.5F)
-			return dustStormIntensity * dustStormIntensity * 0.05F;
+        if(dustStormSmoothed >= 0.25F)
+            return dustStormSmoothed * dustStormSmoothed * 0.075F;
 
 		return super.fogDensity(event);
 	}
 
 	@Override
 	public boolean isDaytime() {
-		if(dustStormIntensity >= 0.5F) return false;
+        if(dustStormIntensity >= 0.2F) return false;
 		return super.isDaytime();
 	}
 
@@ -112,6 +116,7 @@ public class WorldProviderDuna extends WorldProviderCelestial {
 	public void resetRainAndThunder() {
 		super.resetRainAndThunder();
 		dustStormIntensity = 0;
+        dustStormSmoothed = 0;
 		dustStormTimer = world.rand.nextInt(168000) + 12000;
 	}
 
