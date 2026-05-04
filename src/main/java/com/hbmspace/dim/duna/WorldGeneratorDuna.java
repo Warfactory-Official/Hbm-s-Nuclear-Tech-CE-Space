@@ -84,11 +84,11 @@ public class WorldGeneratorDuna implements IWorldGenerator {
         WorldGeneratorCelestial.generateOre(world, rand, i, j, WorldConfigSpace.zincSpawn, 9, 4, 27, ModBlocksSpace.ore_zinc.getStateFromMeta(meta), stone);
 
         // Basalt rich in minerals, but only in basaltic caves!
-        WorldGeneratorCelestial.generateOre(world, rand, i, j, 12, 6, 0, 16, ModBlocksSpace.ore_basalt.getStateFromMeta(0), ModBlocks.basalt);
-        WorldGeneratorCelestial.generateOre(world, rand, i, j, 8, 8, 0, 16, ModBlocksSpace.ore_basalt.getStateFromMeta(1), ModBlocks.basalt);
-        WorldGeneratorCelestial.generateOre(world, rand, i, j, 8, 9, 0, 16, ModBlocksSpace.ore_basalt.getStateFromMeta(2), ModBlocks.basalt);
-        WorldGeneratorCelestial.generateOre(world, rand, i, j, 2, 4, 0, 16, ModBlocksSpace.ore_basalt.getStateFromMeta(3), ModBlocks.basalt);
-        WorldGeneratorCelestial.generateOre(world, rand, i, j, 6, 10, 0, 16, ModBlocksSpace.ore_basalt.getStateFromMeta(4), ModBlocks.basalt);
+        WorldGeneratorCelestial.generateOre(world, rand, i, j, 12, 6, 0, 16, ModBlocks.basalt_ore.getStateFromMeta(0), ModBlocks.basalt);
+        WorldGeneratorCelestial.generateOre(world, rand, i, j, 8, 8, 0, 16, ModBlocks.basalt_ore.getStateFromMeta(1), ModBlocks.basalt);
+        WorldGeneratorCelestial.generateOre(world, rand, i, j, 8, 9, 0, 16, ModBlocks.basalt_ore.getStateFromMeta(2), ModBlocks.basalt);
+        WorldGeneratorCelestial.generateOre(world, rand, i, j, 2, 4, 0, 16, ModBlocks.basalt_ore.getStateFromMeta(3), ModBlocks.basalt);
+        WorldGeneratorCelestial.generateOre(world, rand, i, j, 6, 10, 0, 16, ModBlocks.basalt_ore.getStateFromMeta(4), ModBlocks.basalt);
 
 
         if(i == 0 && j == 0 && world.getWorldInfo().getTerrainType() == WorldTypeTeleport.martian) {

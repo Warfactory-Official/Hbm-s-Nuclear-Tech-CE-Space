@@ -99,7 +99,6 @@ public class ModBlocksSpace {
     public static final Block ore_arsenic = new BlockOre("ore_arsenic", null, 2).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_cadmium = new BlockOre("ore_cadmium", null, 2).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_silicon = new BlockOre("ore_silicon", null, 2).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
-    public static final Block ore_basalt = new BlockOreBasalt("ore_basalt").setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
 
     public static final Block stone_resource = new BlockEnumMetaSpace<>(Material.ROCK, SoundType.STONE, "stone_resource", BlockEnumsSpace.EnumStoneType.VALUES, true, true).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block bromine_block = new GenericFluidBlockSpace(ModFluidsSpace.bromine_fluid, Material.WATER, "bromine_block").setResistance(500F);

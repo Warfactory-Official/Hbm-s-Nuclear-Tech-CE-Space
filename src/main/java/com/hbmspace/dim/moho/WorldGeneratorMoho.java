@@ -89,11 +89,11 @@ public class WorldGeneratorMoho implements IWorldGenerator {
         WorldGeneratorCelestial.generateOre(world, rand, i, j, 10, 32, 0, 128, ModBlocks.basalt.getDefaultState(), stone);
 		
 		// More basalt ores!
-		//WorldGeneratorCelestial.generateOre(world, rand, i, j, 16, 6, 16, 64, ModBlocksSpace.ore_basalt, 0, ModBlocksSpace.basalt);
-		//WorldGeneratorCelestial.generateOre(world, rand, i, j, 12, 8, 8, 32, ModBlocksSpace.ore_basalt, 1, ModBlocksSpace.basalt);
-		//WorldGeneratorCelestial.generateOre(world, rand, i, j, 8, 9, 8, 48, ModBlocksSpace.ore_basalt, 2, ModBlocksSpace.basalt);
-		//WorldGeneratorCelestial.generateOre(world, rand, i, j, 2, 4, 0, 24, ModBlocksSpace.ore_basalt, 3, ModBlocksSpace.basalt);
-		//WorldGeneratorCelestial.generateOre(world, rand, i, j, 8, 10, 16, 64, ModBlocksSpace.ore_basalt, 4, ModBlocksSpace.basalt);
+		WorldGeneratorCelestial.generateOre(world, rand, i, j, 16, 6, 16, 64, ModBlocks.basalt_ore.getStateFromMeta(0), ModBlocks.basalt);
+		WorldGeneratorCelestial.generateOre(world, rand, i, j, 12, 8, 8, 32, ModBlocks.basalt_ore.getStateFromMeta(1), ModBlocks.basalt);
+		WorldGeneratorCelestial.generateOre(world, rand, i, j, 8, 9, 8, 48, ModBlocks.basalt_ore.getStateFromMeta(2), ModBlocks.basalt);
+		WorldGeneratorCelestial.generateOre(world, rand, i, j, 2, 4, 0, 24, ModBlocks.basalt_ore.getStateFromMeta(3), ModBlocks.basalt);
+		WorldGeneratorCelestial.generateOre(world, rand, i, j, 8, 10, 16, 64, ModBlocks.basalt_ore.getStateFromMeta(4), ModBlocks.basalt);
 
 		for(int k = 0; k < 2; k++){
 			int x = i + rand.nextInt(16);
