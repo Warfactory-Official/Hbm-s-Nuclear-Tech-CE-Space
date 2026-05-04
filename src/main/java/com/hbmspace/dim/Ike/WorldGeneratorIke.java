@@ -60,7 +60,7 @@ public class WorldGeneratorIke implements IWorldGenerator {
 		//dres and the likes :)
 	
 		
-        WorldGeneratorCelestial.generateOre(world, rand, i, j, WorldConfigSpace.mineralSpawn, 10, 12, 32, ModBlocksSpace.ore_mineral.getStateFromMeta(meta), ModBlocksSpace.moho_stone);
+        WorldGeneratorCelestial.generateOre(world, rand, i, j, WorldConfigSpace.mineralSpawn, 10, 12, 32, ModBlocksSpace.ore_mineral.getStateFromMeta(meta), stone);
 
         if(WorldConfig.pyramidStructure > 0 && rand.nextInt(WorldConfig.pyramidStructure) == 0) {
             int x = i + rand.nextInt(16);
