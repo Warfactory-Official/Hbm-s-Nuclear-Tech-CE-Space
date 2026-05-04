@@ -10,11 +10,7 @@ import com.hbmspace.dim.trait.CBT_Atmosphere;
 import com.hbmspace.handler.atmosphere.IPlantableBreathing;
 import com.hbmspace.items.IDynamicModelsSpace;
 import com.hbmspace.items.ModItemsSpace;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockBush;
-import net.minecraft.block.IGrowable;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.*;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -45,9 +41,8 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.function.Predicate;
 
-public class BlockCrop extends BlockBush implements IGrowable, IPlantableBreathing, IDynamicModelsSpace {
+public class BlockCrop extends BlockCrops implements IGrowable, IPlantableBreathing, IDynamicModelsSpace {
 
-    public static final PropertyInteger AGE = PropertyInteger.create("age", 0, 7);
     protected static final AxisAlignedBB AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.25D, 1.0D);
 
     protected int maxGrowthStage = 7;
@@ -194,11 +189,20 @@ public class BlockCrop extends BlockBush implements IGrowable, IPlantableBreathi
 
     @Override
     public void getDrops(@NotNull NonNullList<ItemStack> drops, @NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull IBlockState state, int fortune) {
-        super.getDrops(drops, world, pos, state, fortune);
-        int age = state.getValue(AGE);
-        if (age < 7) return;
         World w = (world instanceof World) ? (World) world : null;
         Random rand = (w != null) ? w.rand : new Random();
+
+        int count = quantityDropped(state, fortune, rand);
+        for (int i = 0; i < count; i++) {
+            Item item = this.getItemDropped(state, rand, fortune);
+            if (item != net.minecraft.init.Items.AIR) {
+                drops.add(new ItemStack(item, 1, this.damageDropped(state)));
+            }
+        }
+
+        int age = state.getValue(AGE);
+        if (age < 7) return;
+
         if (this == ModBlocksSpace.crop_tea) {
             for (int i = 0; i < 3 + fortune; ++i) {
                 if (rand.nextInt(15) <= age) {
@@ -339,8 +343,4 @@ public class BlockCrop extends BlockBush implements IGrowable, IPlantableBreathi
         }
     }
 
-    @Override
-    public Object getSelf() {
-        return this;
-    }
 }
