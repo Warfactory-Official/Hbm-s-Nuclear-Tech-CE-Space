@@ -519,10 +519,15 @@ public class RocketStruct {
 
         public static RocketStage unzipWatchable(Tuple.Pair<Integer, Integer> pair) {
             RocketStage stage = new RocketStage();
-            stage.fuselage = (ItemMissile) Item.getItemById(pair.key >>> 16);
-            stage.fins = (ItemMissile) Item.getItemById(pair.key & 0xFFFF);
-            stage.thruster = (ItemMissile) Item.getItemById(pair.value >>> 16);
-            stage.fuselageCount = (pair.value >>> 8) & 0xFF;
+            int fId = (pair.key >> 16) & 0xFFFF;
+            int fnId = pair.key & 0xFFFF;
+            int tId = (pair.value >> 16) & 0xFFFF;
+
+            stage.fuselage = fId == 0 ? null : (ItemMissile) Item.getItemById(fId);
+            stage.fins = fnId == 0 ? null : (ItemMissile) Item.getItemById(fnId);
+            stage.thruster = tId == 0 ? null : (ItemMissile) Item.getItemById(tId);
+
+            stage.fuselageCount = (pair.value >> 8) & 0xFF;
             stage.thrusterCount = pair.value & 0xFF;
             return stage;
         }
