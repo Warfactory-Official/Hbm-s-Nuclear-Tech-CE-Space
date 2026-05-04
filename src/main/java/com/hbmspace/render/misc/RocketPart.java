@@ -3,7 +3,7 @@ package com.hbmspace.render.misc;
 import com.hbm.items.ModItems;
 import com.hbm.items.weapon.ItemMissile;
 import com.hbm.main.ResourceManager;
-import com.hbm.render.loader.IModelCustom;
+import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.hbm.render.misc.MissilePart;
 import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.main.ResourceManagerSpace;
@@ -19,9 +19,9 @@ public class RocketPart extends MissilePart {
     public static HashMap<Integer, MissilePart> parts = new HashMap<>();
 
     public RenderRocketPart renderer;
-    private IModelCustom shroudModel;
+    private WaveFrontObjectVAO shroudModel;
 
-    private RocketPart(Item item, ItemMissile.PartType type, double height, double guiheight, IModelCustom model, ResourceLocation texture) {
+    private RocketPart(Item item, ItemMissile.PartType type, double height, double guiheight, WaveFrontObjectVAO model, ResourceLocation texture) {
         super(item, type, height, guiheight, model, texture);
     }
 
@@ -30,17 +30,17 @@ public class RocketPart extends MissilePart {
         return this;
     }
 
-    private RocketPart withDeployed(IModelCustom deployedModel) {
+    private RocketPart withDeployed(WaveFrontObjectVAO deployedModel) {
         this.deployedModel = deployedModel;
         return this;
     }
 
-    private RocketPart withShroud(IModelCustom shroudModel) {
+    private RocketPart withShroud(WaveFrontObjectVAO shroudModel) {
         this.shroudModel = shroudModel;
         return this;
     }
 
-    public IModelCustom getShroud() {
+    public WaveFrontObjectVAO getShroud() {
         return shroudModel;
     }
     // Th3_Sl1ze: I hate the duplicate registration method but apparently it's the only fix I can see rn
@@ -379,7 +379,7 @@ public class RocketPart extends MissilePart {
         parts.put(item.hashCode(), part);
     }
 
-    public static RocketPart registerPart(Item item, ItemMissile.PartType type, double height, double guiheight, IModelCustom model, ResourceLocation texture) {
+    public static RocketPart registerPart(Item item, ItemMissile.PartType type, double height, double guiheight, WaveFrontObjectVAO model, ResourceLocation texture) {
         RocketPart part = new RocketPart(item, type, height, guiheight, model, texture);
         parts.put(item.hashCode(), part);
         return part;

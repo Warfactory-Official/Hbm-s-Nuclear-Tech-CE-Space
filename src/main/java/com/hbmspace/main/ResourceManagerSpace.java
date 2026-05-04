@@ -8,27 +8,27 @@ import net.minecraft.util.ResourceLocation;
 
 public class ResourceManagerSpace {
 
-    public static final IModelCustom lpw2 = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/lpw2.obj")).asVBO();
-    public static final IModelCustom htr3 = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/htr3.obj")).asVBO();
-    public static final IModelCustom htrf4 = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/htrf4.obj")).asVBO();
-    public static final IModelCustom htrf4_neo = new HFRWavefrontObject(new ResourceLocation("hbm", "models/fusion/htrf4.obj")).asVBO();
-    public static final IModelCustom xenon_thruster = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/xenon_thruster.obj")).asVBO();
-    public static final IModelCustom drop_pod = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/rp_drop_pod.obj")).asVBO();
-    public static final IModelCustom combat_pod = new HFRWavefrontObject(new ResourceLocation("hbm", "models/bombs/combat_drop_pod.obj")).asVBO();
-    public static final IModelCustom landing_capsule = (new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/rp_landing_capsule.obj"))).asVBO();
-    public static final IModelCustom mp_w_fairing = (new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_w_fairing.obj"))).asVBO();
-    public static final IModelCustom mp_f_20_12_usa = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_f_20_usa.obj")).asVBO();
-    public static final IModelCustom mp_f_20_6_usa = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_f_20_6_usa.obj")).asVBO();
-    public static final IModelCustom mp_f_20_3_usa = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_f_20_3_usa.obj")).asVBO();
-    public static final IModelCustom mp_f_20_1_usa = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_f_20_1_usa.obj")).asVBO();
-    public static final IModelCustom mp_f_20_neo = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_f_20_neo.obj")).asVBO();
-    public static final IModelCustom sat_dock = new HFRWavefrontObject(new ResourceLocation("hbm", "models/sat_dock.obj")).asVBO();
-    public static final IModelCustom rp_s_20_leggy = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/rp_s_20_leggy.obj")).asVBO();
-    public static final IModelCustom rp_s_20_leggy_deployed = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/rp_s_20_leggy_deployed.obj")).asVBO();
+    public static final WaveFrontObjectVAO lpw2 = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/lpw2.obj")).asVBO();
+    public static final WaveFrontObjectVAO htr3 = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/htr3.obj")).asVBO();
+    public static final WaveFrontObjectVAO htrf4 = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/htrf4.obj")).asVBO();
+    public static final WaveFrontObjectVAO htrf4_neo = new HFRWavefrontObject(new ResourceLocation("hbm", "models/fusion/htrf4.obj")).asVBO();
+    public static final WaveFrontObjectVAO xenon_thruster = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/xenon_thruster.obj")).asVBO();
+    public static final WaveFrontObjectVAO drop_pod = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/rp_drop_pod.obj")).asVBO();
+    public static final WaveFrontObjectVAO combat_pod = new HFRWavefrontObject(new ResourceLocation("hbm", "models/bombs/combat_drop_pod.obj")).asVBO();
+    public static final WaveFrontObjectVAO landing_capsule = (new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/rp_landing_capsule.obj"))).asVBO();
+    public static final WaveFrontObjectVAO mp_w_fairing = (new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_w_fairing.obj"))).asVBO();
+    public static final WaveFrontObjectVAO mp_f_20_12_usa = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_f_20_usa.obj")).asVBO();
+    public static final WaveFrontObjectVAO mp_f_20_6_usa = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_f_20_6_usa.obj")).asVBO();
+    public static final WaveFrontObjectVAO mp_f_20_3_usa = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_f_20_3_usa.obj")).asVBO();
+    public static final WaveFrontObjectVAO mp_f_20_1_usa = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_f_20_1_usa.obj")).asVBO();
+    public static final WaveFrontObjectVAO mp_f_20_neo = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_f_20_neo.obj")).asVBO();
+    public static final WaveFrontObjectVAO sat_dock = new HFRWavefrontObject(new ResourceLocation("hbm", "models/sat_dock.obj")).asVBO();
+    public static final WaveFrontObjectVAO rp_s_20_leggy = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/rp_s_20_leggy.obj")).asVBO();
+    public static final WaveFrontObjectVAO rp_s_20_leggy_deployed = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/rp_s_20_leggy_deployed.obj")).asVBO();
     // Duplicates from CE original to prevent crashes (IDFK WHY)
-    public static final IModelCustom mp_t_20_kerosene = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_t_20_kerosene.obj")).asVBO();
-    public static final IModelCustom mp_t_20_kerosene_dual = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_t_20_kerosene_dual.obj")).asVBO();
-    public static final IModelCustom mp_t_20_kerosene_triple = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_t_20_kerosene_triple.obj")).asVBO();
+    public static final WaveFrontObjectVAO mp_t_20_kerosene = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_t_20_kerosene.obj")).asVBO();
+    public static final WaveFrontObjectVAO mp_t_20_kerosene_dual = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_t_20_kerosene_dual.obj")).asVBO();
+    public static final WaveFrontObjectVAO mp_t_20_kerosene_triple = new HFRWavefrontObject(new ResourceLocation("hbm", "models/missile_parts/mp_t_20_kerosene_triple.obj")).asVBO();
 
     //Space
     public static final IModelCustom solarp = new HFRWavefrontObject(new ResourceLocation("hbm", "models/machines/solar_panel.obj")).asVBO();
