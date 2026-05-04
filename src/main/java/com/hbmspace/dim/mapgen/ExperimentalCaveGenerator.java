@@ -298,9 +298,7 @@ public class ExperimentalCaveGenerator extends MapGenBase {
             } else {
                 primer.setBlockState(x, y, z, net.minecraft.init.Blocks.AIR.getDefaultState());
 
-                // Индекс - 1 в старом массиве всегда означал y - 1
                 if (foundTop && primer.getBlockState(x, y - 1, z).getBlock() == biome.fillerBlock.getBlock()) {
-                    // biome.topBlock уже является IBlockState
                     primer.setBlockState(x, y - 1, z, biome.topBlock);
                 }
             }
