@@ -5,6 +5,7 @@ import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.handler.RocketStruct;
 import com.hbmspace.interfaces.AutoRegister;
 import com.hbmspace.main.ResourceManagerSpace;
+import com.hbmspace.render.misc.RocketPart;
 import com.hbmspace.render.misc.RocketPronter;
 import com.hbmspace.tileentity.machine.TileEntityMachineRocketAssembly;
 import net.minecraft.client.Minecraft;
@@ -44,7 +45,7 @@ public class RenderRocketAssembly extends TileEntitySpecialRenderer<TileEntityMa
                 if (te.rocket.stages.size() > 0) {
                     RocketStruct.RocketStage stage = te.rocket.stages.get(0);
                     if (stage.thruster != null) {
-                        GlStateManager.translate(0F, (float)(-RocketStruct.getPartHeight(stage.thruster)), 0F);
+                        GlStateManager.translate(0F, (float)(-RocketPart.getPart(stage.thruster).height), 0F);
                     }
                 }
 
@@ -59,8 +60,8 @@ public class RenderRocketAssembly extends TileEntitySpecialRenderer<TileEntityMa
                 RocketStruct.RocketStage nextStage = i < te.rocket.stages.size() - 1 ? te.rocket.stages.get(i + 1) : null;
 
                 double targetHeight = 0;
-                if (stage.fuselage != null) targetHeight += RocketStruct.getPartHeight(stage.fuselage) * stage.getStack();
-                if (nextStage != null && nextStage.thruster != null) targetHeight += RocketStruct.getPartHeight(nextStage.thruster);
+                if (stage.fuselage != null) targetHeight += RocketPart.getPart(stage.fuselage).height * stage.getStack();
+                if (nextStage != null && nextStage.thruster != null) targetHeight += RocketPart.getPart(nextStage.thruster).height;
 
                 while (targetHeight > 1) {
                     GlStateManager.translate(0F, 1F, 0F);
