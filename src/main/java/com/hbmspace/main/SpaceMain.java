@@ -15,6 +15,7 @@ import com.hbmspace.commands.CommandSpaceTP;
 import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.dim.WorldTypeTeleport;
 import com.hbmspace.enums.EnumAddonTypes;
+import com.hbmspace.handler.RocketStruct;
 import com.hbmspace.handler.registires.ModBlocksReplaceHandler;
 import com.hbmspace.handler.registires.ModItemsReplaceHandler;
 import com.hbmspace.inventory.OreDictManagerSpace;
@@ -156,7 +157,7 @@ public class SpaceMain {
 
         PlanetGen.init();
         proxy.postInit(event);
-        if(event.getSide() == Side.SERVER) RocketPart.registerServerParts(); // fuck me, parts were registered on client but NOT on server
+        if(event.getSide() == Side.SERVER) RocketStruct.registerServerParts(); // fuck me, parts were registered on client but NOT on server
 
         WorldTypeTeleport.init();
     }

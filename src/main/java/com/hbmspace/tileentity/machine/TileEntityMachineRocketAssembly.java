@@ -31,7 +31,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,8 +115,8 @@ public class TileEntityMachineRocketAssembly extends TileEntityMachineBase imple
                 }
 
                 double checkHeight = rocket.getHeight();
-                if(rocket.capsule != null) checkHeight -= rocket.capsule.height;
-                if(!rocket.stages.isEmpty() && rocket.stages.getFirst().thruster != null) checkHeight -= rocket.stages.getFirst().thruster.height;
+                if(rocket.capsule != null) checkHeight -= RocketStruct.getPartHeight(rocket.capsule);
+                if(!rocket.stages.isEmpty() && rocket.stages.getFirst().thruster != null) checkHeight -= RocketStruct.getPartHeight(rocket.stages.getFirst().thruster);
 
                 if(checkHeight < maxHeight) {
                     // Create platforms to stand on
@@ -126,8 +125,8 @@ public class TileEntityMachineRocketAssembly extends TileEntityMachineBase imple
                         RocketStruct.RocketStage stage = rocket.stages.get(i);
                         RocketStruct.RocketStage nextStage = i < rocket.stages.size() - 1 ? rocket.stages.get(i + 1) : null;
 
-                        if(stage.fuselage != null) targetHeight += (int) (stage.fuselage.height * stage.getStack());
-                        if(nextStage != null && nextStage.thruster != null) targetHeight += (int) nextStage.thruster.height;
+                        if(stage.fuselage != null) targetHeight += (int) (RocketStruct.getPartHeight(stage.fuselage) * stage.getStack());
+                        if(nextStage != null && nextStage.thruster != null) targetHeight += (int) RocketStruct.getPartHeight(nextStage.thruster);
 
                         int platform = Math.round(targetHeight);
 
@@ -219,7 +218,7 @@ public class TileEntityMachineRocketAssembly extends TileEntityMachineBase imple
 
     @Override
     public void serialize(ByteBuf buf) {
-        rocket.writeToByteBuffer(buf);
+        if(rocket != null) rocket.writeToByteBuffer(buf);
     }
 
     @Override
@@ -265,16 +264,16 @@ public class TileEntityMachineRocketAssembly extends TileEntityMachineBase imple
         int satFreq = ISatChip.getFreqS(inventory.getStackInSlot(inventory.getSlots() - RocketStruct.MAX_STAGES * 2 - 1));
         RocketStruct rocket = ItemCustomRocket.get(inventory.getStackInSlot(inventory.getSlots() - RocketStruct.MAX_STAGES * 2 - 1));
 
-        inventory.setStackInSlot(0, new ItemStack(rocket.capsule.part));
+        inventory.setStackInSlot(0, new ItemStack(rocket.capsule));
         if(inventory.getStackInSlot(0).getItem() instanceof ISatChip) {
             ISatChip.setFreqS(inventory.getStackInSlot(0), satFreq);
         }
         for(int i = 0; i < rocket.stages.size(); i++) {
             int o = i * 3;
             RocketStruct.RocketStage stage = rocket.stages.get(rocket.stages.size() - 1 - i);
-            inventory.setStackInSlot(o + 1, new ItemStack(stage.fuselage.part, stage.fuselageCount));
-            if(stage.fins != null) inventory.setStackInSlot(o + 2, new ItemStack(stage.fins.part));
-            inventory.setStackInSlot(o + 3, new ItemStack(stage.thruster.part, stage.thrusterCount));
+            inventory.setStackInSlot(o + 1, new ItemStack(stage.fuselage, stage.fuselageCount));
+            if(stage.fins != null) inventory.setStackInSlot(o + 2, new ItemStack(stage.fins));
+            inventory.setStackInSlot(o + 3, new ItemStack(stage.thruster, stage.thrusterCount));
         }
 
         inventory.setStackInSlot(inventory.getSlots() - RocketStruct.MAX_STAGES * 2 - 1, ItemStack.EMPTY);

@@ -187,7 +187,7 @@ public class TileEntityOrbitalStation extends TileEntityOrbStation implements IF
             if(!rocket.stages.isEmpty()) {
                 itemsToStuff.push(ItemCustomRocket.build(docked.getRocket(), true));
             } else {
-                itemsToStuff.push(new ItemStack(rocket.capsule.part));
+                itemsToStuff.push(new ItemStack(rocket.capsule));
             }
 
             if(docked.navDrive != null) itemsToStuff.push(docked.navDrive.copy());

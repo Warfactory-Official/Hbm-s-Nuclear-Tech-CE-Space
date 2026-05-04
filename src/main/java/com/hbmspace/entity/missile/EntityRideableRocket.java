@@ -215,16 +215,16 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
                     }
                 }
             } else if(!canRide()) {
-                if(rocket.capsule.part instanceof ISatChip && destination.body != SolarSystem.Body.ORBIT) {
+                if(rocket.capsule instanceof ISatChip && destination.body != SolarSystem.Body.ORBIT) {
                     WorldServer targetWorld = DimensionManager.getWorld(targetDimensionId);
                     if(targetWorld == null) {
                         DimensionManager.initDimension(targetDimensionId);
                         targetWorld = DimensionManager.getWorld(targetDimensionId);
                     }
                     if(targetWorld != null) {
-                        Satellite.orbit(targetWorld, Satellite.getIDFromItem(rocket.capsule.part), satFreq, posX, posY, posZ);
+                        Satellite.orbit(targetWorld, Satellite.getIDFromItem(rocket.capsule), satFreq, posX, posY, posZ);
                     }
-                } else if(rocket.capsule.part == ModItemsSpace.rp_station_core_20) {
+                } else if(rocket.capsule == ModItemsSpace.rp_station_core_20) {
                     OrbitalStation.addStation(x, z, CelestialBody.getBody(world));
                     if(thrower instanceof EntityPlayer player) {
                         if(!player.capabilities.isCreativeMode && !ItemVOTVdrive.wasCopied(navDrive)) {
@@ -559,11 +559,11 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
     }
 
     public boolean canRide() {
-        return getRocket().capsule.part.attributes[0] == ItemMissile.WarheadType.APOLLO;
+        return getRocket().capsule.attributes[0] == ItemMissile.WarheadType.APOLLO;
     }
 
     public boolean isReusable() {
-        return getRocket().capsule.part == ModItemsSpace.rp_pod_20;
+        return getRocket().capsule == ModItemsSpace.rp_pod_20;
     }
 
     public void recallPod(ItemVOTVdrive.Destination destination) {
@@ -629,7 +629,7 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
             if(isEntityInvulnerable(source)) {
                 return false;
             } else if(getControllingPassenger() == null && source.getTrueSource() instanceof EntityPlayer player) {
-                if((getRocket().stages.isEmpty() && getRocket().capsule.part != ModItemsSpace.rp_pod_20) || getState() == RocketState.TIPPING) {
+                if((getRocket().stages.isEmpty() && getRocket().capsule != ModItemsSpace.rp_pod_20) || getState() == RocketState.TIPPING) {
                     dropNDie(source);
                 } else {
                     ItemStack stack = player.getHeldItemMainhand();
@@ -648,8 +648,8 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
         RocketStruct rocket = getRocket();
         ItemStack stack = ItemStack.EMPTY;
         if(rocket.stages.isEmpty()) {
-            if(rocket.capsule != null && rocket.capsule.part != null) {
-                stack = new ItemStack(rocket.capsule.part);
+            if(rocket.capsule != null && rocket.capsule != null) {
+                stack = new ItemStack(rocket.capsule);
             }
         } else {
             stack = ItemCustomRocket.build(rocket, true);
@@ -707,7 +707,7 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
                 ParticleUtil.spawnGasFlame(world, x, y, z + 0.5D, 0.0D, -1.0D, 0.0D);
                 ParticleUtil.spawnGasFlame(world, x, y, z - 0.5D, 0.0D, -1.0D, 0.0D);
             } else {
-                double r = rocket.capsule.part.bottom.radius * 0.5D;
+                double r = rocket.capsule.bottom.radius * 0.5D;
                 ParticleUtil.spawnGasFlame(world, x + r, y, z + r, 0.25D, -0.75D, 0.25D);
                 ParticleUtil.spawnGasFlame(world, x - r, y, z + r, -0.25D, -0.75D, 0.25D);
                 ParticleUtil.spawnGasFlame(world, x + r, y, z - r, 0.25D, -0.75D, -0.25D);
@@ -739,8 +739,8 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
             int cluster = stage.getCluster();
             for(int c = 1; c < cluster; c++) {
                 float spin = (float) c / (float) (cluster - 1);
-                double ox = Math.cos(spin * Math.PI * 2) * stage.fuselage.part.bottom.radius;
-                double oz = Math.sin(spin * Math.PI * 2) * stage.fuselage.part.bottom.radius;
+                double ox = Math.cos(spin * Math.PI * 2) * stage.fuselage.bottom.radius;
+                double oz = Math.sin(spin * Math.PI * 2) * stage.fuselage.bottom.radius;
                 spawnControlWithOffset(ox, 0.0D, oz);
             }
         }
@@ -748,7 +748,7 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
 
     public RocketStruct getRocket() {
         RocketStruct rocket = new RocketStruct();
-        rocket.capsule = RocketPart.getPart(this.dataManager.get(DP_ROCKET_CAPSULE));
+        rocket.capsule = (ItemMissile) ItemMissile.getItemById(this.dataManager.get(DP_ROCKET_CAPSULE));
 
         int count = this.dataManager.get(DP_ROCKET_STAGECOUNT);
         for(int i = 0; i < count && i < RocketStruct.MAX_STAGES; i++) {
@@ -763,7 +763,7 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
     }
 
     public void setRocket(RocketStruct rocket) {
-        this.dataManager.set(DP_ROCKET_CAPSULE, RocketPart.getId(rocket.capsule));
+        this.dataManager.set(DP_ROCKET_CAPSULE, ItemMissile.getIdFromItem(rocket.capsule));
         int count = Math.min(rocket.stages.size(), RocketStruct.MAX_STAGES);
         this.dataManager.set(DP_ROCKET_STAGECOUNT, count);
         for(int i = 0; i < count; i++) {

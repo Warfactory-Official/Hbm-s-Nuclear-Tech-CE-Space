@@ -123,7 +123,7 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
 
             rocket = ItemCustomRocket.get(inventory.getStackInSlot(0));
             if(rocket != null) {
-                int newHeight = MathHelper.floor(rocket.getHeight() - rocket.capsule.height + 1);
+                int newHeight = MathHelper.floor(rocket.getHeight() - RocketStruct.getPartHeight(rocket.capsule) + 1);
                 if(newHeight <= 8) newHeight = 0;
 
                 if(newHeight != height) {
@@ -301,7 +301,7 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
         }
 
         SolarSystem.Body target = ItemVOTVdrive.getDestination(inventory.getStackInSlot(1)).body;
-        if(target == SolarSystem.Body.ORBIT && rocket.capsule.part != ModItemsSpace.rp_capsule_20 && rocket.capsule.part != ModItemsSpace.rp_station_core_20)
+        if(target == SolarSystem.Body.ORBIT && rocket.capsule != ModItemsSpace.rp_capsule_20 && rocket.capsule != ModItemsSpace.rp_station_core_20)
             return false;
 
         ItemVOTVdrive.Target from = CelestialBody.getTarget(world, pos.getX(), pos.getZ());
@@ -309,8 +309,8 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
 
         RocketStruct rocket = ItemCustomRocket.get(inventory.getStackInSlot(0));
 
-        if(!to.isValid && rocket.capsule.part != ModItemsSpace.rp_station_core_20) return false;
-        if(to.isValid && rocket.capsule.part == ModItemsSpace.rp_station_core_20) return false;
+        if(!to.isValid && rocket.capsule != ModItemsSpace.rp_station_core_20) return false;
+        if(to.isValid && rocket.capsule == ModItemsSpace.rp_station_core_20) return false;
 
         // Check if the stage can make the journey
         return rocket.hasSufficientFuel(from.body, to.body, from.inOrbit, to.inOrbit);
@@ -415,7 +415,7 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
         }
 
         SolarSystem.Body target = ItemVOTVdrive.getDestination(drive).body;
-        if(target == SolarSystem.Body.ORBIT && rocket.capsule.part != ModItemsSpace.rp_capsule_20 && rocket.capsule.part != ModItemsSpace.rp_station_core_20) {
+        if(target == SolarSystem.Body.ORBIT && rocket.capsule != ModItemsSpace.rp_capsule_20 && rocket.capsule != ModItemsSpace.rp_station_core_20) {
             issues.add(TextFormatting.RED + "Satellite target must be a planet");
             return true;
         }
@@ -424,11 +424,11 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
     }
 
     public static void findTravelIssues(List<String> issues, RocketStruct rocket, ItemVOTVdrive.Target from, ItemVOTVdrive.Target to) {
-        if(to.inOrbit && !to.isValid && rocket.capsule.part != ModItemsSpace.rp_station_core_20) {
+        if(to.inOrbit && !to.isValid && rocket.capsule != ModItemsSpace.rp_station_core_20) {
             issues.add(TextFormatting.RED + "Station not yet launched");
         }
 
-        if(to.inOrbit && to.isValid && rocket.capsule.part == ModItemsSpace.rp_station_core_20) {
+        if(to.inOrbit && to.isValid && rocket.capsule == ModItemsSpace.rp_station_core_20) {
             issues.add(TextFormatting.RED + "Station already launched");
         }
 

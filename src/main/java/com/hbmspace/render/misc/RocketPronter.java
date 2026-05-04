@@ -30,14 +30,18 @@ public class RocketPronter {
         boolean hasShroud = false;
 
         if(buffer == null)
-            buffer = GLAllocation.createDirectByteBuffer(8 * 4).asDoubleBuffer(); // four doubles
+            buffer = GLAllocation.createDirectByteBuffer(8 * 4).asDoubleBuffer();
 
         for(RocketStruct.RocketStage stage : rocket.stages) {
-            int stack = stage.getStack();
+            RocketPart fuselagePart = stage.fuselage != null ? RocketPart.getPart(stage.fuselage) : null;
+            RocketPart finsPart     = stage.fins     != null ? RocketPart.getPart(stage.fins)     : null;
+            RocketPart thrusterPart = stage.thruster != null ? RocketPart.getPart(stage.thruster) : null;
+
+            int stack   = stage.getStack();
             int cluster = stage.getCluster();
 
-            if(isDeployed && stage.thruster != null && stage.fins != null && stage.fins.height > stage.thruster.height) {
-                GlStateManager.translate(0, stage.fins.height - stage.thruster.height, 0);
+            if(isDeployed && thrusterPart != null && finsPart != null && finsPart.height > thrusterPart.height) {
+                GlStateManager.translate(0, finsPart.height - thrusterPart.height, 0);
             }
 
             for(int c = 0; c < cluster; c++) {
@@ -54,15 +58,15 @@ public class RocketPronter {
                         float spin = (float)c / (float)(cluster - 1);
                         GlStateManager.rotate(360.0F * spin, 0, 1, 0);
 
-                        if(stage.fuselage != null) {
-                            GlStateManager.translate(stage.fuselage.part.bottom.radius, 0, 0);
-                        } else if(stage.thruster != null) {
-                            GlStateManager.translate(stage.thruster.part.top.radius, 0, 0);
+                        if(fuselagePart != null) {
+                            GlStateManager.translate(fuselagePart.part.bottom.radius, 0, 0);
+                        } else if(thrusterPart != null) {
+                            GlStateManager.translate(thrusterPart.part.top.radius, 0, 0);
                         }
                     }
 
-                    if(stage.thruster != null) {
-                        if(hasShroud && stage.fuselage != null && stage.fuselage.getShroud() != null) {
+                    if(thrusterPart != null) {
+                        if(hasShroud && fuselagePart != null && fuselagePart.getShroud() != null) {
                             if(shroudTimer > 0) {
                                 float shroudLerp = shroudTimer + interp;
                                 GlStateManager.pushMatrix();
@@ -71,11 +75,11 @@ public class RocketPronter {
                             }
 
                             tex.bindTexture(ResourceManager.universal);
-                            buffer.put(new double[] {0, -1, 0, stage.thruster.height});
+                            buffer.put(new double[]{0, -1, 0, thrusterPart.height});
                             buffer.rewind();
                             GL11.glEnable(GL11.GL_CLIP_PLANE0);
                             GL11.glClipPlane(GL11.GL_CLIP_PLANE0, buffer);
-                            stage.fuselage.getShroud().renderAll();
+                            fuselagePart.getShroud().renderAll();
                             GL11.glDisable(GL11.GL_CLIP_PLANE0);
 
                             if(shroudTimer > 0) {
@@ -84,26 +88,26 @@ public class RocketPronter {
                         }
 
                         if(!hasShroud || shroudTimer > 0) {
-                            tex.bindTexture(stage.thruster.texture);
-                            if(stage.thruster.getModel(isDeployed) != null) {
-                                stage.thruster.getModel(isDeployed).renderAll();
+                            tex.bindTexture(thrusterPart.texture);
+                            if(thrusterPart.getModel(isDeployed) != null) {
+                                thrusterPart.getModel(isDeployed).renderAll();
                             }
                         }
-                        GlStateManager.translate(0, stage.thruster.height, 0);
+                        GlStateManager.translate(0, thrusterPart.height, 0);
                     }
 
-                    if(stage.fuselage != null) {
-                        if(stage.fins != null && stage.fins.getModel(isDeployed) != null) {
-                            tex.bindTexture(stage.fins.texture);
-                            stage.fins.getModel(isDeployed).renderAll();
+                    if(fuselagePart != null) {
+                        if(finsPart != null && finsPart.getModel(isDeployed) != null) {
+                            tex.bindTexture(finsPart.texture);
+                            finsPart.getModel(isDeployed).renderAll();
                         }
 
                         for(int s = 0; s < stack; s++) {
-                            tex.bindTexture(stage.fuselage.texture);
-                            if(stage.fuselage.getModel(isDeployed) != null) {
-                                stage.fuselage.getModel(isDeployed).renderAll();
+                            tex.bindTexture(fuselagePart.texture);
+                            if(fuselagePart.getModel(isDeployed) != null) {
+                                fuselagePart.getModel(isDeployed).renderAll();
                             }
-                            GlStateManager.translate(0, stage.fuselage.height, 0);
+                            GlStateManager.translate(0, fuselagePart.height, 0);
                         }
                     }
 
@@ -111,23 +115,24 @@ public class RocketPronter {
                 GlStateManager.popMatrix();
             }
 
+            if(thrusterPart != null) GlStateManager.translate(0, thrusterPart.height, 0);
+            if(fuselagePart != null) GlStateManager.translate(0, fuselagePart.height * stack, 0);
 
-            if(stage.thruster != null) GlStateManager.translate(0, stage.thruster.height, 0);
-            if(stage.fuselage != null) GlStateManager.translate(0, stage.fuselage.height * stack, 0);
-
-            // Only the bottom-most stage can be deployed
             isDeployed = false;
             decoupleTimer = 0;
-            if(hasShroud) shroudTimer = 0; // Only the bottom-most shroud (second stage from bottom) should animate
+            if(hasShroud) shroudTimer = 0;
             hasShroud = true;
         }
 
         if(rocket.capsule != null) {
-            if(entity != null && rocket.capsule.renderer != null) {
-                rocket.capsule.renderer.render(tex, entity, interp);
-            } else if(rocket.capsule.model != null) {
-                tex.bindTexture(rocket.capsule.texture);
-                rocket.capsule.model.renderAll();
+            RocketPart capsulePart = RocketPart.getPart(rocket.capsule);
+            if(capsulePart != null) {
+                if(entity != null && capsulePart.renderer != null) {
+                    capsulePart.renderer.render(tex, entity, interp);
+                } else if(capsulePart.model != null) {
+                    tex.bindTexture(capsulePart.texture);
+                    capsulePart.model.renderAll();
+                }
             }
         }
 

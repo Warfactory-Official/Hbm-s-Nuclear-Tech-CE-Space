@@ -209,14 +209,14 @@ public class TileEntityOrbitalStationLauncher extends TileEntityOrbStation imple
         }
 
         SolarSystem.Body target = ItemVOTVdrive.getDestination(inventory.getStackInSlot(0)).body;
-        if(target == SolarSystem.Body.ORBIT && rocket.capsule.part != ModItemsSpace.rp_capsule_20 && rocket.capsule.part != ModItemsSpace.rp_station_core_20)
+        if(target == SolarSystem.Body.ORBIT && rocket.capsule != ModItemsSpace.rp_capsule_20 && rocket.capsule != ModItemsSpace.rp_station_core_20)
             return false;
 
         Target from = CelestialBody.getTarget(world, pos.getX(), pos.getZ());
         Target to = ItemVOTVdrive.getTarget(inventory.getStackInSlot(0), world);
 
-        if(!to.isValid && rocket.capsule.part != ModItemsSpace.rp_station_core_20) return false;
-        if(to.isValid && rocket.capsule.part == ModItemsSpace.rp_station_core_20) return false;
+        if(!to.isValid && rocket.capsule != ModItemsSpace.rp_station_core_20) return false;
+        if(to.isValid && rocket.capsule == ModItemsSpace.rp_station_core_20) return false;
 
         // Check if the stage can make the journey
         return rocket.hasSufficientFuel(from.body, to.body, from.inOrbit, to.inOrbit);
