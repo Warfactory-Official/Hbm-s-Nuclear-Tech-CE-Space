@@ -1,14 +1,13 @@
 package com.hbmspace.mixin.mod.hbm.tileentities;
 
 import com.hbm.blocks.ModBlocks;
-import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.machine.oil.TileEntityOilDrillBase;
 import com.hbm.util.BobMathUtil;
 import com.hbmspace.blocks.generic.BlockOreFluid;
+import com.hbmspace.util.OilSpaceUtil;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -76,31 +75,6 @@ public abstract class MixinTileEntityOilDrillBase {
     }
 
     public void onSuck(BlockOreFluid block, BlockPos targetPos) {
-        World world = ((TileEntity) (Object) this).getWorld();
-        IBlockState state = world.getBlockState(targetPos);
-        int meta = block.getMetaFromState(state);
-
-        tanks[0].setTankType(block.getPrimaryFluid(meta));
-        tanks[1].setTankType(block.getSecondaryFluid(meta));
-
-        tanks[0].setFill(Math.min(tanks[0].getFill() + getPrimaryFluidAmount(block, meta), tanks[0].getMaxFill()));
-        if (tanks[1].getTankType() != Fluids.NONE) {
-            tanks[1].setFill(Math.min(tanks[1].getFill() + getSecondaryFluidAmount(block, meta), tanks[1].getMaxFill()));
-        }
-
-        attemptDrain(block, targetPos, meta);
-    }
-
-    protected int getPrimaryFluidAmount(BlockOreFluid block, int meta) {
-        return block.getPrimaryFluidAmount(meta);
-    }
-
-    protected int getSecondaryFluidAmount(BlockOreFluid block, int meta) {
-        return block.getSecondaryFluidAmount(meta);
-    }
-
-    protected void attemptDrain(BlockOreFluid block, BlockPos targetPos, int meta) {
-        World world = ((TileEntity) (Object) this).getWorld();
-        block.drain(world, targetPos, meta, 1);
+        OilSpaceUtil.defaultOnSuck((TileEntity) (Object) this, block, targetPos, tanks);
     }
 }

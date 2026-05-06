@@ -1,5 +1,6 @@
 package com.hbmspace.enums;
 
+import com.hbm.blocks.PlantEnums;
 import net.minecraftforge.common.util.EnumHelper;
 
 import java.lang.reflect.Field;
@@ -22,6 +23,7 @@ public final class EnumAddonTypes {
         EnumAddonRBMKColumn.init();
         EnumAddonRBMKRodTypes.init();
         EnumAddonBedrockOreTypes.init();
+        EnumAddonFlowerPlantTypes.init();
     }
 
     /**

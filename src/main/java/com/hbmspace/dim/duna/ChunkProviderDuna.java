@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 public class ChunkProviderDuna extends ChunkProviderCelestial {
 
     private final ExperimentalCaveGenerator caveGenSmall = new ExperimentalCaveGenerator(2, 12, 0.12F);
-	private final ExperimentalCaveGenerator caveGenV2 = new ExperimentalCaveGenerator(2, 40, 8.0F);
+    private final ExperimentalCaveGenerator caveGenV2 = new ExperimentalCaveGenerator(2, 40, 3.0F);
 
     private final MapGenPlateau genPlateau = new MapGenPlateau(worldObj);
 
@@ -32,7 +32,7 @@ public class ChunkProviderDuna extends ChunkProviderCelestial {
 		stoneBlock = ModBlocksSpace.duna_rock;
 
         caveGenV2.lavaBlock = ModBlocks.basalt;
-        caveGenV2.stoneBlock = ModBlocksSpace.duna_rock;
+        caveGenV2.stoneBlock = ModBlocksSpace.duna_cobble;
         caveGenSmall.lavaBlock = ModBlocksSpace.duna_sands;
         caveGenSmall.stoneBlock = ModBlocksSpace.duna_rock;
 

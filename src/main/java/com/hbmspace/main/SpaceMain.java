@@ -2,6 +2,8 @@ package com.hbmspace.main;
 
 import com.hbm.entity.logic.IChunkLoader;
 import com.hbm.handler.GuiHandler;
+import com.hbm.world.feature.NTMFlowers;
+import com.hbm.world.phased.PhasedStructureRegistry;
 import com.hbmspace.Tags;
 import com.hbmspace.blocks.BlockEnumsSpace;
 import com.hbmspace.blocks.ModBlocksSpace;
@@ -14,6 +16,7 @@ import com.hbmspace.config.WorldConfigSpace;
 import com.hbmspace.commands.CommandSpaceTP;
 import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.dim.WorldTypeTeleport;
+import com.hbmspace.enums.EnumAddonFlowerPlantTypes;
 import com.hbmspace.enums.EnumAddonTypes;
 import com.hbmspace.handler.RocketStruct;
 import com.hbmspace.handler.registires.ModBlocksReplaceHandler;
@@ -32,6 +35,7 @@ import com.hbmspace.world.PlanetGen;
 import com.hbmspace.world.feature.OreLayer3DSpace;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Configuration;
@@ -147,6 +151,9 @@ public class SpaceMain {
         RecipeTweakerManager.initRecipeTweakers();
     }
 
+    public static NTMFlowers INSTANCE_STRAWBERRY;
+    public static NTMFlowers INSTANCE_MINT;
+
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         ModFluidsSpace.setFromRegistry();
@@ -156,6 +163,10 @@ public class SpaceMain {
         new OreLayer3DSpace(ModBlocksSpace.stone_resource, BlockEnumsSpace.EnumStoneType.CONGLOMERATE.ordinal()).setDimension(SpaceConfig.minmusDimension).setScaleH(0.04D).setScaleV(0.25D).setThreshold(220);
 
         PlanetGen.init();
+        INSTANCE_STRAWBERRY = new NTMFlowers(BiomeDictionary.Type.PLAINS, EnumAddonFlowerPlantTypes.STRAWBERRY);
+        INSTANCE_MINT = new NTMFlowers(BiomeDictionary.Type.PLAINS, EnumAddonFlowerPlantTypes.MINT);
+        PhasedStructureRegistry.register("hbm:flowers_strawberry", INSTANCE_STRAWBERRY);
+        PhasedStructureRegistry.register("hbm:flowers_mint", INSTANCE_MINT);
         proxy.postInit(event);
         if(event.getSide() == Side.SERVER) RocketStruct.registerServerParts(); // fuck me, parts were registered on client but NOT on server
 

@@ -21,9 +21,6 @@ public class EnumAddonWasteTypes {
         CURIUM245 = addWasteType("Curium-245", 1000, 1000);
 
         EnumAddonTypes.updateStaticValuesField(ItemWasteShort.WasteClass.class, "VALUES");
-        EnumAddonTypes.updateInstanceField(ItemWasteShort.WasteClass.class,
-                ItemWasteShort.class, "theEnum",
-                ModItems.nuclear_waste_short, ModItems.nuclear_waste_short_depleted);
     }
 
     private static ItemWasteShort.WasteClass addWasteType(String name, int liquid, int gas) {

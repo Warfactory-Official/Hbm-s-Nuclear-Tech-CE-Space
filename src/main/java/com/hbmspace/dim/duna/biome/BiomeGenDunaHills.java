@@ -70,13 +70,13 @@ public class BiomeGenDunaHills extends BiomeGenBaseDuna {
         IBlockState filler = this.fillerBlock;
 
         for (int y = 255; y >= 0; --y) {
-            IBlockState state = primer.getBlockState(localZ, y, localX);
+            IBlockState state = primer.getBlockState(localX, y, localZ);
             if (state.getMaterial() == Material.AIR && y < (int) pillarTopY) {
-                primer.setBlockState(localZ, y, localX, ModBlocksSpace.duna_rock.getDefaultState());
+                primer.setBlockState(localX, y, localZ, ModBlocksSpace.duna_rock.getDefaultState());
                 state = ModBlocksSpace.duna_rock.getDefaultState();
             }
             if (y <= rand.nextInt(5)) {
-                primer.setBlockState(localZ, y, localX, Blocks.BEDROCK.getDefaultState());
+                primer.setBlockState(localX, y, localZ, Blocks.BEDROCK.getDefaultState());
                 continue;
             }
 
@@ -101,42 +101,42 @@ public class BiomeGenDunaHills extends BiomeGenBaseDuna {
 
                 if (y >= seaLevel - 1) {
                     if (this.hasForest && y > 86 + surfaceDepth * 2) {  // unreachable
-                        primer.setBlockState(localZ, y, localX, ModBlocksSpace.duna_sands.getDefaultState());
+                        primer.setBlockState(localX, y, localZ, ModBlocksSpace.duna_sands.getDefaultState());
                     } else if (y > seaLevel + 3 + surfaceDepth) {
                         // 1.7 behavior:
                         // - within 64..127: if cosineFlag == true -> rock; else -> red clay IFF band is "clay" (not rock)
                         // - outside 64..127: always red clay
                         boolean placeRedClay = (y < 64 || y > 127) || (!cosineFlag && isBandClay(x, y, z));
-                        primer.setBlockState(localZ, y, localX, placeRedClay ? Blocks.STAINED_HARDENED_CLAY.getDefaultState()
+                        primer.setBlockState(localX, y, localZ, placeRedClay ? Blocks.STAINED_HARDENED_CLAY.getDefaultState()
                                                                                                            .withProperty(BlockColored.COLOR,
                                                                                                                    EnumDyeColor.RED) : ModBlocksSpace.duna_rock.getDefaultState());
                     } else {
-                        primer.setBlockState(localZ, y, localX, this.topBlock);
+                        primer.setBlockState(localX, y, localZ, this.topBlock);
                         placedTop = true;
                     }
                 } else {
-                    primer.setBlockState(localZ, y, localX, filler);
+                    primer.setBlockState(localX, y, localZ, filler);
                 }
 
             } else if (remainingDepth > 0) {
                 --remainingDepth;
 
                 if (placedTop) {
-                    primer.setBlockState(localZ, y, localX, ModBlocksSpace.ferric_clay.getDefaultState());
+                    primer.setBlockState(localX, y, localZ, ModBlocksSpace.ferric_clay.getDefaultState());
                 } else {
                     IBlockState band = getBand(x, y, z);
 
                     if (isStainedClay(band, EnumDyeColor.YELLOW)) {
                         // yellow is ugly
-                        primer.setBlockState(localZ, y, localX, ModBlocksSpace.ferric_clay.getDefaultState());
+                        primer.setBlockState(localX, y, localZ, ModBlocksSpace.ferric_clay.getDefaultState());
                     } else if (isStainedClay(band, EnumDyeColor.WHITE)) {
                         // white is good for yer teeth
-                        // primer.setBlockState(localZ, y, localX, ModBlocksSpace.stone_resource.getDefaultState());
-                        primer.setBlockState(localZ, y, localX, ModBlocksSpace.duna_rock.getDefaultState());
+                        // primer.setBlockState(localX, y, localZ, ModBlocksSpace.stone_resource.getDefaultState());
+                        primer.setBlockState(localX, y, localZ, ModBlocksSpace.duna_rock.getDefaultState());
                     } else if (band.getBlock() == Blocks.STAINED_HARDENED_CLAY) {
-                        primer.setBlockState(localZ, y, localX, band);
+                        primer.setBlockState(localX, y, localZ, band);
                     } else {
-                        primer.setBlockState(localZ, y, localX, ModBlocksSpace.duna_rock.getDefaultState());
+                        primer.setBlockState(localX, y, localZ, ModBlocksSpace.duna_rock.getDefaultState());
                     }
                 }
             }

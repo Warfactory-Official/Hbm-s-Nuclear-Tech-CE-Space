@@ -29,6 +29,7 @@
     "hbm.MixinNTMWorldGenerator",
     "hbm.MixinPermaSyncHandler",
     "hbm.block.MixinBlockPedestal",
+    "hbm.block.MixinBlockNTMFlower",
     "hbm.items.MixinItemBedrockOreBase",
     "hbm.items.MixinItemBedrockOreNew",
     "hbm.items.MixinItemOilDetector",
