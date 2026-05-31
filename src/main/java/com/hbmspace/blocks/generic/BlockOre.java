@@ -307,6 +307,8 @@ public class BlockOre extends net.minecraft.block.BlockOre implements ICustomBlo
         return new StateMapperBase() {
             @Override
             protected @NotNull ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
+                if (!state.getPropertyKeys().contains(META))
+                    return new ModelResourceLocation(loc, "meta=0");
                 int meta = state.getValue(META);
                 if (meta < META_COUNT) return new ModelResourceLocation(loc, "meta=" + meta);
                 else return new ModelResourceLocation(loc, "meta=0");
