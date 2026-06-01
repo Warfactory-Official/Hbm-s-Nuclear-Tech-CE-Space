@@ -1,6 +1,5 @@
 package com.hbmspace.mixin.mod.hbm.tileentities;
 
-import com.hbm.blocks.ModBlocks;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.machine.oil.TileEntityOilDrillBase;
@@ -30,7 +29,7 @@ public abstract class MixinTileEntityOilDrillBase {
 
     @Overwrite
     public boolean canSuckBlock(Block b) {
-        return (b instanceof BlockOreFluid && b != ModBlocks.ore_bedrock_oil) || BlockOreFluid.getFullBlock(b) != null;
+        return (b instanceof BlockOreFluid) || BlockOreFluid.getFullBlock(b) != null;
     }
 
     @Overwrite
