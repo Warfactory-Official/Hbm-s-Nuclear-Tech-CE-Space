@@ -231,6 +231,7 @@ public class SolarSystemWorldSavedData extends WorldSavedData {
 	}
 
 	public static HashMap<Class<? extends CelestialBodyTrait>, CelestialBodyTrait> getClientTraits(String bodyName) {
+		if (clientTraits == null) return null;
 		return clientTraits.get(bodyName);
 	}
 	
