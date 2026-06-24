@@ -11,7 +11,7 @@ import com.hbmspace.dim.duna.GenLayerDuna.GenLayerDiversifyDuna;
 import com.hbmspace.dim.duna.GenLayerDuna.GenLayerDunaBiomes;
 import com.hbmspace.dim.duna.GenLayerDuna.GenLayerDunaLowlands;
 
-import com.hbm.util.ParticleUtil;
+import com.hbmspace.util.ParticleUtilSpace;
 import com.hbm.util.Vec3dUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -67,7 +67,7 @@ public class WorldProviderDuna extends WorldProviderCelestial {
 				Vec3d vec = new Vec3d(20, 0, 50);
 				vec = Vec3dUtil.rotateRoll(vec, (float)(world.rand.nextDouble() * Math.PI * 10));
 				vec = vec.rotateYaw((float)(world.rand.nextDouble() * Math.PI * 2 * 5));
-				ParticleUtil.spawnDustFlame(world, viewEntity.posX + vec.x, viewEntity.posY, viewEntity.posZ + vec.z, -4, 0, 0);
+				ParticleUtilSpace.spawnDustFlame(world, viewEntity.posX + vec.x, viewEntity.posY, viewEntity.posZ + vec.z, -4, 0, 0);
 			}
 		}
 	}

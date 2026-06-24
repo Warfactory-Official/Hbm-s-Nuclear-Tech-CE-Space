@@ -276,7 +276,10 @@ public class TileEntityOrbitalStation extends TileEntityOrbStation implements IF
     public void serialize(ByteBuf buf) {
         super.serialize(buf);
 
-        if(isCore()) station.serialize(buf);
+        if(isCore()) {
+            if(station == null) station = OrbitalStation.getStationFromPosition(pos.getX(), pos.getZ());
+            station.serialize(buf);
+        }
 
         buf.writeBoolean(hasDocked);
         buf.writeBoolean(hasRider);

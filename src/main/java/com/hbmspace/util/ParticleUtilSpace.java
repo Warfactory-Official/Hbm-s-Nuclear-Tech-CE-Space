@@ -27,4 +27,23 @@ public class ParticleUtilSpace {
             PacketThreading.createAllAroundThreadedPacket(new AuxParticlePacketNT(data, x, y, z), new NetworkRegistry.TargetPoint(world.provider.getDimension(), x, y, z, 150));
         }
     }
+
+    public static void spawnDustFlame(World world, double x, double y, double z, double mX, double mY, double mZ) {
+
+        NBTTagCompound data = new NBTTagCompound();
+        data.setString("type", "duststorm");
+        data.setDouble("mX", mX);
+        data.setDouble("mY", mY);
+        data.setDouble("mZ", mZ);
+        data.setFloat("scale", 4F);
+
+        if(world.isRemote) {
+            data.setDouble("posX", x);
+            data.setDouble("posY", y);
+            data.setDouble("posZ", z);
+            SpaceMain.proxy.effectNT(data);
+        } else {
+            PacketThreading.createAllAroundThreadedPacket(new AuxParticlePacketNT(data, x, y, z), new NetworkRegistry.TargetPoint(world.provider.getDimension(), x, y, z, 150));
+        }
+    }
 }

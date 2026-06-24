@@ -11,6 +11,7 @@ import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.trait.CBT_Atmosphere;
 import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.particle.IParticleRocketFlame;
+import com.hbmspace.particle.ParticleDust;
 import com.hbmspace.particle.ParticleGlow;
 import com.hbmspace.render.misc.RocketPart;
 import com.hbmspace.render.tileentity.IItemRendererProviderSpace;
@@ -149,6 +150,14 @@ public class ClientProxy extends ServerProxy {
                 double mZ = data.getDouble("mZ");
                 float scale = data.getFloat("scale");
                 ParticleGlow particle = new ParticleGlow(world, x, y, z, mX, mY, mZ, scale);
+                Minecraft.getMinecraft().effectRenderer.addEffect(particle);
+            }
+            case "duststorm" -> {
+                double mX = data.getDouble("mX");
+                double mY = data.getDouble("mY");
+                double mZ = data.getDouble("mZ");
+                float scale = data.getFloat("scale");
+                ParticleDust particle = new ParticleDust(world, x, y, z, mX, mY, mZ, scale);
                 Minecraft.getMinecraft().effectRenderer.addEffect(particle);
             }
             case "missileContrail", "depress" -> {

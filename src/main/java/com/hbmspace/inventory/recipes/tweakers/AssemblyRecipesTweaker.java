@@ -87,7 +87,7 @@ public class AssemblyRecipesTweaker {
         recs.register(new GenericRecipe("ass.dysonconverterhe").setup(6_000, 100).outputItems(new ItemStack(ModBlocksSpace.dyson_converter_he, 1))
                 .inputItems(
                         new RecipesCommon.OreDictStack(OSMIRIDIUM.plateWelded(), 2),
-                        new RecipesCommon.OreDictStack(ALLOY.wireDense(), 64),
+                        new RecipesCommon.OreDictStack(GOLD.wireDense(), 64),
                         new RecipesCommon.OreDictStack(GOLD.wireDense(), 16),
                         new RecipesCommon.ComparableStack(ModBlocks.machine_transformer_dnt, 4),
                         new RecipesCommon.ComparableStack(ModItems.circuit, 8, ItemEnums.EnumCircuitType.BISMOID)));
@@ -112,7 +112,7 @@ public class AssemblyRecipesTweaker {
                         new RecipesCommon.OreDictStack(ANY_HARDPLASTIC.ingot(), 2),
                         new RecipesCommon.ComparableStack(ModItemsSpace.beryllium_mirror, 1),
                         new RecipesCommon.OreDictStack(GOLD.wireDense(), 2),
-                        new RecipesCommon.OreDictStack(ALLOY.wireFine(), 32),
+                        new RecipesCommon.OreDictStack(GOLD.wireFine(), 32),
                         new RecipesCommon.OreDictStack(STAINLESS.plate(), 4),
                         new RecipesCommon.ComparableStack(ModItems.circuit, 2, ItemEnums.EnumCircuitType.CAPACITOR_BOARD),
                         new RecipesCommon.ComparableStack(ModItemsSpace.circuit, 1, ItemEnumsSpace.EnumCircuitType.HFCHIP)));
@@ -293,7 +293,7 @@ public class AssemblyRecipesTweaker {
                         new RecipesCommon.OreDictStack(STEEL.bolt(), 32),
                         new RecipesCommon.OreDictStack(TI.shell(), 8),
                         new RecipesCommon.ComparableStack(ModItems.motor_desh, 2),
-                        new RecipesCommon.ComparableStack(ModItems.coil_advanced_alloy, 8),
+                        new RecipesCommon.ComparableStack(ModItems.coil_copper, 8),
                         new RecipesCommon.OreDictStack(ANY_HARDPLASTIC.ingot(), 8),
                         new RecipesCommon.ComparableStack(ModItems.circuit, 2, ItemEnums.EnumCircuitType.ADVANCED),
                         new RecipesCommon.OreDictStack(CU.pipe(), 4)));
@@ -322,7 +322,7 @@ public class AssemblyRecipesTweaker {
         recs.register(new GenericRecipe("ass.mp_thruster_10_solid").setup(400, 100).outputItems(new ItemStack(ModItems.mp_thruster_10_solid, 1))
                 .inputItems(new RecipesCommon.ComparableStack(ModItems.seg_10, 1), new RecipesCommon.ComparableStack(ModItems.coil_tungsten, 1), new RecipesCommon.OreDictStack(DURA.ingot(), 4), new RecipesCommon.OreDictStack(STEEL.plate(), 4)));
         recs.register(new GenericRecipe("ass.mp_thruster_10_xenon").setup(400, 100).outputItems(new ItemStack(ModItems.mp_thruster_10_xenon, 1))
-                .inputItems(new RecipesCommon.ComparableStack(ModItems.seg_10, 1), new RecipesCommon.OreDictStack(STEEL.plate(), 4), new RecipesCommon.OreDictStack(STEEL.pipe(), 12), new RecipesCommon.ComparableStack(ModItems.arc_electrode, 4, ItemArcElectrode.EnumElectrodeType.LANTHANIUM)));
+                .inputItems(new RecipesCommon.ComparableStack(ModItems.seg_10, 1), new RecipesCommon.OreDictStack(STEEL.plate(), 4), new RecipesCommon.OreDictStack(STEEL.pipe(), 12), new RecipesCommon.ComparableStack(ModItems.arc_electrode, 1, ItemArcElectrode.EnumElectrodeType.LANTHANIUM)));
         recs.register(new GenericRecipe("ass.mp_thruster_15_kerosene").setup(400, 100).outputItems(new ItemStack(ModItems.mp_thruster_15_kerosene, 1))
                 .inputItems(new RecipesCommon.ComparableStack(ModItems.seg_15, 1), new RecipesCommon.OreDictStack(STEEL.pipe(), 1), new RecipesCommon.OreDictStack(W.ingot(), 8), new RecipesCommon.OreDictStack(STEEL.plate(), 6), new RecipesCommon.OreDictStack(DESH.ingot(), 4)));
         recs.register(new GenericRecipe("ass.mp_thruster_15_kerosene_dual").setup(400, 100).outputItems(new ItemStack(ModItems.mp_thruster_15_kerosene_dual, 1))

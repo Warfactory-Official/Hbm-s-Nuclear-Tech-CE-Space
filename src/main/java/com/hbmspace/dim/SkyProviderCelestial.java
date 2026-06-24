@@ -431,6 +431,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 
 		GlStateManager.enableTexture2D();
 		GlStateManager.depthMask(true);
+		GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
 	}
 
 	protected void renderSunset(float partialTicks, WorldClient world, Minecraft mc, float solarAngle, float pressure, ResourceLocation surfaceTexture) {

@@ -157,11 +157,29 @@ public final class EnumAddonTypes {
     private static void setStaticFieldUnsafe(Field field, Object value) {
         Object base = U.staticFieldBase(field);
         long offset = U.staticFieldOffset(field);
-        U.putReference(base, offset, value);
+        Class<?> type = field.getType();
+        if (type == short.class) U.putShort(base, offset, (Short) value);
+        else if (type == int.class) U.putInt(base, offset, (Integer) value);
+        else if (type == long.class) U.putLong(base, offset, (Long) value);
+        else if (type == boolean.class) U.putBoolean(base, offset, (Boolean) value);
+        else if (type == byte.class) U.putByte(base, offset, (Byte) value);
+        else if (type == char.class) U.putChar(base, offset, (Character) value);
+        else if (type == float.class) U.putFloat(base, offset, (Float) value);
+        else if (type == double.class) U.putDouble(base, offset, (Double) value);
+        else U.putReference(base, offset, value);
     }
 
     private static void setInstanceFieldUnsafe(Field field, Object target, Object value) {
         long offset = U.objectFieldOffset(field);
-        U.putReference(target, offset, value);
+        Class<?> type = field.getType();
+        if (type == short.class) U.putShort(target, offset, (Short) value);
+        else if (type == int.class) U.putInt(target, offset, (Integer) value);
+        else if (type == long.class) U.putLong(target, offset, (Long) value);
+        else if (type == boolean.class) U.putBoolean(target, offset, (Boolean) value);
+        else if (type == byte.class) U.putByte(target, offset, (Byte) value);
+        else if (type == char.class) U.putChar(target, offset, (Character) value);
+        else if (type == float.class) U.putFloat(target, offset, (Float) value);
+        else if (type == double.class) U.putDouble(target, offset, (Double) value);
+        else U.putReference(target, offset, value);
     }
 }
