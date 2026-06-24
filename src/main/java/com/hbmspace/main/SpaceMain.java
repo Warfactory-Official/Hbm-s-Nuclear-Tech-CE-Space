@@ -15,6 +15,7 @@ import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.config.WorldConfigSpace;
 import com.hbmspace.commands.CommandSpaceTP;
 import com.hbmspace.dim.SolarSystem;
+import com.hbmspace.dim.WorldGeneratorCelestial;
 import com.hbmspace.dim.WorldTypeTeleport;
 import com.hbmspace.enums.EnumAddonFlowerPlantTypes;
 import com.hbmspace.enums.EnumAddonTypes;
@@ -94,6 +95,10 @@ public class SpaceMain {
         if (logger == null)
             logger = event.getModLog();
 
+        try {
+            Class.forName("com.hbmspace.lib.ModDamageSourceSpace", true, SpaceMain.class.getClassLoader());
+        } catch (ClassNotFoundException ignored) {
+        }
 
         reloadConfig();
 
@@ -167,6 +172,7 @@ public class SpaceMain {
         INSTANCE_MINT = new NTMFlowers(BiomeDictionary.Type.PLAINS, EnumAddonFlowerPlantTypes.MINT);
         PhasedStructureRegistry.register("hbm:flowers_strawberry", INSTANCE_STRAWBERRY);
         PhasedStructureRegistry.register("hbm:flowers_mint", INSTANCE_MINT);
+        WorldGeneratorCelestial.registerPhasedStructures();
         proxy.postInit(event);
         if(event.getSide() == Side.SERVER) RocketStruct.registerServerParts(); // fuck me, parts were registered on client but NOT on server
 

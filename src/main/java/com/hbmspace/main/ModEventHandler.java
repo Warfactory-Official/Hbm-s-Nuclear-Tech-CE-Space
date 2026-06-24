@@ -51,6 +51,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -90,6 +91,13 @@ public class ModEventHandler {
     public static void attachRadCap(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof EntityLivingBase)
             e.addCapability(ENT_HBM_PROP_ID, new HbmLivingCapabilitySpace.EntityHbmPropsProvider());
+    }
+
+    @SubscribeEvent
+    public static void onLivingAttack(LivingAttackEvent event) {
+        if ("inWall".equals(event.getSource().getDamageType()) && event.getEntityLiving().getRidingEntity() instanceof EntityRideableRocket) {
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent

@@ -333,7 +333,8 @@ public class BlockOre extends net.minecraft.block.BlockOre implements ICustomBlo
             if (!path.startsWith("blocks/")) path = "blocks/" + path;
             return new ResourceLocation(ns, path);
         } else {
-            return new ResourceLocation("hbm:blocks/" + name);
+            String path = name.startsWith("blocks/") ? name : "blocks/" + name;
+            return new ResourceLocation("hbm", path);
         }
     }
 

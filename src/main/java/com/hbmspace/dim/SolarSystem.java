@@ -77,7 +77,7 @@ public class SolarSystem {
 								.withRotationalPeriod(21_549)
 								.withColor(0.608F, 0.914F, 1.0F)
 								.withTraits(new CBT_Atmosphere(com.hbmspace.inventory.fluid.Fluids.EARTHAIR, 1D), new CBT_Water())
-								.withBlockTextures("blocks/stone", "blocks/dirt")
+								.withBlockTextures("stone", "minecraft:blocks/dirt")
 								.withCityMask(new ResourceLocation("hbm", "textures/misc/space/kerbin_mask.png"))
 								.withBiomeMask(new ResourceLocation("hbm", "textures/misc/space/kerbin_biomes.png"))
 								.withSatellites(

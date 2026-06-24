@@ -1,9 +1,11 @@
 package com.hbmspace.enums;
 
 import com.hbm.inventory.material.NTMMaterial;
+import com.hbm.items.special.ItemBedrockOreBase;
 import com.hbm.items.special.ItemBedrockOreNew;
 import com.hbm.items.special.ItemBedrockOreNew.BedrockOreOutput;
 import com.hbm.items.special.ItemBedrockOreNew.BedrockOreType;
+import net.minecraft.world.gen.NoiseGeneratorPerlin;
 
 import java.util.*;
 
@@ -132,6 +134,8 @@ public class EnumAddonBedrockOreTypes {
         // Overrides the standard VALUES array with only the Space ones.
         // SubItems, Model Generation, Sprites, and Recipes will automatically ignore the base types!
         EnumAddonTypes.setStaticField(BedrockOreType.class, "VALUES", spaceTypes.toArray(new BedrockOreType[0]));
+
+        EnumAddonTypes.setStaticField(ItemBedrockOreBase.class, "ores", new NoiseGeneratorPerlin[ALL_TYPES.length]);
     }
 
     private static BedrockOreOutput o(NTMMaterial mat, int amount) {

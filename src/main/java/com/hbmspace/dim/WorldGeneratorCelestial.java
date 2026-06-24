@@ -7,6 +7,7 @@ import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.items.ModItems;
 import com.hbm.world.feature.BedrockOre;
 import com.hbm.world.feature.DepthDeposit;
+import com.hbm.world.phased.PhasedStructureRegistry;
 import com.hbmspace.blocks.BlockEnumsSpace;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.blocks.generic.BlockOre;
@@ -25,9 +26,25 @@ import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+import java.lang.reflect.Constructor;
 import java.util.Random;
 
 public class WorldGeneratorCelestial implements IWorldGenerator {
+
+    public static BedrockOre ICE_DEPOSIT;
+
+    public static void registerPhasedStructures() {
+        if (ICE_DEPOSIT != null) return;
+        try {
+            Constructor<BedrockOre> ctor = BedrockOre.class.getDeclaredConstructor(
+                    ItemStack.class, FluidStack.class, int.class, int.class, Block.class);
+            ctor.setAccessible(true);
+            ICE_DEPOSIT = ctor.newInstance(new ItemStack(Blocks.PACKED_ICE, 8 * 4), null, 0xAAFFFF, 1, ModBlocks.stone_depth);
+            PhasedStructureRegistry.register("hbmspace:bedrock_ore_ice", ICE_DEPOSIT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public WorldGeneratorCelestial() {
         // Specify which ores spawn where
@@ -140,13 +157,13 @@ public class WorldGeneratorCelestial implements IWorldGenerator {
         if(rand.nextInt(10) == 0) {
             int randPosX = x + rand.nextInt(2) + 8;
             int randPosZ = z + rand.nextInt(2) + 8;
-            // FIXME ig
-            BedrockOre.generate(world, randPosX, randPosZ, new ItemStack(ModItems.bedrock_ore_base), drillAcid, 0xD78A16, 1, ModBlocks.stone_depth);
-        } else if(hasIce && rand.nextInt(3) == 0) {
+            //Fixed it I guess
+            BedrockOre.OVERWORLD_BY_TIER[1].generate(world, world.rand, new BlockPos(randPosX, 0, randPosZ));
+        } else if(hasIce && ICE_DEPOSIT != null && rand.nextInt(3) == 0) {
             int randPosX = x + rand.nextInt(2) + 8;
             int randPosZ = z + rand.nextInt(2) + 8;
 
-            BedrockOre.generate(world, randPosX, randPosZ, new ItemStack(Blocks.PACKED_ICE, 8 * 4), null, 0xAAFFFF, 1);
+            ICE_DEPOSIT.generate(world, world.rand, new BlockPos(randPosX, 0, randPosZ));
         }
     }
 
