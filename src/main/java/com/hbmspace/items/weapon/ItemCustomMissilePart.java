@@ -185,8 +185,8 @@ public class ItemCustomMissilePart extends ItemMissile {
             case ANY -> TextFormatting.GRAY + I18nUtil.resolveKey("item.custom_missile_part.fuel.any");
             case KEROSENE ->
                     TextFormatting.LIGHT_PURPLE + I18nUtil.resolveKey("item.custom_missile_part.fuel.kerosene");
-            case METHALOX -> TextFormatting.YELLOW + I18nUtil.resolveKey("item.custom_missile_part.fuel.kerolox");
-            case KEROLOX -> TextFormatting.LIGHT_PURPLE + I18nUtil.resolveKey("item.custom_missile_part.fuel.methalox");
+            case METHALOX -> TextFormatting.YELLOW + I18nUtil.resolveKey("item.custom_missile_part.fuel.methalox");
+            case KEROLOX -> TextFormatting.LIGHT_PURPLE + I18nUtil.resolveKey("item.custom_missile_part.fuel.kerolox");
             case SOLID -> TextFormatting.GOLD + I18nUtil.resolveKey("item.custom_missile_part.fuel.solid");
             case HYDROGEN -> TextFormatting.DARK_AQUA + I18nUtil.resolveKey("item.custom_missile_part.fuel.hydrogen");
             case XENON -> TextFormatting.DARK_PURPLE + I18nUtil.resolveKey("item.custom_missile_part.fuel.xenon");

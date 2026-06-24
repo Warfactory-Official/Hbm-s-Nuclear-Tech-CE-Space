@@ -1,5 +1,10 @@
 package com.hbmspace.hazard;
 
+import com.hbm.hazard.HazardData;
+import com.hbm.hazard.HazardRegistry;
+import com.hbm.hazard.HazardSystem;
+import com.hbmspace.items.ModItemsSpace;
+
 public class HazardRegistrySpace {
     public static final float cm242 = 9.3F; //fertile but probably unused
     public static final float cm243 = 5.6F; //fissile
@@ -15,4 +20,9 @@ public class HazardRegistrySpace {
     public static final float es253 = 18.3F;
     public static final float es255 = 19.3F;
     public static final float cn989 = 89.0F;
+
+    public static void registerItemHazards() {
+        HazardSystem.register(ModItemsSpace.powder_wd2004, new HazardData().addEntry(HazardRegistry.DIGAMMA, 1F));
+        HazardSystem.register(ModItemsSpace.powder_wd2004_tiny, new HazardData().addEntry(HazardRegistry.DIGAMMA, 0.05F));
+    }
 }

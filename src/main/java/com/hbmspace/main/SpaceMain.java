@@ -9,11 +9,11 @@ import com.hbmspace.blocks.BlockEnumsSpace;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.blocks.fluid.ModFluidsSpace;
 import com.hbmspace.capability.HbmLivingCapabilitySpace;
+import com.hbmspace.commands.CommandSpaceTP;
 import com.hbmspace.commands.CommandStations;
 import com.hbmspace.commands.CommandTotalTime;
 import com.hbmspace.config.SpaceConfig;
 import com.hbmspace.config.WorldConfigSpace;
-import com.hbmspace.commands.CommandSpaceTP;
 import com.hbmspace.dim.SolarSystem;
 import com.hbmspace.dim.WorldGeneratorCelestial;
 import com.hbmspace.dim.WorldTypeTeleport;
@@ -22,6 +22,7 @@ import com.hbmspace.enums.EnumAddonTypes;
 import com.hbmspace.handler.RocketStruct;
 import com.hbmspace.handler.registires.ModBlocksReplaceHandler;
 import com.hbmspace.handler.registires.ModItemsReplaceHandler;
+import com.hbmspace.hazard.HazardRegistrySpace;
 import com.hbmspace.inventory.OreDictManagerSpace;
 import com.hbmspace.inventory.recipes.tweakers.AnvilRecipeTweaker;
 import com.hbmspace.inventory.recipes.tweakers.RecipeTweakerManager;
@@ -30,7 +31,6 @@ import com.hbmspace.items.weapon.ItemCustomMissilePart;
 import com.hbmspace.lib.HBMSpaceSoundHandler;
 import com.hbmspace.packet.PacketRegistry;
 import com.hbmspace.potion.HbmPotion;
-import com.hbmspace.render.misc.RocketPart;
 import com.hbmspace.tileentity.machine.TileEntityMachinePumpBaseTweaks;
 import com.hbmspace.world.PlanetGen;
 import com.hbmspace.world.feature.OreLayer3DSpace;
@@ -46,7 +46,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
@@ -60,11 +63,11 @@ import java.io.File;
  * Okay, so if you read this
  * It's mostly separated NTM:Space content from NTM:CE, which I did put on a separate repo. Hopefully that won't take TOO much time.
  * I will try to mostly repeat the structure as it's just comfortable for me
- *
+ * <p>
  * "It's fun, after all these times when you've killed me, and now.. all I have to do is to kill you **once**"
  *
  * @author Th3_Sl1ze
-*/
+ */
 @Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:hbm@[2.2.0.0,);required-after:mixinbooter@[10.6,)")
 @Mod.EventBusSubscriber
 public class SpaceMain {
@@ -74,6 +77,8 @@ public class SpaceMain {
     @Mod.Instance(Tags.MODID)
     public static SpaceMain instance;
     public static Logger logger;
+    public static NTMFlowers INSTANCE_STRAWBERRY;
+    public static NTMFlowers INSTANCE_MINT;
 
     static {
         HBMSpaceSoundHandler.init();
@@ -88,6 +93,30 @@ public class SpaceMain {
     @SubscribeEvent
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
         ModBlocksReplaceHandler.initReplacings(event);
+    }
+
+    public static void reloadConfig() {
+        Configuration config = new Configuration(new File(proxy.getDataDir().getPath() + "/config/hbm/hbm_space.cfg"));
+        config.load();
+        WorldConfigSpace.loadFromConfig(config);
+        SpaceConfig.loadFromConfig(config);
+        config.save();
+    }
+
+    // Th3_Sl1ze: Either I'm blind or there are no annotations for specifying dependency version..
+    // This is for reverse compat. Yes, I'm gonna do that. Cuz why not?
+    public static boolean checkNTMVersion(String versionSpec) {
+        ModContainer mod = Loader.instance().getIndexedModList().get("hbm");
+        if (mod != null) {
+            ArtifactVersion currentVersion = mod.getProcessedVersion();
+            try {
+                VersionRange range = VersionRange.createFromVersionSpec(versionSpec);
+                return range.containsVersion(currentVersion);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return false;
     }
 
     @EventHandler
@@ -129,35 +158,24 @@ public class SpaceMain {
         PacketRegistry.preInit();
 
         ForgeChunkManager.setForcedChunkLoadingCallback(this, (tickets, world) -> {
-            for(ForgeChunkManager.Ticket ticket : tickets) {
-                if(ticket.getType() == ForgeChunkManager.Type.NORMAL) {
+            for (ForgeChunkManager.Ticket ticket : tickets) {
+                if (ticket.getType() == ForgeChunkManager.Type.NORMAL) {
                     ChunkLoaderManager.loadTicket(world, ticket);
                     return;
                 }
 
-                if(ticket.getEntity() instanceof IChunkLoader) {
+                if (ticket.getEntity() instanceof IChunkLoader) {
                     ((IChunkLoader) ticket.getEntity()).init(ticket);
                 }
             }
         });
     }
 
-
-    public static void reloadConfig() {
-        Configuration config = new Configuration(new File(proxy.getDataDir().getPath() + "/config/hbm/hbm_space.cfg"));
-        config.load();
-        WorldConfigSpace.loadFromConfig(config);
-        SpaceConfig.loadFromConfig(config);
-        config.save();
-    }
     @EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
         RecipeTweakerManager.initRecipeTweakers();
     }
-
-    public static NTMFlowers INSTANCE_STRAWBERRY;
-    public static NTMFlowers INSTANCE_MINT;
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
@@ -173,8 +191,11 @@ public class SpaceMain {
         PhasedStructureRegistry.register("hbm:flowers_strawberry", INSTANCE_STRAWBERRY);
         PhasedStructureRegistry.register("hbm:flowers_mint", INSTANCE_MINT);
         WorldGeneratorCelestial.registerPhasedStructures();
+        HazardRegistrySpace.registerItemHazards();
         proxy.postInit(event);
-        if(event.getSide() == Side.SERVER) RocketStruct.registerServerParts(); // fuck me, parts were registered on client but NOT on server
+        if (event.getSide() == Side.SERVER)
+            RocketStruct.registerServerParts(); // fuck me, parts were registered on client but NOT on server
+        //TODO: Defer this to the proxies
 
         WorldTypeTeleport.init();
     }
@@ -184,21 +205,5 @@ public class SpaceMain {
         evt.registerServerCommand(new CommandSpaceTP());
         evt.registerServerCommand(new CommandStations());
         evt.registerServerCommand(new CommandTotalTime());
-    }
-
-    // Th3_Sl1ze: Either I'm blind or there are no annotations for specifying dependency version..
-    // This is for reverse compat. Yes, I'm gonna do that. Cuz why not?
-    public static boolean checkNTMVersion(String versionSpec) {
-        ModContainer mod = Loader.instance().getIndexedModList().get("hbm");
-        if (mod != null) {
-            ArtifactVersion currentVersion = mod.getProcessedVersion();
-            try {
-                VersionRange range = VersionRange.createFromVersionSpec(versionSpec);
-                return range.containsVersion(currentVersion);
-            } catch (Exception e) {
-                return false;
-            }
-        }
-        return false;
     }
 }

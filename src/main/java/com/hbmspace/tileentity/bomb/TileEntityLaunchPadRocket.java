@@ -4,6 +4,7 @@ import com.hbm.api.energymk2.IBatteryItem;
 import com.hbm.api.energymk2.IEnergyReceiverMK2;
 import com.hbm.api.fluid.IFluidStandardReceiver;
 import com.hbm.blocks.BlockDummyable;
+import com.hbm.handler.ClimbableRegistry;
 import com.hbm.handler.CompatHandler;
 import com.hbm.interfaces.IClimbable;
 import com.hbm.interfaces.IControlReceiver;
@@ -114,7 +115,7 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
 
             // Fills, note that the liquid input also takes solid fuel
             power = Library.chargeTEFromItems(inventory, 2, power, maxPower);
-            for(FluidTankNTM tank : tanks) tank.loadTank(3, 4, inventory);
+            for(FluidTankNTM tank : tanks) if(tank.getTankType() != Fluids.NONE) tank.loadTank(3, 4, inventory);
             if(!inventory.getStackInSlot(3).isEmpty() && inventory.getStackInSlot(3).getItem() == ModItems.rocket_fuel && solidFuel.level < solidFuel.max) {
                 decrStackSize(3, 1);
                 solidFuel.level += 250;
@@ -224,6 +225,7 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
                     }
 
                     height = newHeight;
+                    refreshLadder();
                 }
             }
 
@@ -502,8 +504,12 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
         solidFuel.level = buf.readInt();
         solidFuel.max = buf.readInt();
 
-        height = buf.readInt();
+        int newHeight = buf.readInt();
+        boolean heightChanged = newHeight != height;
+        height = newHeight;
         canSeeSky = buf.readBoolean();
+
+        if(heightChanged) refreshLadder();
 
         if(buf.readBoolean()) {
             rocket = RocketStruct.readFromByteBuffer(buf);
@@ -740,28 +746,56 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
         return 65536.0D;
     }
 
-    private AxisAlignedBB ladderAABB = null;
+    private AxisAlignedBB sideLadderAABB = null;
+    private AxisAlignedBB mainLadderAABB = null;
+    private int ladderCacheHeight = -1;
 
-    private AxisAlignedBB getLadderAABB(){
-        if (ladderAABB == null){
-            ForgeDirection dir = ForgeDirection.getOrientation(this.getBlockMetadata() - BlockDummyable.offset);
-            ForgeDirection rot = dir.getRotation(ForgeDirection.UP);
-            ladderAABB = new AxisAlignedBB(pos.getX() + 0.25, pos.getY(), pos.getZ() + 0.25, pos.getX() + 0.75, pos.getY() + 3, pos.getZ() + 0.75).offset(-rot.offsetX * 6.5 - dir.offsetX * 5, 0, -rot.offsetZ * 6.5 - dir.offsetZ * 5);
-            if(height >= 8) {
-                ladderAABB.union(new AxisAlignedBB(pos.getX() + 0.25, pos.getY() + 3, pos.getZ() + 0.25, pos.getX() + 0.75, pos.getY() + 3 + height, pos.getZ() + 0.75).offset(-rot.offsetX * 2.5 - dir.offsetX * 5, 0, -rot.offsetZ * 2.5 - dir.offsetZ * 5));
-            }
-        }
-        return ladderAABB;
+    private void computeLadderAABBs() {
+        if(sideLadderAABB != null && ladderCacheHeight == height) return;
+
+        ForgeDirection dir = ForgeDirection.getOrientation(this.getBlockMetadata() - BlockDummyable.offset);
+        ForgeDirection rot = dir.getRotation(ForgeDirection.UP);
+
+        sideLadderAABB = new AxisAlignedBB(pos.getX() + 0.25, pos.getY(), pos.getZ() + 0.25, pos.getX() + 0.75, pos.getY() + 3, pos.getZ() + 0.75).offset(-rot.offsetX * 6.5 - dir.offsetX * 5, 0, -rot.offsetZ * 6.5 - dir.offsetZ * 5);
+        mainLadderAABB = height >= 8 ? new AxisAlignedBB(pos.getX() + 0.25, pos.getY() + 3, pos.getZ() + 0.25, pos.getX() + 0.75, pos.getY() + 3 + height, pos.getZ() + 0.75).offset(-rot.offsetX * 2.5 - dir.offsetX * 5, 0, -rot.offsetZ * 2.5 - dir.offsetZ * 5) : null;
+        ladderCacheHeight = height;
+    }
+
+    private void refreshLadder() {
+        computeLadderAABBs();
+        if(world != null) ClimbableRegistry.refresh(this);
     }
 
     @Override
     public boolean isEntityInClimbAABB(@NotNull EntityLivingBase entity) {
-        return entity.getEntityBoundingBox().intersects(getLadderAABB());
+        computeLadderAABBs();
+        AxisAlignedBB box = entity.getEntityBoundingBox();
+        if(box.intersects(sideLadderAABB)) return true;
+        return mainLadderAABB != null && box.intersects(mainLadderAABB);
     }
 
     @Override
     public @Nullable AxisAlignedBB getClimbAABBForIndexing() {
-        return getLadderAABB();
+        computeLadderAABBs();
+        return mainLadderAABB != null ? sideLadderAABB.union(mainLadderAABB) : sideLadderAABB;
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        registerClimbable();
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        unregisterClimbable();
+    }
+
+    @Override
+    public void onChunkUnload() {
+        unregisterClimbable();
+        super.onChunkUnload();
     }
 
 }
