@@ -95,6 +95,25 @@ public class SpaceMain {
         ModBlocksReplaceHandler.initReplacings(event);
     }
 
+    private static void forceInitEntityDataParameters() {
+        String[] entityClasses = {
+                "com.hbm.entity.mob.EntityUFOBase",
+                "com.hbmspace.entity.mob.siege.EntitySiegeUFO",
+                "com.hbmspace.entity.mob.siege.EntitySiegeCraft",
+                "com.hbmspace.entity.projectile.EntitySiegeLaser",
+                "com.hbmspace.entity.effect.EntityDepress",
+                "com.hbmspace.entity.missile.EntityRideableRocket",
+                "com.hbmspace.entity.missile.EntityRideableRocket$EntityRideableRocketDummy",
+                "com.hbmspace.entity.missile.EntityCombatDropPod"
+        };
+        for (String entityClass : entityClasses) {
+            try {
+                Class.forName(entityClass, true, SpaceMain.class.getClassLoader());
+            } catch (ClassNotFoundException ignored) {
+            }
+        }
+    }
+
     public static void reloadConfig() {
         Configuration config = new Configuration(new File(proxy.getDataDir().getPath() + "/config/hbm/hbm_space.cfg"));
         config.load();
@@ -154,6 +173,7 @@ public class SpaceMain {
 
         int i = 0;
         AutoRegistrySpace.registerEntities(i);
+        forceInitEntityDataParameters();
         ItemCustomMissilePart.initSpaceThrusters();
         PacketRegistry.preInit();
 
