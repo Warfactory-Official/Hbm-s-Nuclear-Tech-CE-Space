@@ -50,6 +50,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
@@ -84,13 +85,13 @@ public class SpaceMain {
         HBMSpaceSoundHandler.init();
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRegisterItems(RegistryEvent.Register<Item> event) {
         ModItemsSpace.swapStackSizes(event);
         ModItemsReplaceHandler.initReplacings(event);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
         ModBlocksReplaceHandler.initReplacings(event);
     }
