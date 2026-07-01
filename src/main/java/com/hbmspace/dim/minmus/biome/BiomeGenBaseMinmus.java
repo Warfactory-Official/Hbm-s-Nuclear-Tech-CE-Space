@@ -1,5 +1,3 @@
-
-
 package com.hbmspace.dim.minmus.biome;
 
 import com.hbmspace.blocks.ModBlocksSpace;

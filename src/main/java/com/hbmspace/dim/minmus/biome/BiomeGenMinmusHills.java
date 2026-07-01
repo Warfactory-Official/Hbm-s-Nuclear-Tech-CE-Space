@@ -62,9 +62,6 @@ public class BiomeGenMinmusHills extends BiomeGenBaseMinmus {
 
                 if (y >= 62) {
                     chunkPrimer.setBlockState(localX, y, localZ, topBlockState);
-                    if (topBlockState == this.topBlock && y + 1 < 256 && chunkPrimer.getBlockState(localX, y + 1, localZ).getMaterial() == Material.AIR) {
-                        chunkPrimer.setBlockState(localX, y + 1, localZ, Blocks.SNOW_LAYER.getDefaultState());
-                    }
                 } else if (y < 56 - surfaceDepth) {
                     topBlockState = Blocks.AIR.getDefaultState();
                     fillerBlockState = ModBlocksSpace.minmus_stone.getDefaultState();

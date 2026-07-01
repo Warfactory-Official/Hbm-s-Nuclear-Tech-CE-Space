@@ -11,18 +11,33 @@ import com.hbmspace.dim.moho.biome.BiomeGenBaseMoho;
 import com.hbmspace.dim.moon.BiomeGenMoon;
 import com.hbmspace.dim.orbit.BiomeGenOrbit;
 import com.hbmspace.dim.tekto.biome.BiomeGenBaseTekto;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 @Mod.EventBusSubscriber(modid = Tags.MODID)
 public class ModBiomesInit {
+
+    @SubscribeEvent
+    public static void preventMinmusSnow(PopulateChunkEvent.Populate evt) {
+        // Th3_Sl1ze: of course I could do setTemperature(0.0f). Though Minmus is actually cold, and that supposedly removes just ice and snow in population phase
+        if (evt.getType() == PopulateChunkEvent.Populate.EventType.ICE) {
+            BlockPos pos = new BlockPos(evt.getChunkX() * 16 + 8, 0, evt.getChunkZ() * 16 + 8);
+            if (evt.getWorld().getBiome(pos) instanceof BiomeGenBaseMinmus) {
+                evt.setResult(Event.Result.DENY);
+            }
+        }
+    }
+
     @SubscribeEvent
     public static void registerBiomes(RegistryEvent.Register<Biome> evt){
+        MinecraftForge.TERRAIN_GEN_BUS.register(ModBiomesInit.class);
         evt.getRegistry().registerAll(
                 BiomeGenBaseDuna.dunaPlains.setRegistryName("hbm", "duna_plains"),
                 BiomeGenBaseDuna.dunaLowlands.setRegistryName("hbm", "duna_lowlands"),
