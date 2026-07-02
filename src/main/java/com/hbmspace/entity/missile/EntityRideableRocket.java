@@ -574,10 +574,11 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
 
     @Override
     public void updatePassenger(Entity passenger) {
-        double offset = lastState == RocketState.TRANSFER ? 1.62D : 0;
-        double length = getMountedYOffset() + passenger.getYOffset() - offset;
+        double offset = lastState == RocketState.TRANSFER ? 1D : 0;
+        double offsetY = lastState == RocketState.TRANSFER ? 1.62D : 0;
+        double length = getMountedYOffset() + passenger.getYOffset() + offset;
         Vec3d target = BobMathUtil.getDirectionFromAxisAngle(rotationPitch - 90.0F, 180.0F - rotationYaw, length);
-        passenger.setPosition(posX + target.x, posY + target.y, posZ + target.z);
+        passenger.setPosition(posX + target.x, posY + target.y - offsetY, posZ + target.z);
     }
 
     @Override

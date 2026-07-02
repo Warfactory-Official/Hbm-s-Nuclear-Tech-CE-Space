@@ -13,6 +13,7 @@ import com.hbm.render.icon.TextureAtlasSpriteMutatable;
 import com.hbm.render.item.ItemRenderMissilePart;
 import com.hbm.render.misc.MissilePart;
 import com.hbm.sound.AudioWrapper;
+import com.hbm.util.BobMathUtil;
 import com.hbm.util.Clock;
 import com.hbm.util.I18nUtil;
 import com.hbm.util.Vec3NT;
@@ -55,6 +56,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.*;
@@ -357,8 +359,11 @@ public class ModEventHandlerClient {
     public static void onRenderRidingPlayerPre(RenderPlayerEvent.Pre event) {
         wasRiding = event.getEntityPlayer().getRidingEntity() instanceof EntityRideableRocket;
         if(!wasRiding) return;
-
+        EntityRideableRocket rocket = (EntityRideableRocket) event.getEntityPlayer().getRidingEntity();
         GlStateManager.pushMatrix();
+        double offset = rocket.getState() == EntityRideableRocket.RocketState.TRANSFER ? 1.62D : 0;
+        double offsetX = rocket.getState() == EntityRideableRocket.RocketState.TRANSFER ? -1.45D : 0;
+        GlStateManager.translate(offsetX, offset, 0);
 
         GlStateManager.rotate(-event.getEntityPlayer().getRidingEntity().rotationPitch, 0, 0, 1);
     }

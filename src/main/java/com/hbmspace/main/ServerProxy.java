@@ -2,6 +2,7 @@ package com.hbmspace.main;
 
 import com.hbm.handler.HbmKeybinds;
 import com.hbm.sound.AudioWrapper;
+import com.hbmspace.handler.RocketStruct;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
@@ -57,6 +58,7 @@ public class ServerProxy {
     }
 
     public void postInit(FMLPostInitializationEvent e){
+        RocketStruct.registerServerParts();
     }
 
     public boolean opengl33(){

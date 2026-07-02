@@ -87,8 +87,8 @@ public class ResourceManagerSpace {
     public static final ResourceLocation landing_capsule_tex = new ResourceLocation("hbm", "textures/models/missile_parts/warheads/rp_landing_capsule.png");
     public static final ResourceLocation mp_w_fairing_tex = new ResourceLocation("hbm", "textures/models/missile_parts/warheads/mp_w_fairing.png");
     public static final ResourceLocation mp_f_20_hydrazine_tex = new ResourceLocation("hbm", "textures/models/missile_parts/fuselages/mp_f_20_hydrazine.png");
-    public static final ResourceLocation mp_f_20_kerolox_tex = mp_f_20_hydrazine_tex;
-    public static final ResourceLocation mp_f_20_kerolox_usa_tex = mp_f_20_hydrazine_tex;
+    public static final ResourceLocation mp_f_20_kerolox_tex = new ResourceLocation("hbm", "textures/models/missile_parts/fuselages/mp_f_20_kerosene.png");
+    public static final ResourceLocation mp_f_20_kerolox_usa_tex = new ResourceLocation("hbm", "textures/models/missile_parts/fuselages/mp_f_20_kerosene_usa.png");
     public static final ResourceLocation mp_t_20_methalox_tex = new ResourceLocation("hbm", "textures/models/missile_parts/thrusters/mp_t_20_methalox.png");
     public static final ResourceLocation mp_t_20_methalox_dual_tex = new ResourceLocation("hbm", "textures/models/missile_parts/thrusters/mp_t_20_methalox_dual.png");
     public static final ResourceLocation mp_t_20_hydrogen_tex = new ResourceLocation("hbm", "textures/models/missile_parts/thrusters/mp_t_20_hydrogen.png");

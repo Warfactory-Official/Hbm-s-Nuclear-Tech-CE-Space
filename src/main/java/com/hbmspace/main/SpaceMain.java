@@ -214,9 +214,6 @@ public class SpaceMain {
         WorldGeneratorCelestial.registerPhasedStructures();
         HazardRegistrySpace.registerItemHazards();
         proxy.postInit(event);
-        if (event.getSide() == Side.SERVER)
-            RocketStruct.registerServerParts(); // fuck me, parts were registered on client but NOT on server
-        //TODO: Defer this to the proxies
 
         WorldTypeTeleport.init();
     }

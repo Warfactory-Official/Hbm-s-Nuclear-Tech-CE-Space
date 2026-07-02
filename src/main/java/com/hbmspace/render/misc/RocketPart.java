@@ -41,7 +41,8 @@ public class RocketPart extends MissilePart {
     }
 
     public WaveFrontObjectVAO getShroud() {
-        return shroudModel;
+        if(shroudModel != null) return shroudModel;
+        return (WaveFrontObjectVAO) model;
     }
 
     public static void registerClientParts() {
