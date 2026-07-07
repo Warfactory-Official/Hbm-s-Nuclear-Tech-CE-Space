@@ -25,7 +25,6 @@ import com.hbmspace.items.weapon.ItemCustomRocket;
 import com.hbmspace.lib.HBMSpaceSoundHandler;
 import com.hbmspace.main.SpaceMain;
 import com.hbmspace.packet.toclient.EntityBufPacket;
-import com.hbmspace.render.misc.RocketPart;
 import com.hbmspace.tileentity.machine.TileEntityOrbitalStation;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.material.Material;
@@ -1039,7 +1038,7 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
             if(!world.isRemote) {
                 if(parent == null || parent.isDead) {
                     setDead();
-                } else if(this.dataManager.get(DP_PARENT_ID) != parent.getEntityId()) {
+                } else if(!this.dataManager.get(DP_PARENT_ID).equals(parent.getEntityId())) {
                     this.dataManager.set(DP_PARENT_ID, parent.getEntityId());
                 }
             } else if(parent == null) {
@@ -1056,7 +1055,13 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
                     Entity entity = world.getEntityByID(id);
                     if(entity instanceof EntityRideableRocket) {
                         parent = (EntityRideableRocket) entity;
+                        return;
                     }
+                }
+                // Th3_Sl1ze: idk why, but restarting the game makes dummy part unable to retrieve it's parent via id in singleplayer. probably the same is applied to restarting dedicated server.
+                for(EntityRideableRocket rocket : world.getEntitiesWithinAABB(EntityRideableRocket.class, this.getEntityBoundingBox().grow(8.0D))) {
+                    parent = rocket;
+                    break;
                 }
             }
         }

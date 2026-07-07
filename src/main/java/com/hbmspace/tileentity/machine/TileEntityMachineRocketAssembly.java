@@ -229,6 +229,11 @@ public class TileEntityMachineRocketAssembly extends TileEntityMachineBase imple
     @Override
     public @NotNull NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         nbt.setIntArray("platforms", BobMathUtil.intCollectionToArray(platforms));
+        if (rocket != null) {
+            NBTTagCompound rocketTag = new NBTTagCompound();
+            rocket.writeToNBT(rocketTag);
+            nbt.setTag("rocket", rocketTag);
+        }
         return super.writeToNBT(nbt);
     }
 
@@ -237,6 +242,11 @@ public class TileEntityMachineRocketAssembly extends TileEntityMachineBase imple
         super.readFromNBT(nbt);
         platforms = new ArrayList<>();
         for(int i : nbt.getIntArray("platforms")) platforms.add(i);
+        if (nbt.hasKey("rocket")) {
+            rocket = RocketStruct.readFromNBT(nbt.getCompoundTag("rocket"));
+        } else {
+            rocket = null;
+        }
     }
 
     public void construct() {

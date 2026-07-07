@@ -4,6 +4,8 @@ import com.hbmspace.Tags;
 import com.hbmspace.dim.Ike.BiomeGenIke;
 import com.hbmspace.dim.dres.biome.BiomeGenBaseDres;
 import com.hbmspace.dim.duna.biome.BiomeGenBaseDuna;
+import com.hbmspace.dim.duna.biome.BiomeGenDunaPolar;
+import com.hbmspace.dim.duna.biome.BiomeGenDunaPolarHills;
 import com.hbmspace.dim.eve.biome.BiomeGenBaseEve;
 import com.hbmspace.dim.laythe.biome.BiomeGenBaseLaythe;
 import com.hbmspace.dim.minmus.biome.BiomeGenBaseMinmus;
@@ -29,8 +31,9 @@ public class ModBiomesInit {
         // Th3_Sl1ze: of course I could do setTemperature(0.0f). Though Minmus is actually cold, and that supposedly removes just ice and snow in population phase
         if (evt.getType() == PopulateChunkEvent.Populate.EventType.ICE) {
             BlockPos pos = new BlockPos(evt.getChunkX() * 16 + 8, 0, evt.getChunkZ() * 16 + 8);
-            if (evt.getWorld().getBiome(pos) instanceof BiomeGenBaseMinmus) {
-                evt.setResult(Event.Result.DENY);
+            // since serene seasons tends to spawn snow.. everywhere, I have to exclude it from everywhere but duna polar biomes
+            if (evt.getWorld().getBiome(pos) instanceof BiomeGenBaseCelestial biome) {
+                if(!(biome instanceof BiomeGenDunaPolar || biome instanceof BiomeGenDunaPolarHills)) evt.setResult(Event.Result.DENY);
             }
         }
     }

@@ -90,9 +90,22 @@ public class ModItemsReplaceHandler {
         ore_oil_item.setHasSubtypes(true);
         ore_oil_item.setMaxDamage(0);
 
-        EnumAddonTypes.setInstanceField(net.minecraftforge.registries.IForgeRegistryEntry.Impl.class, "registryName", ore_oil_item, null);
+        EnumAddonTypes.setInstanceField(IForgeRegistryEntry.Impl.class, "registryName", ore_oil_item, null);
 
         ore_oil_item.setRegistryName("hbm", "ore_oil");
+        ItemBlock ore_boil_item = new ItemBlock(ModBlocks.ore_bedrock_oil) {
+            @Override
+            public int getMetadata(int damage) {
+                return damage;
+            }
+        };
+        ore_boil_item.setHasSubtypes(true);
+        ore_boil_item.setMaxDamage(0);
+
+        EnumAddonTypes.setInstanceField(IForgeRegistryEntry.Impl.class, "registryName", ore_boil_item, null);
+
+        ore_boil_item.setRegistryName("hbm", "ore_bedrock_oil");
         event.getRegistry().register(ore_oil_item);
+        event.getRegistry().register(ore_boil_item);
     }
 }

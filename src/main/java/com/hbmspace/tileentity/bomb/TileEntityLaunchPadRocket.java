@@ -528,6 +528,11 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
         nbt.setInteger("height", height);
         nbt.setBoolean("sky", canSeeSky);
         for(int i = 0; i < tanks.length; i++) tanks[i].writeToNBT(nbt, "t" + i);
+        if (rocket != null) {
+            NBTTagCompound rocketTag = new NBTTagCompound();
+            rocket.writeToNBT(rocketTag);
+            nbt.setTag("rocket", rocketTag);
+        }
         return super.writeToNBT(nbt);
     }
 
@@ -540,6 +545,11 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
         height = nbt.getInteger("height");
         canSeeSky = nbt.getBoolean("sky");
         for(int i = 0; i < tanks.length; i++) tanks[i].readFromNBT(nbt, "t" + i);
+        if (nbt.hasKey("rocket")) {
+            rocket = RocketStruct.readFromNBT(nbt.getCompoundTag("rocket"));
+        } else {
+            rocket = null;
+        }
     }
 
     @Override

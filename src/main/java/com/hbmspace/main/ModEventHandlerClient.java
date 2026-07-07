@@ -180,7 +180,7 @@ public class ModEventHandlerClient {
                 BlockOre ore = BlockOre.vanillaMap.get(block);
                 if(ore != null) {
                     ore.addInformation(stack, event.getEntityPlayer().getEntityWorld(), list, event.getFlags());
-                } else if(block == Blocks.COAL_ORE || block == ModBlocks.ore_bedrock_oil) {
+                } else if(block == Blocks.COAL_ORE) {
                     // we don't have any celestial coal, special case
                     list.add(TextFormatting.GOLD + "Can be found on:");
                     list.add(TextFormatting.AQUA + " - " + I18nUtil.resolveKey("body.kerbin"));

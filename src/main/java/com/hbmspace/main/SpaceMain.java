@@ -19,7 +19,6 @@ import com.hbmspace.dim.WorldGeneratorCelestial;
 import com.hbmspace.dim.WorldTypeTeleport;
 import com.hbmspace.enums.EnumAddonFlowerPlantTypes;
 import com.hbmspace.enums.EnumAddonTypes;
-import com.hbmspace.handler.RocketStruct;
 import com.hbmspace.handler.registires.ModBlocksReplaceHandler;
 import com.hbmspace.handler.registires.ModItemsReplaceHandler;
 import com.hbmspace.hazard.HazardRegistrySpace;
@@ -55,7 +54,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionRange;
-import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
