@@ -11,6 +11,7 @@ public class RecipeTweakerManager {
                 case "ArcWelderRecipes": ArcWelderRecipesTweaker.init(); break;
                 case "AssemblyMachineRecipes": AssemblyRecipesTweaker.init(); break;
                 case "BlastFurnaceRecipes": BlastFurnaceRecipesTweaker.init(); break;
+                case "BlastFurnaceRecipesNT": BlastFurnaceRecipesNTTweaker.init(); break;
                 case "BreederRecipes": BreederRecipesTweaker.init(); break;
                 case "CentrifugeRecipes": CentrifugeRecipesTweaker.init(); break;
                 case "ChemicalPlantRecipes": ChemicalPlantRecipesTweaker.init(); break;

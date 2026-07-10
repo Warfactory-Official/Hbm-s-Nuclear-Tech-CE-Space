@@ -1,6 +1,5 @@
 package com.hbmspace.inventory.recipes.tweakers;
 
-import com.hbm.inventory.recipes.BlastFurnaceRecipes;
 import com.hbmspace.items.ModItemsSpace;
 import net.minecraft.item.ItemStack;
 
@@ -8,6 +7,7 @@ import static com.hbm.inventory.OreDictManager.STEEL;
 import static com.hbm.inventory.recipes.BlastFurnaceRecipes.addRecipe;
 import static com.hbmspace.inventory.OreDictManagerSpace.NI;
 
+@Deprecated
 public class BlastFurnaceRecipesTweaker {
 
     public static void init() {
