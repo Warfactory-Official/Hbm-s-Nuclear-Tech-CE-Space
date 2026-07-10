@@ -7,6 +7,7 @@ public class RecipeTweakerManager {
     public static void initRecipeTweakers() {
         SerializableRecipe.additionalListeners.add(recipeHandlerName -> {
             switch (recipeHandlerName) {
+                case "AnnihilatorRecipessTweaker": AnnihilatorRecipessTweaker.init(); break;
                 case "AnvilRecipes": AnvilRecipeTweaker.init(); AnvilSmithingRecipeTweaker.init(); break;
                 case "ArcWelderRecipes": ArcWelderRecipesTweaker.init(); break;
                 case "AssemblyMachineRecipes": AssemblyRecipesTweaker.init(); break;
@@ -15,6 +16,7 @@ public class RecipeTweakerManager {
                 case "BreederRecipes": BreederRecipesTweaker.init(); break;
                 case "CentrifugeRecipes": CentrifugeRecipesTweaker.init(); break;
                 case "ChemicalPlantRecipes": ChemicalPlantRecipesTweaker.init(); break;
+                case "CokerRecipes": CokerRecipesTweaker.init(); break;
                 case "CrackingRecipes": CrackingRecipesTweaker.init(); break;
                 case "CrucibleRecipes": CrucibleRecipesTweaker.init(); break;
                 case "CrystallizerRecipes": CrystallizerRecipesTweaker.init(); break;
@@ -27,6 +29,7 @@ public class RecipeTweakerManager {
                 case "MagicRecipes": MagicRecipesTweaker.init(); break;
                 case "MixerRecipes": MixerRecipesTweaker.init(); break;
                 case "OutgasserRecipes": OutgasserRecipesTweaker.init(); break;
+                case "PlasmaForgeRecipes": PlasmaForgeRecipesTweaker.init(); break;
                 case "PUREXRecipes": PUREXRecipesTweaker.init(); break;
                 case "PressRecipes": PressRecipesTweaker.init(); break;
                 case "PyroOvenRecipes": PyroOvenRecipesTweaker.init(); break;

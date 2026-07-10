@@ -85,6 +85,14 @@ public class AnvilRecipeTweaker implements IRecipeRegisterListener {
                 },
                 new AnvilRecipes.AnvilOutput(new ItemStack(ModBlocksSpace.machine_atmo_vent))).setTier(2));
         /*constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(
+                new RecipesCommon.AStack[] {
+                        new RecipesCommon.OreDictStack(STEEL.pipe(), 6),
+                        new RecipesCommon.OreDictStack(STAINLESS.plateCast(), 8),
+                        new RecipesCommon.OreDictStack(ANY_PLASTIC.ingot(), 4),
+                        new RecipesCommon.ComparableStack(ModItems.turbine_titanium, 1),
+                },
+                new AnvilRecipes.AnvilOutput(new ItemStack(ModBlocksSpace.machine_atmo_emitter))).setTier(2));
+        constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(
                 new RecipesCommon.AStack[] {new RecipesCommon.ComparableStack(ModBlocks.glass_quartz, 3), new RecipesCommon.ComparableStack(ModItems.pill_herbal, 2), new RecipesCommon.ComparableStack(ModItems.powder_magic, 2)},
                 new AnvilRecipes.AnvilOutput(new ItemStack(ModItems.flask_infusion, 1, ItemFlask.EnumInfusion.NITAN.ordinal()))).setTier(2));*/
         constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.ComparableStack(ModBlocksSpace.deco_stainless, 4), new AnvilRecipes.AnvilOutput[]{new AnvilRecipes.AnvilOutput(new ItemStack(ModItemsSpace.ingot_stainless, 1))}).setTier(1));

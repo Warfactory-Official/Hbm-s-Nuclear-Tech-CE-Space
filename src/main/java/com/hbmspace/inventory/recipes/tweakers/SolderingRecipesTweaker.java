@@ -23,7 +23,7 @@ public class SolderingRecipesTweaker {
         pcb.clear();
         solder.clear();
 
-        for (SolderingRecipes.SolderingRecipe r : recipes) {
+        for (SolderingRecipe r : recipes) {
             toppings.addAll(Arrays.asList(r.toppings));
             pcb.addAll(Arrays.asList(r.pcb));
             solder.addAll(Arrays.asList(r.solder));
@@ -34,7 +34,7 @@ public class SolderingRecipesTweaker {
         boolean lbsm = GeneralConfig.enableLBSM && GeneralConfig.enableLBSMSimpleCrafting;
         boolean no528 = !GeneralConfig.enable528;
 
-        recipes.add(new SolderingRecipes.SolderingRecipe(new ItemStack(ModItemsSpace.circuit, 1, ItemEnumsSpace.EnumCircuitType.AERO.ordinal()), 300, 1_000,
+        recipes.add(new SolderingRecipe(new ItemStack(ModItemsSpace.circuit, 1, ItemEnumsSpace.EnumCircuitType.AERO.ordinal()), 300, 1_000,
                 new RecipesCommon.AStack[]{
                         new RecipesCommon.ComparableStack(ModItems.circuit, 3, ItemEnums.EnumCircuitType.CHIP)},
                 new RecipesCommon.AStack[]{
@@ -44,7 +44,7 @@ public class SolderingRecipesTweaker {
                         new RecipesCommon.OreDictStack(PB.wireFine(), 4)}
         ));
 
-        recipes.add(new SolderingRecipes.SolderingRecipe(new ItemStack(ModItemsSpace.hard_drive, 1), 200, 250,
+        recipes.add(new SolderingRecipe(new ItemStack(ModItemsSpace.hard_drive, 1), 200, 250,
                 new RecipesCommon.AStack[]{
                         new RecipesCommon.ComparableStack(ModItems.circuit, 2, ItemEnums.EnumCircuitType.CHIP)},
                 new RecipesCommon.AStack[]{
@@ -53,26 +53,36 @@ public class SolderingRecipesTweaker {
                         new RecipesCommon.OreDictStack(MINGRADE.wireFine(), 4)}
         ));
 
-        recipes.add(new SolderingRecipes.SolderingRecipe(new ItemStack(ModItems.circuit, 1, ItemEnums.EnumCircuitType.BISMOID.ordinal()), 400, 10_000,
+        recipes.add(new SolderingRecipe(new ItemStack(ModItems.circuit, 1, ItemEnums.EnumCircuitType.CAPACITOR_BOARD.ordinal()), 200, 300,
+                new FluidStack(Fluids.PEROXIDE, 500),
+                new RecipesCommon.AStack[] {
+                        new RecipesCommon.ComparableStack(ModItems.circuit, 3, ItemEnumsSpace.EnumCircuitType.CAPACITOR_LANTHANIUM)},
+                new RecipesCommon.AStack[] {
+                        new RecipesCommon.ComparableStack(ModItems.circuit, 1, ItemEnums.EnumCircuitType.PCB)},
+                new RecipesCommon.AStack[] {
+                        new RecipesCommon.OreDictStack(PB.wireFine(), 3)}
+        ));
+
+        recipes.add(new SolderingRecipe(new ItemStack(ModItems.circuit, 1, ItemEnums.EnumCircuitType.BISMOID.ordinal()), 400, 10_000,
                 new FluidStack(com.hbmspace.inventory.fluid.Fluids.POLYTHYLENE, 1_000),
-                new RecipesCommon.AStack[]{
+                new RecipesCommon.AStack[] {
                         new RecipesCommon.ComparableStack(ModItems.circuit, 4, ItemEnums.EnumCircuitType.CHIP_BISMOID),
                         new RecipesCommon.ComparableStack(ModItemsSpace.circuit, lbsm ? 1 : 4, ItemEnumsSpace.EnumCircuitType.GASCHIP),
                         new RecipesCommon.ComparableStack(ModItems.circuit, lbsm ? 2 : 8, ItemEnums.EnumCircuitType.CAPACITOR)},
-                new RecipesCommon.AStack[]{
+                new RecipesCommon.AStack[] {
                         new RecipesCommon.ComparableStack(ModItems.circuit, 6, ItemEnums.EnumCircuitType.PCB)},
-                new RecipesCommon.AStack[]{
+                new RecipesCommon.AStack[] {
                         new RecipesCommon.OreDictStack(PB.wireFine(), 12)}
         ));
 
-        recipes.add(new SolderingRecipes.SolderingRecipe(new ItemStack(ModItems.circuit, 1, ItemEnums.EnumCircuitType.ADVANCED.ordinal()), 300, 1_000,
+        recipes.add(new SolderingRecipe(new ItemStack(ModItems.circuit, 1, ItemEnums.EnumCircuitType.ADVANCED.ordinal()), 300, 1_000,
                 new FluidStack(com.hbmspace.inventory.fluid.Fluids.POLYTHYLENE, 250),
-                new RecipesCommon.AStack[]{
+                new RecipesCommon.AStack[] {
                         new RecipesCommon.ComparableStack(ModItemsSpace.circuit, lbsm ? 1 : 2, ItemEnumsSpace.EnumCircuitType.GASCHIP),
                         new RecipesCommon.ComparableStack(ModItems.circuit, 2, ItemEnums.EnumCircuitType.CAPACITOR)},
-                new RecipesCommon.AStack[]{
+                new RecipesCommon.AStack[] {
                         new RecipesCommon.ComparableStack(ModItems.circuit, 4, ItemEnums.EnumCircuitType.PCB)},
-                new RecipesCommon.AStack[]{
+                new RecipesCommon.AStack[] {
                         new RecipesCommon.OreDictStack(PB.wireFine(), 8)}
         ));
 

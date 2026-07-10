@@ -182,6 +182,7 @@ public class ModBlocksSpace {
     public static final Block pet_leaves = new BlockRubberLeaves("pet_leaves").setCreativeTab(MainRegistry.blockTab).setHardness(0.5F).setResistance(2.5F);
     public static final Block ccl_block = new GenericFluidBlockSpace(ccl_fluid, Material.WATER, "ccl_block").setDamage(ModDamageSource.lead, 1F).setResistance(500.0F);
     public static final Block dummy_beam = new BlockDummyableBeam(Material.IRON, "dummy_beam").setHardness(10.0F).setResistance(20.0F);
+    public static final Block astroturf = new BlockNoSpawn("astroturf").setSoundType(SoundType.GROUND).setCreativeTab(MainRegistry.blockTab).setHardness(0.6F);
 
     public static final Block furnace = new BlockFurnaceSpace(false).setHardness(3.5F).setSoundType(SoundType.STONE);
     public static final Block lit_furnace = new BlockFurnaceSpace(true).setHardness(3.5F).setSoundType(SoundType.STONE).setLightLevel(0.875F);

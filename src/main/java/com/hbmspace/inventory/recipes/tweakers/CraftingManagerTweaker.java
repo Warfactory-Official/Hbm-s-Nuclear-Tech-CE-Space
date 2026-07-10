@@ -162,10 +162,6 @@ public class CraftingManagerTweaker extends CraftingManager {
 
         addRecipeAuto(DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.CAPACITOR_LANTHANIUM), "I", "N", "W", 'I', ModItems.plate_polymer, 'N', LA.nugget(), 'W', AL.wireFine());
         addRecipeAuto(DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.CAPACITOR_LANTHANIUM), "I", "N", "W", 'I', ModItems.plate_polymer, 'N', LA.nugget(), 'W', CU.wireFine());
-        addRecipeAuto(DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.GASCHIP), "I", "S", "W", 'I', ModItems.plate_polymer, 'S', DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.GAAS), 'W', CU.wireFine());
-        addRecipeAuto(DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.GASCHIP), "I", "S", "W", 'I', ModItems.plate_polymer, 'S', DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.GAAS), 'W', GOLD.wireFine());
-        addRecipeAuto(DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.HFCHIP), "I", "S", "W", 'I', ModItemsSpace.nugget_hafnium, 'S', DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.GASCHIP), 'W', GOLD.wireFine());
-        addRecipeAuto(DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.MOLYCHIP), "I", "S", "W", 'I', ModItems.powder_molysite, 'S', MINGRADE.billet(), 'W', GOLD.wireFine());
         addRecipeAuto(new ItemStack(ModItemsSpace.turbine_syngas, 1), "BBB", "BSB", "BBB", 'B', ModItemsSpace.blade_syngas, 'S', STAINLESS.ingot());
         addShapelessAuto(new ItemStack(ModItemsSpace.cmug_empty, 1), Items.CLAY_BALL);
         addRecipeAuto(new ItemStack(ModItemsSpace.glass_empty, 1), "G G", "GGG", " G ", 'G', Blocks.GLASS);

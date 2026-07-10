@@ -17,6 +17,14 @@ public class ItemEnumsSpace {
         public static final EnumCircuitType[] VALUES = values();
     }
 
+    public enum EnumExpensiveType {
+        STAINLESS_BEAM,
+        AVIONICS,
+        ASTRO;
+
+        public static final EnumExpensiveType[] VALUES = values();
+    }
+
     public static enum EnumChunkType {
         PENTLANDITE,
         MOONSTONE;

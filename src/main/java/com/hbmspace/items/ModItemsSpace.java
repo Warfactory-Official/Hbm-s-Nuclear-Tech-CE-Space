@@ -55,6 +55,7 @@ public class ModItemsSpace {
     public static final Item hard_drive = new ItemBakedSpace("hard_drive", "votv_e").setMaxStackSize(64).setCreativeTab(MainRegistry.partsTab);
     public static final ItemEnumMultiSpace<SolarSystem.Body> full_drive = new ItemVOTVdrive("hard_drive_full").setCreativeTab(MainRegistry.controlTab);
     public static final Item circuit = new ItemEnumMultiSpace<>("circuit", ItemEnumsSpace.EnumCircuitType.VALUES, true, true).setCreativeTab(MainRegistry.partsTab);
+    public static final Item item_expensive = new ItemEnumMultiSpace<>("item_expensive", ItemEnumsSpace.EnumExpensiveType.VALUES, true, true).setCreativeTab(MainRegistry.partsTab);
     public static final Item transporter_linker = new ItemTransporterLinker("transporter_linker").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
     public static final Item rp_fuselage_20_12 = new ItemCustomMissilePart("rp_f_20_12").makeFuselage(ItemMissile.FuelType.ANY, 64000F, 4000, ItemMissile.PartSize.SIZE_20, ItemMissile.PartSize.SIZE_20);
     public static final Item rp_fuselage_20_6 = new ItemCustomMissilePart("rp_f_20_6").makeFuselage(ItemMissile.FuelType.ANY, 32000F, 2100, ItemMissile.PartSize.SIZE_20, ItemMissile.PartSize.SIZE_20);
