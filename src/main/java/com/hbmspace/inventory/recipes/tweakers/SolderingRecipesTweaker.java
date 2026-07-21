@@ -56,7 +56,7 @@ public class SolderingRecipesTweaker {
         recipes.add(new SolderingRecipe(new ItemStack(ModItems.circuit, 1, ItemEnums.EnumCircuitType.CAPACITOR_BOARD.ordinal()), 200, 300,
                 new FluidStack(Fluids.PEROXIDE, 500),
                 new RecipesCommon.AStack[] {
-                        new RecipesCommon.ComparableStack(ModItems.circuit, 3, ItemEnumsSpace.EnumCircuitType.CAPACITOR_LANTHANIUM)},
+                        new RecipesCommon.ComparableStack(ModItemsSpace.circuit, 3, ItemEnumsSpace.EnumCircuitType.CAPACITOR_LANTHANIUM)},
                 new RecipesCommon.AStack[] {
                         new RecipesCommon.ComparableStack(ModItems.circuit, 1, ItemEnums.EnumCircuitType.PCB)},
                 new RecipesCommon.AStack[] {
