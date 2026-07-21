@@ -34,6 +34,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -748,7 +749,8 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
 
     public RocketStruct getRocket() {
         RocketStruct rocket = new RocketStruct();
-        rocket.capsule = (ItemMissile) ItemMissile.getItemById(this.dataManager.get(DP_ROCKET_CAPSULE));
+        Item capItem = Item.getItemById(this.dataManager.get(DP_ROCKET_CAPSULE));
+        rocket.capsule = capItem instanceof ItemMissile ? (ItemMissile) capItem : null;
 
         int count = this.dataManager.get(DP_ROCKET_STAGECOUNT);
         for(int i = 0; i < count && i < RocketStruct.MAX_STAGES; i++) {

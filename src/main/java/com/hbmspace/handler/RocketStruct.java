@@ -15,6 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
@@ -33,7 +34,7 @@ public class RocketStruct {
     public ItemMissile capsule;
     public ArrayList<RocketStage> stages = new ArrayList<>();
     public int satFreq = 0;
-    public static final HashMap<Integer, Double> serverParts = new HashMap<>();
+    public static final HashMap<Item, Double> serverParts = new HashMap<>();
     public List<String> extraIssues = new ArrayList<>();
 
     public static final int MAX_STAGES = 5;
@@ -301,7 +302,7 @@ public class RocketStruct {
     public static double getPartHeight(ItemMissile item) {
         if (item == null) return 0;
 
-        Double h = serverParts.get(Item.getIdFromItem(item));
+        Double h = serverParts.get(item);
         return h != null ? h : 0;
     }
 
@@ -433,17 +434,23 @@ public class RocketStruct {
     public static RocketStruct readFromByteBuffer(ByteBuf buf) {
         RocketStruct rocket = new RocketStruct();
         int capId = buf.readInt();
-        rocket.capsule = capId == 0 ? null : (ItemMissile) Item.getItemById(capId);
+        Item capItem = capId == 0 ? null : Item.getItemById(capId);
+        rocket.capsule = capItem instanceof ItemMissile ? (ItemMissile) capItem : null;
 
         int count = buf.readInt();
         for(int i = 0; i < count; i++) {
             RocketStage stage = new RocketStage();
             int fId = buf.readInt();
-            stage.fuselage = fId == 0 ? null : (ItemMissile) Item.getItemById(fId);
+            Item fItem = fId == 0 ? null : Item.getItemById(fId);
+            stage.fuselage = fItem instanceof ItemMissile ? (ItemMissile) fItem : null;
+
             int fnId = buf.readInt();
-            stage.fins = fnId == 0 ? null : (ItemMissile) Item.getItemById(fnId);
+            Item fnItem = fnId == 0 ? null : Item.getItemById(fnId);
+            stage.fins = fnItem instanceof ItemMissile ? (ItemMissile) fnItem : null;
+
             int tId = buf.readInt();
-            stage.thruster = tId == 0 ? null : (ItemMissile) Item.getItemById(tId);
+            Item tItem = tId == 0 ? null : Item.getItemById(tId);
+            stage.thruster = tItem instanceof ItemMissile ? (ItemMissile) tItem : null;
 
             stage.fuselageCount = buf.readByte();
             stage.thrusterCount = buf.readByte();
@@ -459,14 +466,33 @@ public class RocketStruct {
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
+        if (capsule != null) {
+            ResourceLocation res = Item.REGISTRY.getNameForObject(capsule);
+            if (res != null) nbt.setString("capsuleName", res.toString());
+        }
         nbt.setInteger("capsule", capsule != null ? Item.getIdFromItem(capsule) : 0);
 
         NBTTagList stagesTag = new NBTTagList();
         for(RocketStage stage : stages) {
             NBTTagCompound stageTag = new NBTTagCompound();
+            if (stage.fuselage != null) {
+                ResourceLocation res = Item.REGISTRY.getNameForObject(stage.fuselage);
+                if (res != null) stageTag.setString("fuselageName", res.toString());
+            }
             stageTag.setInteger("fuselage", stage.fuselage != null ? Item.getIdFromItem(stage.fuselage) : 0);
+
+            if (stage.fins != null) {
+                ResourceLocation res = Item.REGISTRY.getNameForObject(stage.fins);
+                if (res != null) stageTag.setString("finsName", res.toString());
+            }
             stageTag.setInteger("fins", stage.fins != null ? Item.getIdFromItem(stage.fins) : 0);
+
+            if (stage.thruster != null) {
+                ResourceLocation res = Item.REGISTRY.getNameForObject(stage.thruster);
+                if (res != null) stageTag.setString("thrusterName", res.toString());
+            }
             stageTag.setInteger("thruster", stage.thruster != null ? Item.getIdFromItem(stage.thruster) : 0);
+
             stageTag.setInteger("fc", stage.fuselageCount);
             stageTag.setInteger("tc", stage.thrusterCount);
             stagesTag.appendTag(stageTag);
@@ -478,19 +504,44 @@ public class RocketStruct {
 
     public static RocketStruct readFromNBT(NBTTagCompound nbt) {
         RocketStruct rocket = new RocketStruct();
-        int capId = nbt.getInteger("capsule");
-        rocket.capsule = capId == 0 ? null : (ItemMissile) Item.getItemById(capId);
+
+        Item capItem = null;
+        if (nbt.hasKey("capsuleName", Constants.NBT.TAG_STRING)) {
+            capItem = Item.REGISTRY.getObject(new ResourceLocation(nbt.getString("capsuleName")));
+        } else if (nbt.hasKey("capsule")) {
+            capItem = Item.getItemById(nbt.getInteger("capsule"));
+        }
+        rocket.capsule = capItem instanceof ItemMissile ? (ItemMissile) capItem : null;
 
         NBTTagList stagesTag = nbt.getTagList("stages", Constants.NBT.TAG_COMPOUND);
         for(int i = 0; i < stagesTag.tagCount(); i++) {
             NBTTagCompound stageTag = stagesTag.getCompoundTagAt(i);
             RocketStage stage = new RocketStage();
-            int fuselage = stageTag.getInteger("fuselage");
-            int fins = stageTag.getInteger("fins");
-            int thruster = stageTag.getInteger("thruster");
-            stage.fuselage = fuselage == 0 ? null : (ItemMissile) Item.getItemById(fuselage);
-            stage.fins = fins == 0 ? null : (ItemMissile) Item.getItemById(fins);
-            stage.thruster = thruster == 0 ? null : (ItemMissile) Item.getItemById(thruster);
+
+            Item fItem = null;
+            if (stageTag.hasKey("fuselageName", Constants.NBT.TAG_STRING)) {
+                fItem = Item.REGISTRY.getObject(new ResourceLocation(stageTag.getString("fuselageName")));
+            } else if (stageTag.hasKey("fuselage")) {
+                fItem = Item.getItemById(stageTag.getInteger("fuselage"));
+            }
+            stage.fuselage = fItem instanceof ItemMissile ? (ItemMissile) fItem : null;
+
+            Item fnItem = null;
+            if (stageTag.hasKey("finsName", Constants.NBT.TAG_STRING)) {
+                fnItem = Item.REGISTRY.getObject(new ResourceLocation(stageTag.getString("finsName")));
+            } else if (stageTag.hasKey("fins")) {
+                fnItem = Item.getItemById(stageTag.getInteger("fins"));
+            }
+            stage.fins = fnItem instanceof ItemMissile ? (ItemMissile) fnItem : null;
+
+            Item tItem = null;
+            if (stageTag.hasKey("thrusterName", Constants.NBT.TAG_STRING)) {
+                tItem = Item.REGISTRY.getObject(new ResourceLocation(stageTag.getString("thrusterName")));
+            } else if (stageTag.hasKey("thruster")) {
+                tItem = Item.getItemById(stageTag.getInteger("thruster"));
+            }
+            stage.thruster = tItem instanceof ItemMissile ? (ItemMissile) tItem : null;
+
             stage.fuselageCount = Math.max(stageTag.getInteger("fc"), 1);
             stage.thrusterCount = Math.max(stageTag.getInteger("tc"), 1);
             rocket.stages.add(stage);
@@ -523,9 +574,14 @@ public class RocketStruct {
             int fnId = pair.key & 0xFFFF;
             int tId = (pair.value >> 16) & 0xFFFF;
 
-            stage.fuselage = fId == 0 ? null : (ItemMissile) Item.getItemById(fId);
-            stage.fins = fnId == 0 ? null : (ItemMissile) Item.getItemById(fnId);
-            stage.thruster = tId == 0 ? null : (ItemMissile) Item.getItemById(tId);
+            Item fItem = fId == 0 ? null : Item.getItemById(fId);
+            stage.fuselage = fItem instanceof ItemMissile ? (ItemMissile) fItem : null;
+
+            Item fnItem = fnId == 0 ? null : Item.getItemById(fnId);
+            stage.fins = fnItem instanceof ItemMissile ? (ItemMissile) fnItem : null;
+
+            Item tItem = tId == 0 ? null : Item.getItemById(tId);
+            stage.thruster = tItem instanceof ItemMissile ? (ItemMissile) tItem : null;
 
             stage.fuselageCount = (pair.value >> 8) & 0xFF;
             stage.thrusterCount = pair.value & 0xFF;
@@ -543,161 +599,161 @@ public class RocketStruct {
     }
 
     public static void registerServerParts() {
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.sat_war), 7D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.sat_dyson_relay), 7D);
+        serverParts.put(ModItemsSpace.sat_war, 7D);
+        serverParts.put(ModItemsSpace.sat_dyson_relay, 7D);
 
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.rp_capsule_20), 3.5D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.rp_station_core_20), 7D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.rp_pod_20), 3.0D);
+        serverParts.put(ModItemsSpace.rp_capsule_20, 3.5D);
+        serverParts.put(ModItemsSpace.rp_station_core_20, 7D);
+        serverParts.put(ModItemsSpace.rp_pod_20, 3.0D);
 
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_10_kerosene), 1D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_10_solid), 0.5D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_10_xenon), 0.5D);
+        serverParts.put(ModItems.mp_thruster_10_kerosene, 1D);
+        serverParts.put(ModItems.mp_thruster_10_solid, 0.5D);
+        serverParts.put(ModItems.mp_thruster_10_xenon, 0.5D);
 
         //
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_15_kerosene), 1.5D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_15_kerosene_dual), 1D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_15_kerosene_triple), 1D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_15_solid), 0.5D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_15_solid_hexdecuple), 0.5D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_15_hydrogen), 1.5D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_15_hydrogen_dual), 1D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_15_balefire_short), 2D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_15_balefire), 3D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_15_balefire_large), 3D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_15_balefire_large_rad), 3D);
+        serverParts.put(ModItems.mp_thruster_15_kerosene, 1.5D);
+        serverParts.put(ModItems.mp_thruster_15_kerosene_dual, 1D);
+        serverParts.put(ModItems.mp_thruster_15_kerosene_triple, 1D);
+        serverParts.put(ModItems.mp_thruster_15_solid, 0.5D);
+        serverParts.put(ModItems.mp_thruster_15_solid_hexdecuple, 0.5D);
+        serverParts.put(ModItems.mp_thruster_15_hydrogen, 1.5D);
+        serverParts.put(ModItems.mp_thruster_15_hydrogen_dual, 1D);
+        serverParts.put(ModItems.mp_thruster_15_balefire_short, 2D);
+        serverParts.put(ModItems.mp_thruster_15_balefire, 3D);
+        serverParts.put(ModItems.mp_thruster_15_balefire_large, 3D);
+        serverParts.put(ModItems.mp_thruster_15_balefire_large_rad, 3D);
         //
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_20_kerosene), 2D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_20_kerosene_dual), 2D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_20_kerosene_triple), 2D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.mp_thruster_20_methalox), 2D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.mp_thruster_20_methalox_dual), 2D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.mp_thruster_20_methalox_triple), 2D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.mp_thruster_20_hydrogen), 2D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.mp_thruster_20_hydrogen_dual), 2D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.mp_thruster_20_hydrogen_triple), 2D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_20_solid), 1D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_20_solid_multi), 0.5D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_thruster_20_solid_multier), 0.5D);
+        serverParts.put(ModItems.mp_thruster_20_kerosene, 2D);
+        serverParts.put(ModItems.mp_thruster_20_kerosene_dual, 2D);
+        serverParts.put(ModItems.mp_thruster_20_kerosene_triple, 2D);
+        serverParts.put(ModItemsSpace.mp_thruster_20_methalox, 2D);
+        serverParts.put(ModItemsSpace.mp_thruster_20_methalox_dual, 2D);
+        serverParts.put(ModItemsSpace.mp_thruster_20_methalox_triple, 2D);
+        serverParts.put(ModItemsSpace.mp_thruster_20_hydrogen, 2D);
+        serverParts.put(ModItemsSpace.mp_thruster_20_hydrogen_dual, 2D);
+        serverParts.put(ModItemsSpace.mp_thruster_20_hydrogen_triple, 2D);
+        serverParts.put(ModItems.mp_thruster_20_solid, 1D);
+        serverParts.put(ModItems.mp_thruster_20_solid_multi, 0.5D);
+        serverParts.put(ModItems.mp_thruster_20_solid_multier, 0.5D);
 
         //////
-        serverParts.put(Item.getIdFromItem(ModItems.mp_stability_10_flat), 0D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_stability_10_cruise), 0D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_stability_10_space), 0D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_stability_15_flat), 0D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_stability_15_thin), 0D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_stability_15_soyuz), 0D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.rp_legs_20), 2.4D);
+        serverParts.put(ModItems.mp_stability_10_flat, 0D);
+        serverParts.put(ModItems.mp_stability_10_cruise, 0D);
+        serverParts.put(ModItems.mp_stability_10_space, 0D);
+        serverParts.put(ModItems.mp_stability_15_flat, 0D);
+        serverParts.put(ModItems.mp_stability_15_thin, 0D);
+        serverParts.put(ModItems.mp_stability_15_soyuz, 0D);
+        serverParts.put(ModItemsSpace.rp_legs_20, 2.4D);
         //////
 
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_kerosene), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_kerosene_camo), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_kerosene_desert), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_kerosene_sky), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_kerosene_insulation), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_kerosene_flames), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_kerosene_sleek), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_kerosene_metal), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_kerosene_taint), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_solid), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_solid_flames), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_solid_insulation), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_solid_sleek), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_solid_soviet_glory), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_solid_cathedral), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_solid_moonlit), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_solid_battery), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_solid_duracell), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_xenon), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_xenon_bhole), 4D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_kerosene), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_kerosene_camo), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_kerosene_desert), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_kerosene_sky), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_kerosene_flames), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_kerosene_insulation), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_kerosene_sleek), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_kerosene_metal), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_kerosene_dash), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_kerosene_taint), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_kerosene_vap), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_solid), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_solid_flames), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_solid_insulation), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_solid_sleek), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_solid_soviet_glory), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_solid_bullet), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_long_solid_silvermoonlight), 7D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_15_kerosene), 9D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_15_solid), 9D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_15_hydrogen), 9D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_10_15_balefire), 9D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene_camo), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene_desert), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene_sky), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene_insulation), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene_metal), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene_decorated), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene_steampunk), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene_polite), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene_blackjack), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene_lambda), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene_minuteman), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene_pip), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene_taint), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_kerosene_yuck), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_solid), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_solid_insulation), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_solid_desh), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_solid_soviet_glory), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_solid_soviet_stank), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_solid_faust), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_solid_silvermoonlight), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_solid_snowy), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_solid_panorama), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_solid_roses), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_solid_mimi), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_hydrogen), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_hydrogen_cathedral), 10D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_balefire), 10D);
+        serverParts.put(ModItems.mp_fuselage_10_kerosene, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_kerosene_camo, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_kerosene_desert, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_kerosene_sky, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_kerosene_insulation, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_kerosene_flames, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_kerosene_sleek, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_kerosene_metal, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_kerosene_taint, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_solid, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_solid_flames, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_solid_insulation, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_solid_sleek, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_solid_soviet_glory, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_solid_cathedral, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_solid_moonlit, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_solid_battery, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_solid_duracell, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_xenon, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_xenon_bhole, 4D);
+        serverParts.put(ModItems.mp_fuselage_10_long_kerosene, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_kerosene_camo, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_kerosene_desert, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_kerosene_sky, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_kerosene_flames, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_kerosene_insulation, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_kerosene_sleek, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_kerosene_metal, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_kerosene_dash, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_kerosene_taint, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_kerosene_vap, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_solid, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_solid_flames, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_solid_insulation, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_solid_sleek, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_solid_soviet_glory, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_solid_bullet, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_long_solid_silvermoonlight, 7D);
+        serverParts.put(ModItems.mp_fuselage_10_15_kerosene, 9D);
+        serverParts.put(ModItems.mp_fuselage_10_15_solid, 9D);
+        serverParts.put(ModItems.mp_fuselage_10_15_hydrogen, 9D);
+        serverParts.put(ModItems.mp_fuselage_10_15_balefire, 9D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene_camo, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene_desert, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene_sky, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene_insulation, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene_metal, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene_decorated, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene_steampunk, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene_polite, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene_blackjack, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene_lambda, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene_minuteman, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene_pip, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene_taint, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_kerosene_yuck, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_solid, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_solid_insulation, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_solid_desh, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_solid_soviet_glory, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_solid_soviet_stank, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_solid_faust, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_solid_silvermoonlight, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_solid_snowy, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_solid_panorama, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_solid_roses, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_solid_mimi, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_hydrogen, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_hydrogen_cathedral, 10D);
+        serverParts.put(ModItems.mp_fuselage_15_balefire, 10D);
 
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_20_kerosene), 16D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_20_kerosene_magnusson), 16D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_fuselage_15_20_solid), 16D);
+        serverParts.put(ModItems.mp_fuselage_15_20_kerosene, 16D);
+        serverParts.put(ModItems.mp_fuselage_15_20_kerosene_magnusson, 16D);
+        serverParts.put(ModItems.mp_fuselage_15_20_solid, 16D);
 
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.rp_fuselage_20_12_hydrazine), 10D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.rp_fuselage_20_12), 12D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.rp_fuselage_20_6), 6D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.rp_fuselage_20_3), 3D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.rp_fuselage_20_1), 1D);
+        serverParts.put(ModItemsSpace.rp_fuselage_20_12_hydrazine, 10D);
+        serverParts.put(ModItemsSpace.rp_fuselage_20_12, 12D);
+        serverParts.put(ModItemsSpace.rp_fuselage_20_6, 6D);
+        serverParts.put(ModItemsSpace.rp_fuselage_20_3, 3D);
+        serverParts.put(ModItemsSpace.rp_fuselage_20_1, 1D);
 
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.mp_thruster_20_methalox), 2D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.mp_thruster_20_methalox_dual), 2D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.mp_thruster_20_methalox_triple), 2D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.mp_thruster_20_hydrogen), 2D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.mp_thruster_20_hydrogen_dual), 2D);
-        serverParts.put(Item.getIdFromItem(ModItemsSpace.mp_thruster_20_hydrogen_triple), 2D);
+        serverParts.put(ModItemsSpace.mp_thruster_20_methalox, 2D);
+        serverParts.put(ModItemsSpace.mp_thruster_20_methalox_dual, 2D);
+        serverParts.put(ModItemsSpace.mp_thruster_20_methalox_triple, 2D);
+        serverParts.put(ModItemsSpace.mp_thruster_20_hydrogen, 2D);
+        serverParts.put(ModItemsSpace.mp_thruster_20_hydrogen_dual, 2D);
+        serverParts.put(ModItemsSpace.mp_thruster_20_hydrogen_triple, 2D);
 
         //////
 
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_10_he), 2D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_10_incendiary), 2.5D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_10_buster), 0.5D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_10_nuclear), 2D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_10_nuclear_large), 2.5D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_10_taint), 2.25D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_10_cloud), 2.25D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_15_he), 2D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_15_incendiary), 2D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_15_nuclear), 3.5D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_15_nuclear_shark), 3.5D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_15_thermo), 3.5D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_15_volcano), 3.5D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_15_boxcar), 2.25D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_15_n2), 3D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_15_balefire), 2.75D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_15_mirv), 3D);
-        serverParts.put(Item.getIdFromItem(ModItems.mp_warhead_15_turbine), 2.25D);
+        serverParts.put(ModItems.mp_warhead_10_he, 2D);
+        serverParts.put(ModItems.mp_warhead_10_incendiary, 2.5D);
+        serverParts.put(ModItems.mp_warhead_10_buster, 0.5D);
+        serverParts.put(ModItems.mp_warhead_10_nuclear, 2D);
+        serverParts.put(ModItems.mp_warhead_10_nuclear_large, 2.5D);
+        serverParts.put(ModItems.mp_warhead_10_taint, 2.25D);
+        serverParts.put(ModItems.mp_warhead_10_cloud, 2.25D);
+        serverParts.put(ModItems.mp_warhead_15_he, 2D);
+        serverParts.put(ModItems.mp_warhead_15_incendiary, 2D);
+        serverParts.put(ModItems.mp_warhead_15_nuclear, 3.5D);
+        serverParts.put(ModItems.mp_warhead_15_nuclear_shark, 3.5D);
+        serverParts.put(ModItems.mp_warhead_15_thermo, 3.5D);
+        serverParts.put(ModItems.mp_warhead_15_volcano, 3.5D);
+        serverParts.put(ModItems.mp_warhead_15_boxcar, 2.25D);
+        serverParts.put(ModItems.mp_warhead_15_n2, 3D);
+        serverParts.put(ModItems.mp_warhead_15_balefire, 2.75D);
+        serverParts.put(ModItems.mp_warhead_15_mirv, 3D);
+        serverParts.put(ModItems.mp_warhead_15_turbine, 2.25D);
     }
 }
