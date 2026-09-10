@@ -2,6 +2,7 @@ package com.hbmspace.dim.tekto;
 
 import java.util.Random;
 
+import com.hbm.blocks.ModBlocks;
 import com.hbm.config.CompatibilityConfig;
 import com.hbm.config.WorldConfig;
 import com.hbmspace.blocks.ModBlocksSpace;
@@ -30,6 +31,7 @@ public class WorldGeneratorTekto implements IWorldGenerator {
         NBTStructure.registerNullWeight(SpaceConfig.tektoDimension, 24);
 
         BlockOre.addValidBody(ModBlocksSpace.ore_tekto, SolarSystem.Body.TEKTO);
+        BlockOre.addValidBody(ModBlocks.ore_bedrock_oil, SolarSystem.Body.TEKTO);
     }
 
     @Override

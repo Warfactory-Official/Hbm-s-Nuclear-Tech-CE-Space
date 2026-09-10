@@ -23,6 +23,7 @@ public class BlockOreFluid extends BlockOre {
 
     private final Block empty;
     private final ReserveType type;
+    private boolean hasOverworldVariant = false;
 
     private static final HashMap<Block, Block> emptyToFull = new HashMap<>();
 
@@ -40,6 +41,11 @@ public class BlockOreFluid extends BlockOre {
         if (empty != null) {
             emptyToFull.put(empty, this);
         }
+    }
+
+    public BlockOreFluid setOverworldVariant() {
+        this.hasOverworldVariant = true;
+        return this;
     }
 
     public String getUnlocalizedReserveType() {
@@ -158,18 +164,19 @@ public class BlockOreFluid extends BlockOre {
     @Override
     @SideOnly(Side.CLIENT)
     public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> items) {
-        if (tab == this.getCreativeTab() || tab == CreativeTabs.SEARCH) {
-            Set<SolarSystem.Body> validBodies = spawnMap.get(this);
+        if (tab != this.getCreativeTab() && tab != CreativeTabs.SEARCH) return;
 
-            if (validBodies != null && !validBodies.isEmpty()) {
-                SolarSystem.Body[] bodies = SolarSystem.Body.values();
+        // Since I'm replacing the existing ore blocks for fluid variants instead of just adding, I'm leaving the earth 0 id here
+        if (this.hasOverworldVariant) items.add(new ItemStack(this, 1, 0));
 
-                for (int i = 0; i < bodies.length; i++) {
-                    if (validBodies.contains(bodies[i]) && i != 1) {
-                        // Since I'm replacing the existing ore blocks for fluid variants instead of just adding, I'm leaving the earth 0 id here
-                        items.add(new ItemStack(this, 1, i));
-                    }
-                }
+        Set<SolarSystem.Body> validBodies = spawnMap.get(this);
+        if (validBodies == null || validBodies.isEmpty()) return;
+
+        SolarSystem.Body[] bodies = SolarSystem.Body.values();
+
+        for (int i = 2; i < bodies.length; i++) {
+            if (validBodies.contains(bodies[i])) {
+                items.add(new ItemStack(this, 1, i));
             }
         }
     }

@@ -13,8 +13,8 @@ import static com.hbmspace.blocks.ModBlocksSpace.ore_oil_empty;
 public class ModBlocksReplaceHandler {
 
     public static void initReplacings(RegistryEvent.Register<Block> event) {
-        Block ore_oil_override = new BlockOreFluid("ore_oil", ore_oil_empty, BlockOreFluid.ReserveType.OIL).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
-        Block ore_bedrock_oil_override = new BlockOreFluid("ore_bedrock_oil", null, BlockOreFluid.ReserveType.OIL).setCreativeTab(MainRegistry.blockTab).setBlockUnbreakable().setResistance(1_000_000);
+        Block ore_oil_override = new BlockOreFluid("ore_oil", ore_oil_empty, BlockOreFluid.ReserveType.OIL).setOverworldVariant().setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
+        Block ore_bedrock_oil_override = new BlockOreFluid("ore_bedrock_oil", null, BlockOreFluid.ReserveType.OIL).setOverworldVariant().setCreativeTab(MainRegistry.blockTab).setBlockUnbreakable().setResistance(1_000_000);
         // Th3_Sl1ze: lmao, EnumAddonTypes was useful not only for enums..
         EnumAddonTypes.setInstanceField(IForgeRegistryEntry.Impl.class, "registryName", ore_oil_override, null);
         EnumAddonTypes.setInstanceField(IForgeRegistryEntry.Impl.class, "registryName", ore_bedrock_oil_override, null);
