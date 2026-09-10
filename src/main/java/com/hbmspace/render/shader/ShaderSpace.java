@@ -25,6 +25,7 @@ public class ShaderSpace {
     private int timeUniform;
     private int channel1Uniform;
     private int offsetUniform;
+    private boolean bound = false;
 
     private int previousProgram;
 
@@ -92,37 +93,38 @@ public class ShaderSpace {
         }
     }
 
-    public void use() {
-        if(!hasLoaded) return;
+    public boolean use() {
+        if(OptifineCompat.shadersEnabled()) return false;
+        return useUnchecked();
+    }
+
+    public boolean useUnchecked() {
+        if(!hasLoaded) return false;
+
         previousProgram = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
         GL20.glUseProgram(shaderProgram);
+        bound = true;
+        return true;
     }
 
     public void stop() {
-        if(!hasLoaded) return;
+        if(!bound) return;
         GL20.glUseProgram(previousProgram);
-    }
-
-    public void cleanup() {
-        GL20.glDetachShader(shaderProgram, vertexShader);
-        GL20.glDetachShader(shaderProgram, fragmentShader);
-        GL20.glDeleteShader(vertexShader);
-        GL20.glDeleteShader(fragmentShader);
-        GL20.glDeleteProgram(shaderProgram);
+        bound = false;
     }
 
     public void setTime(float time) {
-        if(!hasLoaded) return;
+        if(!bound) return;
         GL20.glUniform1f(timeUniform, time);
     }
 
     public void setTextureUnit(int unit) {
-        if(!hasLoaded) return;
+        if(!bound) return;
         GL20.glUniform1i(channel1Uniform, unit);
     }
 
     public void setOffset(float offset) {
-        if(!hasLoaded) return;
+        if(!bound) return;
         GL20.glUniform1f(offsetUniform, offset);
     }
 
@@ -132,24 +134,24 @@ public class ShaderSpace {
     }
 
     public void setUniform1f(String name, float value) {
-        if(!hasLoaded) return;
+        if(!bound) return;
         int location = uniforms.computeIfAbsent(name, (n) -> GL20.glGetUniformLocation(shaderProgram, n));
         GL20.glUniform1f(location, value);
     }
 
     public void setUniform1f(int location, float value) {
-        if(!hasLoaded) return;
+        if(!bound) return;
         GL20.glUniform1f(location, value);
     }
 
     public void setUniform1i(String name, int value) {
-        if(!hasLoaded) return;
+        if(!bound) return;
         int location = uniforms.computeIfAbsent(name, (n) -> GL20.glGetUniformLocation(shaderProgram, n));
         GL20.glUniform1i(location, value);
     }
 
     public void setUniform1i(int location, int value) {
-        if(!hasLoaded) return;
+        if(!bound) return;
         GL20.glUniform1i(location, value);
     }
 

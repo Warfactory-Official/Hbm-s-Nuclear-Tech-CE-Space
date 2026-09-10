@@ -18,6 +18,7 @@ import com.hbmspace.saveddata.satellites.SatelliteWar;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -214,10 +215,16 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 		return colors;
 	}
 
+	private long lastMetricsTick = Long.MIN_VALUE;
+
 	// This is called once, at the beginning of every frame
 	// so we use this to memoise expensive calcs
 	@SideOnly(Side.CLIENT)
-	protected void updateSky(float partialTicks) {
+	public void updateSky(float partialTicks) {
+		long tick = world.getTotalWorldTime();
+		if(tick == lastMetricsTick) return;
+		lastMetricsTick = tick;
+
 		CelestialBody body = CelestialBody.getBody(world);
 
 		// First fetch the suns true size
@@ -225,7 +232,7 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 		float solarAngle = world.getCelestialAngle(partialTicks);
 
 		// Get our orrery of bodies, this is cached for reuse in sky rendering
-		metrics = SolarSystem.calculateMetricsFromBody(world, partialTicks, body, solarAngle);
+		metrics = SolarSystem.calculateMetricsFromBody(world, 0, body, solarAngle);
 
 		// Get our eclipse amount
 		eclipseAmount = getEclipseFactor(metrics, sunSize, SolarSystem.MAX_APPARENT_SIZE_SURFACE);
@@ -942,6 +949,21 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 		STANDARD,
 		FRAGMENT,
 		SMOKE
+	}
+
+	@SideOnly(Side.CLIENT)
+	private static IRenderHandler noClouds;
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public IRenderHandler getCloudRenderer() {
+		if(CelestialBody.getBody(world).hasTrait(CBT_Atmosphere.class)) return super.getCloudRenderer();
+
+		if(noClouds == null) noClouds = new IRenderHandler() {
+			@Override public void render(float partialTicks, WorldClient world, Minecraft mc) { }
+		};
+
+		return noClouds;
 	}
 
 }

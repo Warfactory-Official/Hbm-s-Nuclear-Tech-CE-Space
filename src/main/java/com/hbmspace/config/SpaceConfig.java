@@ -56,6 +56,7 @@ public class SpaceConfig {
     public static int maxStationDistance = 32_000;
 
     public static boolean combatPodDespawn = false;
+    public static boolean kerbinSkyboxEverywhere = true;
 
     public SpaceConfig() {
     }
@@ -82,6 +83,7 @@ public class SpaceConfig {
         crashOnBiomeConflict = CommonConfig.createConfigBool(config, CATEGORY_GENERAL, "1.92_crashOnBiomeConflict", "To avoid biome ID collisions, the game will crash if one occurs, and give instructions on how to fix. Only disable this if you know what you're doing!", crashOnBiomeConflict);
         showOreLocations = CommonConfig.createConfigBool(config, CATEGORY_GENERAL, "1.93_showOreLocations", "Should ores indicate which planets they can be found on.", showOreLocations);
         combatPodDespawn = CommonConfig.createConfigBool(config, CATEGORY_GENERAL, "1.94_combatPodDespawn", "Whether combat pods should despawn after a certian amount of time.", combatPodDespawn);
+        kerbinSkyboxEverywhere = CommonConfig.createConfigBool(config, CATEGORY_GENERAL, "1.95_kerbinSkyboxEverywhere", "Makes Kerbin (Overworld) skybox apply on all other planets, in case you're too lazy to adapt shaders' skyboxes to other planets by-hand. IMPORTANT NOTE FOR MODPACKERS: In shader pack's settings, enable vanilla clouds (or disable them entirely) and vanilla skybox/moon/sun if the pack you use has that option. That'll fix most (NOT ALL BUT MOST) shader-related issues.", kerbinSkyboxEverywhere);
 
         final String CATEGORY_BIOME = "16_biomes";
         moonBiome = CommonConfig.createConfigInt(config, CATEGORY_BIOME, "16.02_moonBiome", "Mun Biome ID", moonBiome);

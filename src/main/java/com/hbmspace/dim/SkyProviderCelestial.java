@@ -10,6 +10,8 @@ import com.hbm.saveddata.satellites.SatelliteSavedData;
 import com.hbm.util.BobMathUtil;
 import com.hbmspace.main.ModEventHandlerClient;
 import com.hbmspace.main.ResourceManagerSpace;
+import com.hbmspace.main.SpaceMain;
+import com.hbmspace.render.shader.OptifineCompat;
 import com.hbmspace.render.shader.ShaderSpace;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -20,7 +22,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.IRenderHandler;
-import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GLContext;
@@ -63,32 +64,54 @@ public class SkyProviderCelestial extends IRenderHandler {
 			new ResourceLocation("hbm", "textures/misc/space/citylights_3.png"),
 	};
 
-	private static final ResourceLocation defaultMask = new ResourceLocation("hbm", "textures/misc/space/default_mask.png");
+	// of compat
+	private static final ShaderSpace celestialShader = new ShaderSpace(new ResourceLocation("hbm", "shaders/celestial.frag"));
 
-	public static boolean displayListsInitialized = false;
-	public static int skyVBO;
-	public static int sky2VBO;
+	private static final ResourceLocation defaultMask = new ResourceLocation("hbm", "textures/misc/space/default_mask.png");
 
 	private static boolean gl13;
 
 	private static float currentFov = 70;
 
 	public SkyProviderCelestial() {
-		if (!displayListsInitialized) {
-			initializeDisplayLists();
-		}
+		gl13 = GLContext.getCapabilities().OpenGL13;
 	}
 
-	private void initializeDisplayLists() {
-		ContextCapabilities contextcapabilities = GLContext.getCapabilities();
+	private static int skyDomeList = -1;
+	private static int skyDomeListInverted = -1;
 
-		Minecraft mc = Minecraft.getMinecraft();
-		skyVBO = mc.renderGlobal.glSkyList;
-		sky2VBO = mc.renderGlobal.glSkyList2;
+	private void drawSkyDome(Tessellator tessellator, BufferBuilder buffer, float height, boolean reverseX) {
+		int list = reverseX ? skyDomeListInverted : skyDomeList;
 
-		gl13 = contextcapabilities.OpenGL13;
+		if(list < 0) {
+			list = GLAllocation.generateDisplayLists(1);
+			GlStateManager.glNewList(list, GL11.GL_COMPILE);
+			buildSkyDome(tessellator, buffer, height, reverseX);
+			GlStateManager.glEndList();
 
-		displayListsInitialized = true;
+			if(reverseX) skyDomeListInverted = list;
+			else skyDomeList = list;
+		}
+
+		GlStateManager.callList(list);
+	}
+
+	private void buildSkyDome(Tessellator tessellator, BufferBuilder buffer, float height, boolean reverseX) {
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+
+		for(int x = -384; x <= 384; x += 64) {
+			for(int z = -384; z <= 384; z += 64) {
+				float x0 = reverseX ? x + 64 : x;
+				float x1 = reverseX ? x : x + 64;
+
+				buffer.pos(x0, height, z).endVertex();
+				buffer.pos(x1, height, z).endVertex();
+				buffer.pos(x1, height, z + 64).endVertex();
+				buffer.pos(x0, height, z + 64).endVertex();
+			}
+		}
+
+		tessellator.draw();
 	}
 
 	private static int lastBrightestPixel = 0;
@@ -120,7 +143,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 		float pressure = hasAtmosphere ? (float)atmosphere.getPressure() : 0.0F;
 		float visibility = hasAtmosphere ? MathHelper.clamp(2.0F - pressure, 0.1F, 1.0F) : 1.0F;
 
-		GlStateManager.disableTexture2D();
+		disableTexture2D();
 		Vec3d skyColor = world.getSkyColor(mc.getRenderViewEntity(), partialTicks);
 
 		float skyR = (float) skyColor.x;
@@ -141,6 +164,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 			skyG = anaglyphColor[1];
 			skyB = anaglyphColor[2];
 		}
+		OptifineCompat.setSkyColor(new Vec3d(skyR, skyG, skyB));
 
 		float planetR = skyR;
 		float planetG = skyG;
@@ -159,7 +183,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 
 		GlStateManager.depthMask(false);
-		GlStateManager.enableFog();
+		enableFog();
 		GlStateManager.color(skyR, skyG, skyB);
 
 		// Set maximum sky fog distance to 12 chunks, works nicely with Celeritas/Distant Horizons
@@ -169,13 +193,14 @@ public class SkyProviderCelestial extends IRenderHandler {
 			GlStateManager.setFogStart(0.0F);
 			GlStateManager.setFogEnd(Math.min(12.0F, mc.gameSettings.renderDistanceChunks) * 16.0F);
 
-			GlStateManager.callList(skyVBO);
+			OptifineCompat.preSkyList();
+			drawSkyDome(tessellator, bufferBuilder, 16.0F, false);
 		}
 		RenderUtil.popAttrib();
 
-		GlStateManager.disableFog();
+		disableFog();
 		GlStateManager.disableAlpha();
-		GlStateManager.enableTexture2D();
+		enableTexture2D();
 
 		GlStateManager.enableBlend();
 		RenderHelper.disableStandardItemLighting();
@@ -197,7 +222,9 @@ public class SkyProviderCelestial extends IRenderHandler {
 		{
 			GlStateManager.rotate(body.axialTilt, 1.0F, 0.0F, 0.0F);
 			GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
+			OptifineCompat.preCelestialRotate();
 			GlStateManager.rotate(solarAngle * 360.0F, 1.0F, 0.0F, 0.0F);
+			OptifineCompat.postCelestialRotate();
 
 			// Draw DIGAMMA STAR
 			renderDigamma(world, mc, solarAngle);
@@ -318,14 +345,13 @@ public class SkyProviderCelestial extends IRenderHandler {
 
 		// Compromised flesh effect
 		CelestialBodyTrait.CBT_COMPROMISED compromised = body.getTrait(CelestialBodyTrait.CBT_COMPROMISED.class);
-		if(compromised != null) {
+		if(compromised != null && fleshShader.use()) {
 			GlStateManager.pushMatrix();
 			float time = ((float)world.getWorldTime() + partialTicks) * 0.2F;
 
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 			GlStateManager.disableCull();
 
-			fleshShader.use();
 			GlStateManager.scale(194.5, 70.5, 94.5);
 			GlStateManager.rotate(90, 0, 0, 1);
 
@@ -338,6 +364,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 			fleshShader.setUniform1i("iChannel1", 0);
 			fleshShader.stop();
 
+			GlStateManager.enableCull();
 			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 			GlStateManager.popMatrix();
 		}
@@ -345,9 +372,9 @@ public class SkyProviderCelestial extends IRenderHandler {
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.disableBlend();
 		GlStateManager.enableAlpha();
-		GlStateManager.enableFog();
+		enableFog();
 
-		GlStateManager.disableTexture2D();
+		disableTexture2D();
 		GlStateManager.color(0.0F, 0.0F, 0.0F);
 
 		double heightAboveHorizon = pos.y - world.getHorizon();
@@ -355,7 +382,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 		if(heightAboveHorizon < 0.0D) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(0.0F, 12.0F, 0.0F);
-			GlStateManager.callList(sky2VBO);
+			drawSkyDome(tessellator, bufferBuilder, -16.0F, true);
 			GlStateManager.popMatrix();
 
 			float f8 = 1.0F;
@@ -394,44 +421,58 @@ public class SkyProviderCelestial extends IRenderHandler {
 
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(0.0F, -((float) (heightAboveHorizon - 16.0D)), 0.0F);
-		GlStateManager.callList(sky2VBO);
+		drawSkyDome(tessellator, bufferBuilder, -16.0F, true);
 		GlStateManager.popMatrix();
 
-		double sc = 1 / (pos.y / 1000);
-		double uvOffset = (pos.x / 1024) % 1;
-		GlStateManager.pushMatrix();
-		GlStateManager.enableTexture2D();
-		GlStateManager.disableAlpha();
-		GlStateManager.disableFog();
-		GlStateManager.enableBlend();
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		float curvatureAlpha = MathHelper.clamp(((float)pos.y - 200.0F) / 300.0F, 0.0F, 1.0F);
 
-		float sunBrightness = world.getSunBrightness(partialTicks);
-		GlStateManager.color(sunBrightness, sunBrightness, sunBrightness, ((float)pos.y - 200.0F) / 300.0F);
-		mc.getTextureManager().bindTexture(body.texture);
-		GlStateManager.rotate(180, 1, 0, 0);
+		if(curvatureAlpha > 0.0F) {
+			double sc = 1 / (pos.y / 1000);
+			double uvOffset = (pos.x / 1024) % 1;
+			GlStateManager.pushMatrix();
+			enableTexture2D();
+			boolean ownProgram = OptifineCompat.shadersEnabled() && celestialShader.useUnchecked();
+			if(ownProgram) {
+				celestialShader.setUniform1i("bodyTex", 0);
+				celestialShader.setUniform1i("useTexture", 1);
+			}
+			GlStateManager.disableAlpha();
+			disableFog();
+			GlStateManager.enableBlend();
+			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
-		bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-		bufferBuilder.pos(-115 * sc, 100.0D, -115 * sc).tex(0.0D + uvOffset, 0.0D).endVertex();
-		bufferBuilder.pos(115 * sc, 100.0D, -115 * sc).tex(1.0D + uvOffset, 0.0D).endVertex();
-		bufferBuilder.pos(115 * sc, 100.0D, 115 * sc).tex(1.0D + uvOffset, 1.0D).endVertex();
-		bufferBuilder.pos(-115 * sc, 100.0D, 115 * sc).tex(0.0D + uvOffset, 1.0D).endVertex();
-		tessellator.draw();
+			float sunBrightness = world.getSunBrightness(partialTicks);
+			GlStateManager.color(sunBrightness, sunBrightness, sunBrightness, curvatureAlpha);
+			mc.getTextureManager().bindTexture(body.texture);
+			GlStateManager.rotate(180, 1, 0, 0);
 
-		GlStateManager.disableTexture2D();
-		GlStateManager.enableAlpha();
-		GlStateManager.enableFog();
-		GlStateManager.disableBlend();
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		GlStateManager.popMatrix();
+			bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+			bufferBuilder.pos(-115 * sc, 100.0D, -115 * sc).tex(0.0D + uvOffset, 0.0D).endVertex();
+			bufferBuilder.pos(115 * sc, 100.0D, -115 * sc).tex(1.0D + uvOffset, 0.0D).endVertex();
+			bufferBuilder.pos(115 * sc, 100.0D, 115 * sc).tex(1.0D + uvOffset, 1.0D).endVertex();
+			bufferBuilder.pos(-115 * sc, 100.0D, 115 * sc).tex(0.0D + uvOffset, 1.0D).endVertex();
+			tessellator.draw();
+
+			OptifineCompat.useSkyTexturedProgram();
+			disableTexture2D();
+			GlStateManager.enableAlpha();
+			enableFog();
+			GlStateManager.disableBlend();
+			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+			GlStateManager.popMatrix();
+		}
 
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 		GlStateManager.disableBlend();
 
-		GlStateManager.enableTexture2D();
+		enableTexture2D();
 		GlStateManager.depthMask(true);
-		GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+
+		if(!OptifineCompat.shadersEnabled()) {
+			GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+		}
+
 	}
 
 	protected void renderSunset(float partialTicks, WorldClient world, Minecraft mc, float solarAngle, float pressure, ResourceLocation surfaceTexture) {
@@ -444,7 +485,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 			float[] anaglyphColor = mc.gameSettings.anaglyph ? applyAnaglyph(sunsetColor) : sunsetColor;
 			float sunsetDirection = MathHelper.sin(world.getCelestialAngleRadians(partialTicks)) < 0.0F ? 180.0F : 0.0F;
 
-			GlStateManager.disableTexture2D();
+			disableTexture2D();
 			GlStateManager.shadeModel(7425); // GL_SMOOTH
 
 			GlStateManager.pushMatrix();
@@ -471,7 +512,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 			GlStateManager.popMatrix();
 
 			GlStateManager.shadeModel(7424); // GL_FLAT
-			GlStateManager.enableTexture2D();
+			enableTexture2D();
 
 			// charged dust
 			if(pressure < 0.05F) {
@@ -534,13 +575,13 @@ public class SkyProviderCelestial extends IRenderHandler {
 				GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
 
 				float starBrightnessAlpha = starBrightness * 0.6f;
-				GlStateManager.color(1.0F, 1.0F, 1.0F, starBrightnessAlpha);
+				GlStateManager.color(starBrightnessAlpha, starBrightnessAlpha, starBrightnessAlpha, 1.0F);
 
 				GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
 
 				GlStateManager.rotate(celestialAngle * 360.0F, 1.0F, 0.0F, 0.0F);
 				GlStateManager.rotate(-90.0F, 1.0F, 0.0F, 0.0F);
-				GlStateManager.color(1.0F, 1.0F, 1.0F, starBrightnessAlpha);
+				GlStateManager.color(starBrightnessAlpha, starBrightnessAlpha, starBrightnessAlpha, 1.0F);
 
 				GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
 				GlStateManager.rotate(-90.0F, 0.0F, 0.0F, 1.0F);
@@ -584,59 +625,74 @@ public class SkyProviderCelestial extends IRenderHandler {
 			// AND WASH AWAY THE RAIN
 
 			ShaderSpace shader = sun.shader;
-			double shaderSize = sunSize * sun.shaderScale;
 
-			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+			if(shader.use()) {
+				double shaderSize = sunSize * sun.shaderScale;
 
-			shader.use();
+				GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
-			float time = ((float)world.getWorldTime() + partialTicks) / 20.0F;
+				float time = ((float)world.getWorldTime() + partialTicks) / 20.0F;
 
-			mc.getTextureManager().bindTexture(noise);
-			GlStateManager.pushMatrix();
+				mc.getTextureManager().bindTexture(noise);
+				GlStateManager.pushMatrix();
 
-			// Fix orbital plane
-			GlStateManager.rotate(-90.0F, 0, 1, 0);
-			shader.setUniform1f("iTime", time);
-			shader.setUniform1i("iChannel1", 0);
+				// Fix orbital plane
+				GlStateManager.rotate(-90.0F, 0, 1, 0);
+				shader.setUniform1f("iTime", time);
+				shader.setUniform1i("iChannel1", 0);
 
-			bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-			bufferBuilder.pos(-shaderSize, 100.0D, -shaderSize).tex(0.0D, 0.0D).endVertex();
-			bufferBuilder.pos(shaderSize, 100.0D, -shaderSize).tex(1.0D, 0.0D).endVertex();
-			bufferBuilder.pos(shaderSize, 100.0D, shaderSize).tex(1.0D, 1.0D).endVertex();
-			bufferBuilder.pos(-shaderSize, 100.0D, shaderSize).tex(0.0D, 1.0D).endVertex();
-			tessellator.draw();
+				bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+				bufferBuilder.pos(-shaderSize, 100.0D, -shaderSize).tex(0.0D, 0.0D).endVertex();
+				bufferBuilder.pos(shaderSize, 100.0D, -shaderSize).tex(1.0D, 0.0D).endVertex();
+				bufferBuilder.pos(shaderSize, 100.0D, shaderSize).tex(1.0D, 1.0D).endVertex();
+				bufferBuilder.pos(-shaderSize, 100.0D, shaderSize).tex(0.0D, 1.0D).endVertex();
+				tessellator.draw();
 
-			shader.stop();
+				shader.stop();
 
-			GlStateManager.popMatrix();
-			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+				GlStateManager.popMatrix();
+				GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+			}
 		} else {
-			// Some blanking to conceal the stars
-			GlStateManager.disableTexture2D();
-			GlStateManager.color(0.0F, 0.0F, 0.0F, 1.0F);
+			boolean occludeSwarm = swarmCount > 0 && !OptifineCompat.shadersEnabled();
 
-			bufferBuilder.begin(7, DefaultVertexFormats.POSITION);
-			bufferBuilder.pos(-sunSize, 99.9D, -sunSize).endVertex();
-			bufferBuilder.pos(sunSize, 99.9D, -sunSize).endVertex();
-			bufferBuilder.pos(sunSize, 99.9D, sunSize).endVertex();
-			bufferBuilder.pos(-sunSize, 99.9D, sunSize).endVertex();
-			tessellator.draw();
+			// Some blanking to conceal the stars. An untextured draw in the sky stage goes to
+			// gbuffers_skybasic, which paints its own atmosphere over the quad instead of our black,
+			// so under shaders this adds a bright square the size of the sun texture.
+			if(!OptifineCompat.shadersEnabled()) {
+				disableTexture2D();
+				GlStateManager.color(0.0F, 0.0F, 0.0F, 1.0F);
 
-			// Draw the sun to the depth buffer to block swarm members that are behind
-			GlStateManager.depthMask(true);
-			GlStateManager.color(0.0F, 0.0F, 0.0F, 0.0F);
+				bufferBuilder.begin(7, DefaultVertexFormats.POSITION);
+				bufferBuilder.pos(-sunSize, 99.9D, -sunSize).endVertex();
+				bufferBuilder.pos(sunSize, 99.9D, -sunSize).endVertex();
+				bufferBuilder.pos(sunSize, 99.9D, sunSize).endVertex();
+				bufferBuilder.pos(-sunSize, 99.9D, sunSize).endVertex();
+				tessellator.draw();
+			}
 
-			bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-			bufferBuilder.pos(-sunSize * 0.25D, 100.1D, -sunSize * 0.25D).tex(0.0D, 0.0D).endVertex();
-			bufferBuilder.pos(sunSize * 0.25D, 100.1D, -sunSize * 0.25D).tex(1.0D, 0.0D).endVertex();
-			bufferBuilder.pos(sunSize * 0.25D, 100.1D, sunSize * 0.25D).tex(1.0D, 1.0D).endVertex();
-			bufferBuilder.pos(-sunSize * 0.25D, 100.1D, sunSize * 0.25D).tex(0.0D, 1.0D).endVertex();
-			tessellator.draw();
+			// Draw the sun to the depth buffer to block swarm members that are behind.
+			// Under shaders this would mark sky pixels as solid geometry for the deferred pass.
+			if(occludeSwarm) {
+				GlStateManager.depthMask(true);
+				GlStateManager.color(0.0F, 0.0F, 0.0F, 0.0F);
 
-			GlStateManager.depthMask(false);
+				bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+				bufferBuilder.pos(-sunSize * 0.25D, 100.1D, -sunSize * 0.25D).tex(0.0D, 0.0D).endVertex();
+				bufferBuilder.pos(sunSize * 0.25D, 100.1D, -sunSize * 0.25D).tex(1.0D, 0.0D).endVertex();
+				bufferBuilder.pos(sunSize * 0.25D, 100.1D, sunSize * 0.25D).tex(1.0D, 1.0D).endVertex();
+				bufferBuilder.pos(-sunSize * 0.25D, 100.1D, sunSize * 0.25D).tex(0.0D, 1.0D).endVertex();
+				tessellator.draw();
 
-			GlStateManager.enableTexture2D();
+				GlStateManager.depthMask(false);
+			}
+
+			enableTexture2D();
+			boolean ownProgram = OptifineCompat.shadersEnabled() && celestialShader.useUnchecked();
+			if(ownProgram) {
+				celestialShader.setUniform1i("bodyTex", 0);
+				celestialShader.setUniform1i("useTexture", 1);
+			}
 			GlStateManager.color(1.0F, 1.0F, 1.0F, visibility);
 
 			mc.getTextureManager().bindTexture(SolarSystem.kerbol.texture);
@@ -645,7 +701,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 					? celestial.getSunColor()
 					: new float[] { 1.0F, 1.0F, 1.0F };
 
-			GlStateManager.color(sunColor[0], sunColor[1], sunColor[2], visibility);
+			GlStateManager.color(sunColor[0] * visibility, sunColor[1] * visibility, sunColor[2] * visibility, 1.0F);
 			bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
 			bufferBuilder.pos(-sunSize, 100.0D, -sunSize).tex(0.0D, 0.0D).endVertex();
 			bufferBuilder.pos(sunSize, 100.0D, -sunSize).tex(1.0D, 0.0D).endVertex();
@@ -654,7 +710,8 @@ public class SkyProviderCelestial extends IRenderHandler {
 			tessellator.draw();
 
 			// Draw a big ol' spiky flare! Less so when there is an atmosphere
-			GlStateManager.color(sunColor[0], sunColor[1], sunColor[2], 1 - MathHelper.clamp(pressure, 0.0F, 1.0F) * 0.75F);
+			float flareFade = 1 - MathHelper.clamp(pressure, 0.0F, 1.0F) * 0.75F;
+			GlStateManager.color(sunColor[0] * flareFade, sunColor[1] * flareFade, sunColor[2] * flareFade, 1.0F);
 			mc.getTextureManager().bindTexture(flareTexture);
 
 			bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
@@ -666,23 +723,22 @@ public class SkyProviderCelestial extends IRenderHandler {
 
 			// Draw the swarm members with depth occlusion
 			// We do this last so we can render transparency against the sun
-			renderSwarm(partialTicks, world, mc, sunSize * 0.5, swarmCount);
+			if(occludeSwarm) {
+				renderSwarm(partialTicks, world, mc, sunSize * 0.5, swarmCount);
+			}
 
-			// Clear and disable the depth buffer once again, buffer has to be writable to clear it
-			// GlStateManager.depthMask(true);
-			// GlStateManager.clear(256); // GL_DEPTH_BUFFER_BIT
 			GlStateManager.depthMask(false);
+			if(ownProgram) celestialShader.stop();
 		}
 	}
 
 	private void renderSwarm(float partialTicks, WorldClient world, Minecraft mc, double swarmRadius, int swarmCount) {
+		if(swarmCount <= 0 || !swarmShader.use()) return;
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
 
 		// bloodseeking, parasitic, ecstatically tracing decay
 		// thriving in the glow that death emits, the warm perfume it radiates
-
-		swarmShader.use();
 
 		// swarm members render as pixels, which can vary based on screen resolution
 		// because of this, we make the pixels more transparent based on their apparent size, which varies by a fair few factors
@@ -773,6 +829,25 @@ public class SkyProviderCelestial extends IRenderHandler {
 		double transitionMinSize = 0.01D;
 		double transitionMaxSize = 0.5D;
 
+		// The pack's sky programs only know "sun" and "moon" and discard everything else, and
+		// gbuffers_textured lights our bodies like particles. Draw them with our own program instead,
+		// the sky stage runs with DRAWBUFFERS:0 so gl_FragColor only touches colortex0.
+		boolean ownProgram = OptifineCompat.shadersEnabled() && celestialShader.useUnchecked();
+		if(ownProgram) {
+			celestialShader.setUniform1i("bodyTex", 0);
+			celestialShader.setUniform1i("useTexture", 1);
+		}
+
+		CelestialBody localBody = CelestialBody.getBody(world);
+		AstroMetric moonMetric = null;
+
+		if(OptifineCompat.shadersEnabled()) {
+			for(AstroMetric metric : metrics) {
+				if(metric.body.parent != localBody) continue;
+				if(moonMetric == null || metric.apparentSize > moonMetric.apparentSize) moonMetric = metric;
+			}
+		}
+
 		for(AstroMetric metric : metrics) {
 			if(metric.distance == 0) continue;
 
@@ -781,15 +856,24 @@ public class SkyProviderCelestial extends IRenderHandler {
 			double uvOffset = orbitingThis ? 1 - ((((double)world.getWorldTime() + partialTicks) / 1024) % 1) : 0;
 			float axialTilt = orbitingThis ? 0 : metric.body.axialTilt;
 
+
+			double size = MathHelper.clamp(metric.apparentSize, 0, maxSize);
+			boolean renderBody = size > transitionMinSize;
+
+			float pointAlpha = MathHelper.clamp((float) size * 100.0F, 0.0F, 1.0F)
+					* (1 - BobMathUtil.remap01_clamp((float) size, (float) transitionMinSize, (float) transitionMaxSize))
+					* visibility;
+			boolean renderPoint = size < transitionMaxSize && pointAlpha > 0.004F;
+
+			if (!renderBody && !renderPoint) continue;
+
 			GlStateManager.pushMatrix();
 			{
-				double size = MathHelper.clamp(metric.apparentSize, 0, maxSize);
-				boolean renderPoint = size < transitionMaxSize;
-				boolean renderBody = size > transitionMinSize;
 
 				GlStateManager.rotate((float)metric.angle, 1.0F, 0.0F, 0.0F);
 				GlStateManager.rotate((float)metric.inclination, 0.0F, 0.0F, 1.0F);
 				GlStateManager.rotate(axialTilt + 90.0F, 0.0F, 1.0F, 0.0F);
+				if(metric == moonMetric) OptifineCompat.setMoonPositionFromModelView();
 
 				if(renderBody) {
 					// Back half of rings
@@ -914,48 +998,49 @@ public class SkyProviderCelestial extends IRenderHandler {
 						double impactTime = impact != null ? (world.getTotalWorldTime() - impact.time) + partialTicks : 0;
 						int lightIntensity = light != null && impactTime < 40 ? light.getIntensity() : 0;
 
-						int activeBlackouts = Math.min((int)(impactTime / 8), 5);
+						int activeBlackouts = Math.min((int) (impactTime / 8), 5);
 
 						GlStateManager.enableBlend();
 						GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
-						planetShader.use();
-						planetShader.setUniform1f("phase", (float)-metric.phase);
-						planetShader.setUniform1f("offset", (float)uvOffset);
-						planetShader.setUniform1i("bodyTex", 0);
-						planetShader.setUniform1i("useBodyAlphaMask", 0);
-						planetShader.setUniform1i("lights", 0);
-						planetShader.setUniform1i("cityMask", 1);
-						planetShader.setUniform1i("blackouts", activeBlackouts);
+						if (planetShader.useUnchecked()) {
+							planetShader.setUniform1f("phase", (float) -metric.phase);
+							planetShader.setUniform1f("offset", (float) uvOffset);
+							planetShader.setUniform1i("bodyTex", 0);
+							planetShader.setUniform1i("useBodyAlphaMask", 0);
+							planetShader.setUniform1i("lights", 0);
+							planetShader.setUniform1i("cityMask", 1);
+							planetShader.setUniform1i("blackouts", activeBlackouts);
 
-						mc.getTextureManager().bindTexture(citylights[lightIntensity]);
-						if(gl13) {
-							GL13.glActiveTexture(GL13.GL_TEXTURE1);
-							mc.getTextureManager().bindTexture(metric.body.cityMask != null ? metric.body.cityMask : defaultMask);
-							GL13.glActiveTexture(GL13.GL_TEXTURE0);
+							mc.getTextureManager().bindTexture(citylights[lightIntensity]);
+							if (gl13) {
+								GlStateManager.setActiveTexture(GL13.GL_TEXTURE1);
+								mc.getTextureManager().bindTexture(metric.body.cityMask != null ? metric.body.cityMask : defaultMask);
+								GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
+							}
+
+							bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+							bufferBuilder.pos(-size, 100, -size).tex(0, 0).endVertex();
+							bufferBuilder.pos(size, 100, -size).tex(1, 0).endVertex();
+							bufferBuilder.pos(size, 100, size).tex(1, 1).endVertex();
+							bufferBuilder.pos(-size, 100, size).tex(0, 1).endVertex();
+							tessellator.draw();
+
+							if (gl13) {
+								GlStateManager.setActiveTexture(GL13.GL_TEXTURE1);
+								GlStateManager.bindTexture(mc.entityRenderer.lightmapTexture.getGlTextureId());
+								GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
+							}
+
+							if(!OptifineCompat.shadersEnabled()) enableTexture2D();
+
+							planetShader.stop();
 						}
-
-						bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-						bufferBuilder.pos(-size, 100, -size).tex(0, 0).endVertex();
-						bufferBuilder.pos(size, 100, -size).tex(1, 0).endVertex();
-						bufferBuilder.pos(size, 100, size).tex(1, 1).endVertex();
-						bufferBuilder.pos(-size, 100, size).tex(0, 1).endVertex();
-						tessellator.draw();
-
-						if(gl13) {
-							GL13.glActiveTexture(GL13.GL_TEXTURE1);
-							GlStateManager.bindTexture(mc.entityRenderer.lightmapTexture.getGlTextureId());
-							GL13.glActiveTexture(GL13.GL_TEXTURE0);
-						}
-
-						GlStateManager.enableTexture2D();
-
-						planetShader.stop();
 
 						GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
 						// Impact rendering (lava, shockwave, flare) - kept from your old port
-						if(impact != null) {
+						if (impact != null) {
 							double lavaAlpha = Math.min(impactTime * 0.1, 1.0);
 
 							double impactSize = (impactTime * 0.1) * size * 0.035;
@@ -981,8 +1066,8 @@ public class SkyProviderCelestial extends IRenderHandler {
 								GlStateManager.translate(-size * 0.5, 0, size * 0.4);
 
 								// impact shockwave, increases in size and fades out
-								if(impactAlpha > 0) {
-									GlStateManager.color(1.0F, 1.0F, 1.0F, (float)impactAlpha);
+								if (impactAlpha > 0) {
+									GlStateManager.color(1.0F, 1.0F, 1.0F, (float) impactAlpha);
 									mc.getTextureManager().bindTexture(shockwaveTexture);
 
 									bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
@@ -994,8 +1079,8 @@ public class SkyProviderCelestial extends IRenderHandler {
 								}
 
 								// impact flare, remains static in size and fades out
-								if(flareAlpha > 0) {
-									GlStateManager.color(1.0F, 1.0F, 1.0F, (float)flareAlpha);
+								if (flareAlpha > 0) {
+									GlStateManager.color(1.0F, 1.0F, 1.0F, (float) flareAlpha);
 									mc.getTextureManager().bindTexture(shockFlareTexture);
 
 									bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
@@ -1011,10 +1096,14 @@ public class SkyProviderCelestial extends IRenderHandler {
 						}
 
 
-						GlStateManager.disableTexture2D();
-
 						// Draw another layer on top to blend with the atmosphere
-						GlStateManager.color((float)(planetTint.x - blendDarken), (float)(planetTint.y - blendDarken), (float)(planetTint.z - blendDarken), (1 - blendAmount * visibility));
+						if(ownProgram) {
+							celestialShader.setUniform1i("useTexture", 0);
+						} else {
+							disableTexture2D();
+						}
+
+						GlStateManager.color((float) (planetTint.x - blendDarken), (float) (planetTint.y - blendDarken), (float) (planetTint.z - blendDarken), (1 - blendAmount * visibility));
 
 						bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 						bufferBuilder.pos(-size, 100.0D, -size).tex(0.0D, 0.0D).endVertex();
@@ -1023,7 +1112,11 @@ public class SkyProviderCelestial extends IRenderHandler {
 						bufferBuilder.pos(-size, 100.0D, size).tex(0.0D, 1.0D).endVertex();
 						tessellator.draw();
 
-						GlStateManager.enableTexture2D();
+						if(ownProgram) {
+							celestialShader.setUniform1i("useTexture", 1);
+						} else {
+							enableTexture2D();
+						}
 					}
 
 					// Front half of rings
@@ -1052,9 +1145,7 @@ public class SkyProviderCelestial extends IRenderHandler {
 				}
 
 				if(renderPoint) {
-					float alpha = MathHelper.clamp((float)size * 100.0F, 0.0F, 1.0F);
-					alpha *= 1 - BobMathUtil.remap01_clamp((float)size, (float)transitionMinSize, (float)transitionMaxSize);
-					GlStateManager.color(metric.body.color[0], metric.body.color[1], metric.body.color[2], alpha * visibility);
+					GlStateManager.color(metric.body.color[0], metric.body.color[1], metric.body.color[2], pointAlpha * visibility);
 					mc.getTextureManager().bindTexture(planetTexture);
 
 					bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
@@ -1067,12 +1158,15 @@ public class SkyProviderCelestial extends IRenderHandler {
 			}
 			GlStateManager.popMatrix();
 		}
+		if(ownProgram) celestialShader.stop();
 	}
 
 	protected void renderAtmosphereGlow(Tessellator tessellator, CelestialBody body, double size, float visibility) {
 		BufferBuilder buffer = tessellator.getBuffer();
 		float glowAlpha = getAtmosphereGlowAlpha(body) * visibility;
 		if(glowAlpha <= 0.001F) return;
+
+		boolean ownProgram = OptifineCompat.shadersEnabled();
 
         Vec3d atmo = getBodyAtmosphereColor(body);
 		float r = MathHelper.clamp((float)atmo.x * 1.15F, 0.0F, 1.0F);
@@ -1085,7 +1179,8 @@ public class SkyProviderCelestial extends IRenderHandler {
 
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		GlStateManager.disableTexture2D();
+		if(ownProgram) celestialShader.setUniform1i("useTexture", 0);
+		else disableTexture2D();
 		GlStateManager.disableCull();
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 
@@ -1139,7 +1234,8 @@ public class SkyProviderCelestial extends IRenderHandler {
 
 		GlStateManager.shadeModel(GL11.GL_FLAT);
 		GlStateManager.enableCull();
-		GlStateManager.enableTexture2D();
+		if(ownProgram) celestialShader.setUniform1i("useTexture", 1);
+		else enableTexture2D();
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 	}
 
@@ -1394,6 +1490,26 @@ public class SkyProviderCelestial extends IRenderHandler {
 
 		}
 		GlStateManager.popMatrix();
+	}
+
+	protected static void enableTexture2D() {
+		GlStateManager.enableTexture2D();
+		OptifineCompat.enableTexture2D();
+	}
+
+	protected static void disableTexture2D() {
+		GlStateManager.disableTexture2D();
+		OptifineCompat.disableTexture2D();
+	}
+
+	protected static void enableFog() {
+		GlStateManager.enableFog();
+		OptifineCompat.enableFog();
+	}
+
+	protected static void disableFog() {
+		GlStateManager.disableFog();
+		OptifineCompat.disableFog();
 	}
 
 }

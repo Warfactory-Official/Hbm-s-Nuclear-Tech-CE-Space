@@ -1011,7 +1011,7 @@ public class GUIMachineStardar extends GuiInfoContainer {
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-        planetShader.use();
+        planetShader.useUnchecked();
         planetShader.setUniform1f("phase", phase);
         planetShader.setUniform1f("offset", textureUOffset);
         planetShader.setUniform1i("bodyTex", 0);
