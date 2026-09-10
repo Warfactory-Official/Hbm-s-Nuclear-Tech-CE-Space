@@ -20,6 +20,7 @@
     "hbm.MixinArmorFSB",
     "hbm.MixinDictFrame",
     "hbm.MixinEntityEffectHandler",
+    "hbm.MixinExplosionNukeGeneric",
     "hbm.MixinFluids",
     "hbm.MixinHbmWorldGen",
     "hbm.MixinItemModInsert",

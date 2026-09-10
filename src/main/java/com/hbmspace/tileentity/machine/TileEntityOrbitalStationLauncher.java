@@ -50,7 +50,7 @@ import java.util.Objects;
 @AutoRegister
 public class TileEntityOrbitalStationLauncher extends TileEntityOrbStation implements ITickable, ISpaceGuiProvider, IControlReceiver, IFluidStandardReceiverMK2 {
 
-    public RocketStruct rocket;
+    public RocketStruct rocket = new RocketStruct();
 
     private OrbitalStation station;
     private EntityRideableRocket docked;

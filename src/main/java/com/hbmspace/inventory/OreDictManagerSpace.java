@@ -26,8 +26,6 @@ public class OreDictManagerSpace {
      * STABLE
      */
 
-    public static final String KEY_STONE = "stone";
-
     public static final DictGroup ANY_COAL_COKE = new DictGroup("AnyCoalCoke", ANY_COKE, COAL);
 
     /** NICKEL */

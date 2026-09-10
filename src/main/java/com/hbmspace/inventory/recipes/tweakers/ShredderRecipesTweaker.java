@@ -51,7 +51,7 @@ public class ShredderRecipesTweaker {
         ShredderRecipes.setRecipe(new ItemStack(ModBlocksSpace.vinyl_planks), new ItemStack(ModItemsSpace.powder_rubber, 1));
         ShredderRecipes.setRecipe(new ItemStack(ModBlocksSpace.pvc_planks), new ItemStack(ModItemsSpace.powder_pvc, 1));
 
-        List<ItemStack> stones = OreDictionary.getOres(OreDictManagerSpace.KEY_STONE);
+        List<ItemStack> stones = OreDictionary.getOres(OreDictManager.KEY_STONE);
         List<ItemStack> cobbles = OreDictionary.getOres(OreDictManager.KEY_COBBLESTONE);
         List<ItemStack> sands = OreDictionary.getOres(OreDictManager.KEY_SAND);
 

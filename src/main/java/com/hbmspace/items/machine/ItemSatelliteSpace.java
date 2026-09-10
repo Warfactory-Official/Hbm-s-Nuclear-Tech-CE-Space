@@ -107,7 +107,7 @@ public class ItemSatelliteSpace extends ItemCustomMissilePart implements ISatChi
                 if(targetWorld == null) return new ActionResult<>(EnumActionResult.PASS, stack);
             }
 
-            Satellite.orbit(targetWorld, Satellite.getIDFromItem(stack.getItem()), getFreq(stack), player.posX, player.posY, player.posZ);
+            Satellite.orbit(targetWorld, Satellite.getIDFromStack(stack), getFreq(stack), player.posX, player.posY, player.posZ);
 
             player.sendMessage(new TextComponentString("Satellite launched successfully!"));
         }

@@ -23,7 +23,6 @@ public class RecipeTweakerManager {
                 case "CyclotronRecipes": CyclotronRecipesTweaker.init(); break;
                 case "ElectrolyserFluidRecipes": ElectrolyserFluidRecipesTweaker.init(); break;
                 case "FractionRecipes": FractionRecipesTweaker.init(); break;
-                case "HadronRecipes": HadronRecipesTweaker.init(); break;
                 case "HydrotreatingRecipes": HydrotreatingRecipesTweaker.init(); break;
                 case "LiquefactionRecipes": LiquefactionRecipesTweaker.init(); break;
                 case "MagicRecipes": MagicRecipesTweaker.init(); break;

@@ -1,7 +1,6 @@
 package com.hbmspace.render.tileentity;
 
 import com.hbm.blocks.BlockDummyable;
-import com.hbm.render.amlfrom1710.Vec3;
 import com.hbm.render.item.ItemRenderBase;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbm.render.util.BeamPronter;

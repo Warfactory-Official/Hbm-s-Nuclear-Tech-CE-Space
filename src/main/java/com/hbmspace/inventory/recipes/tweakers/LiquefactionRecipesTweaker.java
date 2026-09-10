@@ -3,15 +3,14 @@ package com.hbmspace.inventory.recipes.tweakers;
 import com.hbm.inventory.RecipesCommon;
 import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.inventory.fluid.Fluids;
-import com.hbm.inventory.recipes.LiquefactionRecipes;
 import com.hbm.items.ModItems;
 import com.hbmspace.blocks.ModBlocksSpace;
 import com.hbmspace.items.ModItemsSpace;
 import net.minecraft.init.Blocks;
 
 import static com.hbm.inventory.OreDictManager.KEY_COBBLESTONE;
+import static com.hbm.inventory.OreDictManager.KEY_STONE;
 import static com.hbm.inventory.recipes.LiquefactionRecipes.recipes;
-import static com.hbmspace.inventory.OreDictManagerSpace.KEY_STONE;
 
 // someone kill me
 public class LiquefactionRecipesTweaker {

@@ -222,7 +222,7 @@ public class EntityRideableRocket extends EntityMissileBaseNT implements ILookOv
                         targetWorld = DimensionManager.getWorld(targetDimensionId);
                     }
                     if(targetWorld != null) {
-                        Satellite.orbit(targetWorld, Satellite.getIDFromItem(rocket.capsule), satFreq, posX, posY, posZ);
+                        Satellite.orbit(targetWorld, Satellite.getIDFromStack(new ItemStack(rocket.capsule)), satFreq, posX, posY, posZ);
                     }
                 } else if(rocket.capsule == ModItemsSpace.rp_station_core_20) {
                     OrbitalStation.addStation(x, z, CelestialBody.getBody(world));
