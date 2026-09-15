@@ -56,7 +56,7 @@ public class MixinItemBedrockOreBaseClient extends Item implements IDynamicModel
     @Override
     public void registerModel() {
         ModelResourceLocation modelLocation = new ModelResourceLocation("hbm:items/bedrock_ore_base", "inventory");
-        for (int meta = 1; meta <= 10; meta++) {
+        for (int meta = 0; meta < SolarSystem.Body.VALUES.length; meta++) {
             ModelLoader.setCustomModelResourceLocation(this, meta, modelLocation);
         }
     }

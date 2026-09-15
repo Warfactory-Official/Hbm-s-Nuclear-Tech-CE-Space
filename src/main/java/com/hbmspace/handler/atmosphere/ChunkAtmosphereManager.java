@@ -24,7 +24,7 @@ public class ChunkAtmosphereManager {
     }
 
     @SubscribeEvent
-    public void onWorldTick(TickEvent.WorldTickEvent event) {
+    public static void onWorldTick(TickEvent.WorldTickEvent event) {
         proxy.receiveWorldTick(event);
     }
 
@@ -49,7 +49,7 @@ public class ChunkAtmosphereManager {
     }
 
     @SubscribeEvent
-    public void onTreeGrow(SaplingGrowTreeEvent event) {
+    public static void onTreeGrow(SaplingGrowTreeEvent event) {
         proxy.receiveTreeGrow(event);
     }
 

@@ -81,6 +81,10 @@ public abstract class WorldProviderCelestial extends WorldProvider {
 	@Override
 	public void updateWeather() {
 		CBT_Atmosphere atmosphere = CelestialBody.getTrait(world, CBT_Atmosphere.class);
+		double pressure = atmosphere != null ? atmosphere.getPressure() : 0;
+
+		// Will prevent water from existing, will be unset immediately before using a bucket if inside a pressurized room
+		this.doesWaterVaporize = !world.isRemote && pressure <= 0.2D;
 
 		if(world.isRemote) {
 			EntityPlayer player = MainRegistry.proxy.me();

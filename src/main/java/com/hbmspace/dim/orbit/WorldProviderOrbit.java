@@ -70,6 +70,9 @@ public class WorldProviderOrbit extends WorldProvider {
 
 	@Override
 	public void updateWeather() {
+		// Will prevent water from existing, will be unset immediately before using a bucket if inside a pressurized room
+		this.doesWaterVaporize = !world.isRemote;
+
 		world.prevRainingStrength = 0.0F;
 		world.prevThunderingStrength = 0.0F;
 		world.rainingStrength = 0.0F;

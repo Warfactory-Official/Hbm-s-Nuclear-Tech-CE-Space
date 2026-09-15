@@ -13,6 +13,7 @@ import com.hbmspace.dim.moho.biome.BiomeGenBaseMoho;
 import com.hbmspace.dim.moon.BiomeGenMoon;
 import com.hbmspace.dim.orbit.BiomeGenOrbit;
 import com.hbmspace.dim.tekto.biome.BiomeGenBaseTekto;
+import com.hbmspace.util.RegistryUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
@@ -42,36 +43,36 @@ public class ModBiomesInit {
     public static void registerBiomes(RegistryEvent.Register<Biome> evt){
         MinecraftForge.TERRAIN_GEN_BUS.register(ModBiomesInit.class);
         evt.getRegistry().registerAll(
-                BiomeGenBaseDuna.dunaPlains.setRegistryName("hbm", "duna_plains"),
-                BiomeGenBaseDuna.dunaLowlands.setRegistryName("hbm", "duna_lowlands"),
-                BiomeGenBaseDuna.dunaPolar.setRegistryName("hbm", "duna_polar"),
-                BiomeGenBaseDuna.dunaHills.setRegistryName("hbm", "duna_hills"),
-                BiomeGenBaseDuna.dunaPolarHills.setRegistryName("hbm", "duna_polar_hills"),
-                BiomeGenBaseDres.dresPlains.setRegistryName("hbm", "dres_plains"),
-                BiomeGenBaseDres.dresCanyon.setRegistryName("hbm", "dres_canyon"),
-                BiomeGenBaseEve.evePlains.setRegistryName("hbm", "eve_plains"),
-                BiomeGenBaseEve.eveOcean.setRegistryName("hbm", "eve_ocean"),
-                BiomeGenBaseEve.eveMountains.setRegistryName("hbm", "eve_mountains"),
-                BiomeGenBaseEve.eveSeismicPlains.setRegistryName("hbm", "eve_seismic_plains"),
-                BiomeGenBaseEve.eveRiver.setRegistryName("hbm", "eve_river"),
-                BiomeGenIke.biome.setRegistryName("hbm", "ike"),
-                BiomeGenBaseLaythe.laytheIsland.setRegistryName("hbm", "laythe_island"),
-                BiomeGenBaseLaythe.laytheOcean.setRegistryName("hbm", "laythe_ocean"),
-                BiomeGenBaseLaythe.laythePolar.setRegistryName("hbm", "laythe_polar"),
-                BiomeGenBaseLaythe.laytheCoast.setRegistryName("hbm", "laythe_coast"),
-                BiomeGenBaseMinmus.minmusPlains.setRegistryName("hbm", "minmus_plains"),
-                BiomeGenBaseMinmus.minmusCanyon.setRegistryName("hbm", "minmus_canyon"),
-                BiomeGenBaseMoho.mohoCrag.setRegistryName("hbm", "moho_crag"),
-                BiomeGenBaseMoho.mohoBasalt.setRegistryName("hbm", "moho_basalt"),
-                BiomeGenBaseMoho.mohoLavaSea.setRegistryName("hbm", "moho_lava_sea"),
-                BiomeGenBaseMoho.mohoPlateau.setRegistryName("hbm", "moho_plateau"),
-                BiomeGenBaseTekto.polyvinylPlains.setRegistryName("hbm", "tekto_polyvinyl_plains"),
-                BiomeGenBaseTekto.halogenHills.setRegistryName("hbm", "tekto_halogen_hills"),
-                BiomeGenBaseTekto.tetrachloricRiver.setRegistryName("hbm", "tekto_tetrachloride_river"),
-                BiomeGenBaseTekto.forest.setRegistryName("hbm", "tekto_forest"),
-                BiomeGenBaseTekto.vinylsands.setRegistryName("hbm", "tekto_vinyl_desert"),
-                BiomeGenMoon.biome.setRegistryName("hbm", "moon"),
-                BiomeGenOrbit.biome.setRegistryName("hbm", "orbit")
+                RegistryUtil.forceRegistryName(BiomeGenBaseDuna.dunaPlains, "hbm", "duna_plains"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseDuna.dunaLowlands, "hbm", "duna_lowlands"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseDuna.dunaPolar, "hbm", "duna_polar"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseDuna.dunaHills, "hbm", "duna_hills"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseDuna.dunaPolarHills, "hbm", "duna_polar_hills"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseDres.dresPlains, "hbm", "dres_plains"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseDres.dresCanyon, "hbm", "dres_canyon"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseEve.evePlains, "hbm", "eve_plains"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseEve.eveOcean, "hbm", "eve_ocean"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseEve.eveMountains, "hbm", "eve_mountains"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseEve.eveSeismicPlains, "hbm", "eve_seismic_plains"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseEve.eveRiver, "hbm", "eve_river"),
+                RegistryUtil.forceRegistryName(BiomeGenIke.biome, "hbm", "ike"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseLaythe.laytheIsland, "hbm", "laythe_island"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseLaythe.laytheOcean, "hbm", "laythe_ocean"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseLaythe.laythePolar, "hbm", "laythe_polar"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseLaythe.laytheCoast, "hbm", "laythe_coast"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseMinmus.minmusPlains, "hbm", "minmus_plains"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseMinmus.minmusCanyon, "hbm", "minmus_canyon"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseMoho.mohoCrag, "hbm", "moho_crag"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseMoho.mohoBasalt, "hbm", "moho_basalt"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseMoho.mohoLavaSea, "hbm", "moho_lava_sea"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseMoho.mohoPlateau, "hbm", "moho_plateau"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseTekto.polyvinylPlains, "hbm", "tekto_polyvinyl_plains"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseTekto.halogenHills, "hbm", "tekto_halogen_hills"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseTekto.tetrachloricRiver, "hbm", "tekto_tetrachloride_river"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseTekto.forest, "hbm", "tekto_forest"),
+                RegistryUtil.forceRegistryName(BiomeGenBaseTekto.vinylsands, "hbm", "tekto_vinyl_desert"),
+                RegistryUtil.forceRegistryName(BiomeGenMoon.biome, "hbm", "moon"),
+                RegistryUtil.forceRegistryName(BiomeGenOrbit.biome, "hbm", "orbit")
         );
 
         addTypes();

@@ -283,11 +283,11 @@ public class ModItemsSpace {
     }
 
     public static void swapStackSizes(RegistryEvent.Register<Item> event){
-        var filteredSet = ModItems.ALL_ITEMS.stream().filter( o -> o instanceof ItemMissile).collect(Collectors.toSet());
-
-        for(Item itemMissile : filteredSet){
-           itemMissile.setMaxStackSize(64);
-           event.getRegistry().register(itemMissile);
+        for(Item item : ModItems.ALL_ITEMS){
+            if(item instanceof ItemMissile) {
+                item.setMaxStackSize(64);
+                if(!event.getRegistry().containsValue(item)) event.getRegistry().register(item);
+            }
         }
 
     }

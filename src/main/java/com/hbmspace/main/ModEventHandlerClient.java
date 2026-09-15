@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.hbm.blocks.ILookOverlay;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.inventory.material.NTMMaterial;
+import com.hbm.items.IDynamicModels;
 import com.hbm.items.ModItems;
 import com.hbm.items.special.ItemAutogen;
 import com.hbm.lib.HBMSoundHandler;
@@ -32,13 +33,19 @@ import com.hbmspace.entity.missile.EntityRideableRocket;
 import com.hbmspace.inventory.materials.MatsSpace;
 import com.hbmspace.items.IDynamicModelsSpace;
 import com.hbmspace.items.ModItemsSpace;
+import com.hbmspace.items.armor.ItemModOxy;
 import com.hbmspace.lib.HBMSpaceSoundHandler;
 import com.hbmspace.particle.ParticleGlow;
 import com.hbmspace.render.misc.RocketPart;
+import com.hbmspace.util.ArmorUtilSpace;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiIngame;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -50,15 +57,19 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
@@ -70,6 +81,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
 import java.util.ArrayList;
@@ -125,9 +137,14 @@ public class ModEventHandlerClient {
     }
 
     private static void registerModel(Item item, int meta) {
-        if(!(item instanceof IDynamicModelsSpace dyn && dyn.INSTANCES.contains(item))) {
-            ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), "inventory"));
-        }
+        if (item == Items.AIR || isDynamic(item)) return;
+        if (item instanceof ItemBlock itemBlock && isDynamic(itemBlock.getBlock())) return;
+        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+    }
+
+    private static boolean isDynamic(Object o) {
+        return (o instanceof IDynamicModelsSpace && IDynamicModelsSpace.INSTANCES.contains(o))
+                || (o instanceof IDynamicModels && IDynamicModels.INSTANCES.contains(o));
     }
 
     private static void registerBlockModel(Block block, int meta) {
@@ -165,6 +182,65 @@ public class ModEventHandlerClient {
                     ((ILookOverlay) entity).printHook(event, world, BlockPos.ORIGIN);
                 }
             }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onRenderAirHUD(RenderGameOverlayEvent.Pre event) {
+        if(event.getType() != RenderGameOverlayEvent.ElementType.AIR) return;
+
+        Minecraft mc = Minecraft.getMinecraft();
+        EntityPlayer player = mc.player;
+        if(player == null) return;
+
+        int width = event.getResolution().getScaledWidth();
+        int height = event.getResolution().getScaledHeight();
+
+        int air = HbmLivingPropsSpace.getOxy(player);
+        if(air < 100) {
+            GuiIngame gui = mc.ingameGUI;
+
+            mc.getTextureManager().bindTexture(Gui.ICONS);
+            GlStateManager.enableBlend();
+            int left = width / 2 + 91;
+            int top = height - GuiIngameForge.right_height;
+
+            int full = MathHelper.ceil((double) (air - 2) * 10.0D / 100.0D);
+            int partial = MathHelper.ceil((double) air * 10.0D / 100.0D) - full;
+
+            for(int i = 0; i < full + partial; ++i) {
+                gui.drawTexturedModalRect(left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9);
+            }
+            GuiIngameForge.right_height += 10;
+
+            GlStateManager.disableBlend();
+
+            event.setCanceled(true);
+        }
+
+        ItemStack tankStack = ArmorUtilSpace.getOxygenTank(player);
+        if(!tankStack.isEmpty() && tankStack.getItem() instanceof ItemModOxy tank) {
+            float tot = (float) ItemModOxy.getFuel(tankStack) / (float) tank.getMaxFuel();
+
+            GlStateManager.disableTexture2D();
+            int right = width / 2 + 91;
+            int top = height - GuiIngameForge.right_height + 3;
+            Tessellator tess = Tessellator.getInstance();
+            BufferBuilder buf = tess.getBuffer();
+            buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+            buf.pos(right - 81.5, top - 0.5, 0).color(0.25F, 0.25F, 0.25F, 1F).endVertex();
+            buf.pos(right - 81.5, top + 4.5, 0).color(0.25F, 0.25F, 0.25F, 1F).endVertex();
+            buf.pos(right + 0.5, top + 4.5, 0).color(0.25F, 0.25F, 0.25F, 1F).endVertex();
+            buf.pos(right + 0.5, top - 0.5, 0).color(0.25F, 0.25F, 0.25F, 1F).endVertex();
+            buf.pos(right - 81 * tot, top, 0).color(1F - tot, tot, tot, 1F).endVertex();
+            buf.pos(right - 81 * tot, top + 4, 0).color(1F - tot, tot, tot, 1F).endVertex();
+            buf.pos(right, top + 4, 0).color(1F - tot, tot, tot, 1F).endVertex();
+            buf.pos(right, top, 0).color(1F - tot, tot, tot, 1F).endVertex();
+            tess.draw();
+            GlStateManager.enableTexture2D();
+
+            GuiIngameForge.right_height += 6;
+            event.setCanceled(true);
         }
     }
 

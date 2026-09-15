@@ -161,12 +161,9 @@ public class BlockAlgaeFilm extends BlockContainer implements ITileEntityProvide
     @Override
     @SideOnly(Side.CLIENT)
     public void registerModel() {
+        ModelResourceLocation inventoryMrl = new ModelResourceLocation(this.getRegistryName(), "meta=0");
         for (int meta = 0; meta < META_COUNT; meta++) {
-            ModelLoader.setCustomModelResourceLocation(
-                    Item.getItemFromBlock(this),
-                    meta,
-                    new ModelResourceLocation(this.getRegistryName(), "meta=" + meta)
-            );
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), meta, inventoryMrl);
         }
     }
 

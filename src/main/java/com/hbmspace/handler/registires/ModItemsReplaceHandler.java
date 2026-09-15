@@ -4,14 +4,11 @@ import com.hbm.blocks.ModBlocks;
 import com.hbm.items.ModItems;
 import com.hbmspace.accessors.ICanSealAccessor;
 import com.hbmspace.accessors.IHaveCorrosionProtAccessor;
-import com.hbmspace.enums.EnumAddonTypes;
 import com.hbmspace.items.ModItemsSpace;
+import com.hbmspace.util.RegistryUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-
-import java.lang.reflect.Field;
 
 public class ModItemsReplaceHandler {
 
@@ -26,7 +23,7 @@ public class ModItemsReplaceHandler {
         if (ModItems.insert_yharonite instanceof IHaveCorrosionProtAccessor yhar_corprot) yhar_corprot.withCorrosionProtection();
         ModItems.ALL_ITEMS.remove(ModItemsSpace.insert_cmb);
         ModItemsSpace.ALL_ITEMS.add(ModItemsSpace.insert_cmb);
-        event.getRegistry().register(ModItemsSpace.insert_cmb);
+        if (!event.getRegistry().containsValue(ModItemsSpace.insert_cmb)) event.getRegistry().register(ModItemsSpace.insert_cmb);
     }
 
     private static void replaceArmors(RegistryEvent.Register<Item> event) {
@@ -90,9 +87,7 @@ public class ModItemsReplaceHandler {
         ore_oil_item.setHasSubtypes(true);
         ore_oil_item.setMaxDamage(0);
 
-        EnumAddonTypes.setInstanceField(IForgeRegistryEntry.Impl.class, "registryName", ore_oil_item, null);
-
-        ore_oil_item.setRegistryName("hbm", "ore_oil");
+        RegistryUtil.forceRegistryName(ore_oil_item, "hbm", "ore_oil");
         ItemBlock ore_boil_item = new ItemBlock(ModBlocks.ore_bedrock_oil) {
             @Override
             public int getMetadata(int damage) {
@@ -102,9 +97,7 @@ public class ModItemsReplaceHandler {
         ore_boil_item.setHasSubtypes(true);
         ore_boil_item.setMaxDamage(0);
 
-        EnumAddonTypes.setInstanceField(IForgeRegistryEntry.Impl.class, "registryName", ore_boil_item, null);
-
-        ore_boil_item.setRegistryName("hbm", "ore_bedrock_oil");
+        RegistryUtil.forceRegistryName(ore_boil_item, "hbm", "ore_bedrock_oil");
         event.getRegistry().register(ore_oil_item);
         event.getRegistry().register(ore_boil_item);
     }

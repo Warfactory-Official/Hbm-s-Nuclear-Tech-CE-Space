@@ -1,6 +1,9 @@
 package com.hbmspace.handler.atmosphere;
 
+import com.hbm.blocks.BlockDummyable;
 import com.hbm.blocks.ModBlocks;
+import com.hbm.tileentity.machine.TileEntityDummy;
+import net.minecraft.tileentity.TileEntity;
 import com.hbm.config.GeneralConfig;
 import com.hbmspace.dim.CelestialBody;
 import com.hbmspace.dim.orbit.WorldProviderOrbit;
@@ -40,6 +43,7 @@ public class ChunkAtmosphereHandler {
 
 	private final HashMap<Integer, HashMap<IAtmosphereProvider, AtmosphereBlob>> worldBlobs = new HashMap<>();
 	private final int MAX_BLOB_RADIUS = 256;
+	private static final int DOOR_SCAN_RADIUS = 8;
 
     // How much CO2 is converted into O2 from various growing
     // Balanced around these amounts of plants providing for a single pressurized room:
@@ -266,6 +270,65 @@ public class ChunkAtmosphereHandler {
 		}
 	}
 
+	public void onDoorStateChanged(World world, BlockPos core, boolean sealed) {
+		if(world.isRemote) return;
+
+		List<AtmosphereBlob> nearbyBlobs = getBlobsWithinRadius(world, new ThreeInts(core.getX(), core.getY(), core.getZ()), MAX_BLOB_RADIUS + DOOR_SCAN_RADIUS);
+		if(nearbyBlobs.isEmpty()) return;
+
+		List<ThreeInts> doorBlocks = new ArrayList<>();
+		for(int x = core.getX() - DOOR_SCAN_RADIUS; x <= core.getX() + DOOR_SCAN_RADIUS; x++) {
+			for(int y = Math.max(core.getY() - DOOR_SCAN_RADIUS, 0); y <= Math.min(core.getY() + DOOR_SCAN_RADIUS, 255); y++) {
+				for(int z = core.getZ() - DOOR_SCAN_RADIUS; z <= core.getZ() + DOOR_SCAN_RADIUS; z++) {
+					BlockPos pos = new BlockPos(x, y, z);
+					if(!world.isBlockLoaded(pos) || !isPartOfDoor(world, pos, core)) continue;
+					if(AtmosphereBlob.isBlockSealed(world, x, y, z) != sealed) continue;
+					doorBlocks.add(new ThreeInts(x, y, z));
+				}
+			}
+		}
+
+		if(doorBlocks.isEmpty()) return;
+
+		for(AtmosphereBlob blob : nearbyBlobs) {
+			if(sealed) {
+				blob.removeBlocks(doorBlocks);
+				if(!blob.contains(blob.getRootPosition())) {
+					blob.runDepress = false;
+					blob.addBlock(blob.getRootPosition());
+				}
+			} else {
+				search:
+				for(ThreeInts pos : doorBlocks) {
+					for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+						if(blob.contains(pos.getPositionAtOffset(dir))) {
+							blob.runDepress = true;
+							blob.depressDir = dir;
+							blob.addBlock(pos);
+							break search;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private static boolean isPartOfDoor(World world, BlockPos pos, BlockPos core) {
+		if(pos.equals(core)) return true;
+
+		Block block = world.getBlockState(pos).getBlock();
+		if(block instanceof BlockDummyable dummyable) {
+			TileEntity te = dummyable.findCoreTE(world, pos);
+			return te != null && te.getPos().equals(core);
+		}
+		if(block.hasTileEntity(world.getBlockState(pos))) {
+			TileEntity te = world.getTileEntity(pos);
+			return te instanceof TileEntityDummy dummy && core.equals(dummy.target);
+		}
+
+		return false;
+	}
+
 	private void onBlockPlaced(World world, ThreeInts pos) {
 		if(!AtmosphereBlob.isBlockSealed(world, pos)) return;
 
@@ -302,11 +365,13 @@ public class ChunkAtmosphereHandler {
 	public void receiveWorldLoad(WorldEvent.Load event) {
 		if(event.getWorld().isRemote) return;
 		worldBlobs.put(event.getWorld().provider.getDimension(), new HashMap<>());
+		growthMap.put(event.getWorld().provider.getDimension(), new ArrayDeque<>());
 	}
 
 	public void receiveWorldUnload(WorldEvent.Unload event) {
 		if(event.getWorld().isRemote) return;
 		worldBlobs.remove(event.getWorld().provider.getDimension());
+		growthMap.remove(event.getWorld().provider.getDimension());
 	}
 
     public void receiveWorldTick(TickEvent.WorldTickEvent tick) {
@@ -317,6 +382,7 @@ public class ChunkAtmosphereHandler {
         if(tick.world.getTotalWorldTime() % 20 != 0) return;
 
         HashMap<IAtmosphereProvider, AtmosphereBlob> blobs = worldBlobs.get(tick.world.provider.getDimension());
+        if(blobs == null) return;
         for(AtmosphereBlob blob : blobs.values()) {
             blob.checkGrowth();
         }
@@ -408,6 +474,7 @@ public class ChunkAtmosphereHandler {
 
     private void tickTerraforming(World world) {
         Queue<Growth> growths = growthMap.get(world.provider.getDimension());
+        if(growths == null) return;
 
         for(int g = 0; g < 64; g++) {
             Growth growth = growths.poll();
@@ -453,12 +520,12 @@ public class ChunkAtmosphereHandler {
     }
 
     public void addGrowth(World world, Block from, Block into, int x, int y, int z, int size) {
-        Queue<Growth> growths = growthMap.get(world.provider.getDimension());
+        Queue<Growth> growths = growthMap.computeIfAbsent(world.provider.getDimension(), k -> new ArrayDeque<>());
         growths.add(new Growth(from, into, x, y, z, size));
     }
 
     public void addGrowth(World world, Block from, Block into, int x, int y, int z, int count, int size) {
-        Queue<Growth> growths = growthMap.get(world.provider.getDimension());
+        Queue<Growth> growths = growthMap.computeIfAbsent(world.provider.getDimension(), k -> new ArrayDeque<>());
         for(int i = 0; i < count; i++) {
             growths.add(new Growth(from, into, x, y, z, size));
         }

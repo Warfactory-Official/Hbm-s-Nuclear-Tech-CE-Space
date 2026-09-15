@@ -334,6 +334,7 @@ public abstract class ChunkProviderCelestial implements IChunkGenerator {
 	@Override
 	public void populate(int x, int z) {
 		BlockFalling.fallInstantly = true;
+		worldObj.provider.doesWaterVaporize = false; // Prevent other mod world generators thinking this is hell (god damn it MCP)
 
 		int k = x * 16;
 		int l = z * 16;

@@ -174,6 +174,7 @@ public class BlockCoral extends BlockEnumMetaSpace<BlockCoral.EnumCoral> impleme
             @Override
             protected @NotNull ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
                 int meta = state.getValue(META);
+                if (meta >= EnumCoral.VALUES.length) meta = 0;
                 EnumFacing facing = state.getValue(FACING);
                 String props = String.format("facing=%s,meta=%d", facing.getName(), meta);
                 return new ModelResourceLocation(loc, props);

@@ -101,7 +101,7 @@ public class ModBlocksSpace {
     public static final Block ore_silicon = new BlockOre("ore_silicon", null, 2).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
 
     public static final Block stone_resource = new BlockEnumMetaSpace<>(Material.ROCK, SoundType.STONE, "stone_resource", BlockEnumsSpace.EnumStoneType.VALUES, true, true).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
-    public static final Block bromine_block = new GenericFluidBlockSpace(ModFluidsSpace.bromine_fluid, Material.WATER, "bromine_block").setResistance(500F);
+    public static final Block bromine_block = ((Block) new GenericFluidBlockSpace(ModFluidsSpace.bromine_fluid, Material.WATER, "bromine_block")).setResistance(500F);
 
     public static final Block spike_cacti = new BlockRubberCacti("rubber_tall").setCreativeTab(MainRegistry.blockTab).setSoundType(SoundType.GROUND).setHardness(0.0F);
     public static final Block vinyl_sand = new BlockFallingBaseSpace(Material.SAND, "vinyl_sand", SoundType.SAND, "sand_vinyl").setCreativeTab(MainRegistry.blockTab).setHardness(1.0F).setResistance(1.0F);
@@ -180,7 +180,7 @@ public class ModBlocksSpace {
     public static final Block rubber_leaves = new BlockRubberLeaves("rubber_leaves").setCreativeTab(MainRegistry.blockTab).setHardness(0.5F).setResistance(2.5F);
     public static final Block rubber_silt = new BlockBakeBaseSpace(Material.SAND, "rubber_silt").setSoundType(SoundType.GROUND).setCreativeTab(MainRegistry.blockTab).setHardness(1.0F).setResistance(1.0F);
     public static final Block pet_leaves = new BlockRubberLeaves("pet_leaves").setCreativeTab(MainRegistry.blockTab).setHardness(0.5F).setResistance(2.5F);
-    public static final Block ccl_block = new GenericFluidBlockSpace(ccl_fluid, Material.WATER, "ccl_block").setDamage(ModDamageSource.lead, 1F).setResistance(500.0F);
+    public static final Block ccl_block = ((Block) new GenericFluidBlockSpace(ccl_fluid, Material.WATER, "ccl_block").setDamage(ModDamageSource.lead, 1F)).setResistance(500.0F);
     public static final Block dummy_beam = new BlockDummyableBeam(Material.IRON, "dummy_beam").setHardness(10.0F).setResistance(20.0F);
     public static final Block astroturf = new BlockNoSpawn("astroturf").setSoundType(SoundType.GROUND).setCreativeTab(MainRegistry.blockTab).setHardness(0.6F);
 

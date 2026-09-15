@@ -168,8 +168,6 @@ public class SpaceMain {
         AutoRegistrySpace.loadAuxiliaryData();
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
-        OreDictManagerSpace.registerOres();
-
         int i = 0;
         AutoRegistrySpace.registerEntities(i);
         forceInitEntityDataParameters();
@@ -193,6 +191,7 @@ public class SpaceMain {
     @EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
+        OreDictManagerSpace.registerOres();
         RecipeTweakerManager.initRecipeTweakers();
     }
 

@@ -9,14 +9,19 @@ import com.hbm.handler.ThreeInts;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.main.MainRegistry;
+import com.hbm.tileentity.machine.TileEntityDummy;
 import com.hbm.util.AdjacencyGraph;
 import com.hbmspace.entity.effect.EntityDepress;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongIterator;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
@@ -24,9 +29,12 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AtmosphereBlob implements Runnable {
 	
@@ -44,12 +52,13 @@ public class AtmosphereBlob implements Runnable {
 
 	private static final ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 16, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>(32));
 	
-	private boolean executing;
-	private ThreeInts blockPos;
+	private final AtomicBoolean executing = new AtomicBoolean();
+	private volatile ThreeInts blockPos;
+	private volatile ThreeInts pendingPos;
 
     // If true, run depressurization effects on blobbing failure
-    public boolean runDepress;
-    public ForgeDirection depressDir = ForgeDirection.UP;
+    public volatile boolean runDepress;
+    public volatile ForgeDirection depressDir = ForgeDirection.UP;
 
     private final LinkedHashMap<ThreeInts, Integer> plants = new LinkedHashMap<>();
 
@@ -78,7 +87,6 @@ public class AtmosphereBlob implements Runnable {
 		IBlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
 		if(block.isAir(state, world, pos)) return false;
-		if(block == ModBlocks.sliding_seal_door) return true; // fuck it, I'll put a temporary bandaid
 
 		if (block instanceof BlockFarmland || block instanceof BlockFence) {
 			return false;
@@ -92,7 +100,11 @@ public class AtmosphereBlob implements Runnable {
 			if (core instanceof IDoor door) {
 				return door.getState() == IDoor.DoorState.CLOSED;
 			}
-			return false;
+			return block == ModBlocks.sliding_seal_door;
+		}
+		if (block.hasTileEntity(state)) {
+			IDoor door = getDoor(world, pos);
+			if (door != null) return door.getState() == IDoor.DoorState.CLOSED;
 		}
 
 		if(state.isFullCube() || state.isOpaqueCube()) return true;
@@ -117,6 +129,13 @@ public class AtmosphereBlob implements Runnable {
                 (bb.maxZ - bb.minZ > 1.0 - eps);
 	}
 	
+	public static IDoor getDoor(World world, BlockPos pos) {
+		TileEntity te = world.getTileEntity(pos);
+		if (te instanceof IDoor door) return door;
+		if (te instanceof TileEntityDummy dummy && dummy.target != null && world.getTileEntity(dummy.target) instanceof IDoor door) return door;
+		return null;
+	}
+
 	public int getBlobMaxRadius() {
 		return handler.getMaxBlobRadius();
 	}
@@ -149,30 +168,35 @@ public class AtmosphereBlob implements Runnable {
 	 * Recursively checks for contiguous blocks and adds them to the graph
 	 */
 	public void addBlock(ThreeInts blockPos) {
-		boolean alreadyContains;
 		synchronized(graph) {
-			alreadyContains = this.contains(blockPos);
+			if(graph.contains(blockPos)) return;
+			if(graph.size() != 0 && !hasNeighbourInGraph(blockPos)) return;
 		}
-		if(!alreadyContains &&
-				(this.graph.size() == 0 || this.contains(blockPos.getPositionAtOffset(ForgeDirection.UP)) || this.contains(blockPos.getPositionAtOffset(ForgeDirection.DOWN)) ||
-						this.contains(blockPos.getPositionAtOffset(ForgeDirection.EAST)) || this.contains(blockPos.getPositionAtOffset(ForgeDirection.WEST)) ||
-						this.contains(blockPos.getPositionAtOffset(ForgeDirection.NORTH)) || this.contains(blockPos.getPositionAtOffset(ForgeDirection.SOUTH)))) {
-			if(!executing) {
-				this.blockPos = blockPos;
-				executing = true;
-				
-				if(GeneralConfig.enableThreadedAtmospheres) {
-					try {
-						pool.execute(this);
-					} catch (RejectedExecutionException e) {
-						MainRegistry.logger.warn("Atmosphere calculation at {} aborted due to oversize queue!", this.getRootPosition());
-						executing = false;
-					}
-				} else {
-					this.run();
-				}
+
+		if(!executing.compareAndSet(false, true)) {
+			pendingPos = blockPos;
+			return;
+		}
+
+		this.blockPos = blockPos;
+
+		if(GeneralConfig.enableThreadedAtmospheres) {
+			try {
+				pool.execute(this);
+			} catch (RejectedExecutionException e) {
+				MainRegistry.logger.warn("Atmosphere calculation at {} aborted due to oversize queue!", this.getRootPosition());
+				executing.set(false);
 			}
+		} else {
+			this.run();
 		}
+	}
+
+	private boolean hasNeighbourInGraph(ThreeInts pos) {
+		for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			if(graph.contains(pos.getPositionAtOffset(dir))) return true;
+		}
+		return false;
 	}
 
 	private void addSingleBlock(ThreeInts blockPos) {
@@ -248,15 +272,52 @@ public class AtmosphereBlob implements Runnable {
 		}
 	}
 	
+	public void removeBlocks(Collection<ThreeInts> positions) {
+		synchronized (graph) {
+			boolean removed = false;
+			for(ThreeInts pos : positions) {
+				if(graph.contains(pos)) {
+					graph.remove(pos);
+					removed = true;
+				}
+			}
+
+			if(!removed || graph.size() == 0) return;
+
+			ThreeInts root = handler.getRootPosition();
+			if(!graph.contains(root)) {
+				runEffectOnWorldBlocks(handler.getAtmoWorld(), new ArrayList<>(graph.getKeys()));
+				graph.clear();
+				return;
+			}
+
+			Set<ThreeInts> reachable = graph.getAllNodesConnectedToNode(root);
+			if(reachable.size() == graph.size()) return;
+
+			List<ThreeInts> detached = new ArrayList<>();
+			for(ThreeInts pos : new ArrayList<>(graph.getKeys())) {
+				if(!reachable.contains(pos) && graph.contains(pos)) {
+					detached.addAll(graph.removeAllNodesConnectedTo(pos));
+				}
+			}
+
+			runEffectOnWorldBlocks(handler.getAtmoWorld(), detached);
+		}
+	}
+
 	/**
 	 * Removes all nodes from the blob
 	 */
 	public void clearBlob() {
 		World world = handler.getAtmoWorld();
+		List<ThreeInts> locations;
 
-		runEffectOnWorldBlocks(world, getLocations());
-		
-		graph.clear();
+		synchronized(graph) {
+			locations = new ArrayList<>(graph.getKeys());
+			graph.clear();
+		}
+
+		if(!locations.isEmpty()) runOnWorldThread(world, () -> runEffectOnWorldBlocks(world, locations));
 	}
 	
 	/**
@@ -275,56 +336,72 @@ public class AtmosphereBlob implements Runnable {
 
 	@Override
 	public void run() {
-		Stack<ThreeInts> stack = new Stack<>();
-		stack.push(blockPos);
+		final ThreeInts start = blockPos;
+		final boolean depress = runDepress;
+		final ForgeDirection dir = depressDir;
+		final World world = handler.getAtmoWorld();
+		final ThreeInts root = getRootPosition();
+		final int maxSize = getBlobMaxRadius();
+		final long maxDistSq = (long) maxSize * maxSize;
 
-		final int maxSize = this.getBlobMaxRadius();
-		final HashSet<ThreeInts> addableBlocks = new HashSet<>();
+		final LongOpenHashSet addableBlocks = new LongOpenHashSet();
+		final LongArrayList[] buckets = new LongArrayList[maxSize + 1];
+		final SealCache cache = new SealCache(world);
 
 		boolean success = true;
 
 		try {
-			// Breadth first search; non recursive
-			while(!stack.isEmpty()) {
-				ThreeInts stackElement = stack.pop();
-				addableBlocks.add(stackElement);
+			long startKey = pack(start.x, start.y, start.z);
+			addableBlocks.add(startKey);
+			int top = Math.min((int) Math.sqrt(distanceSquared(start.x, start.y, start.z, root)), maxSize);
+			pushToBucket(buckets, top, startKey);
 
-				for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-					ThreeInts searchNextPosition = stackElement.getPositionAtOffset(dir);
-
-					boolean alreadyInGraph;
-					synchronized (graph) {
-						alreadyInGraph = graph.contains(searchNextPosition);
-					}
-
-					// Don't path areas we have already scanned
-					if(!alreadyInGraph && !addableBlocks.contains(searchNextPosition)) {
-
-						if(isPositionAllowed(handler.getAtmoWorld(), searchNextPosition)) {
-							if(searchNextPosition.getDistanceSquared(this.getRootPosition()) <= maxSize * maxSize) {
-								stack.push(searchNextPosition);
-								addableBlocks.add(searchNextPosition);
-							} else {
-                                MainRegistry.logger.info("Atmosphere leak at: {}", searchNextPosition);
-								if(runDepress) decompress(blockPos, depressDir);
-								success = false;
-								break;
-							}
-						}
-					}
+			search:
+			while(top >= 0) {
+				LongArrayList bucket = buckets[top];
+				if(bucket == null || bucket.isEmpty()) {
+					top--;
+					continue;
 				}
 
-				if(!success) break;
+				long current = bucket.removeLong(bucket.size() - 1);
+				int cx = unpackX(current);
+				int cy = unpackY(current);
+				int cz = unpackZ(current);
+
+				for(ForgeDirection offset : ForgeDirection.VALID_DIRECTIONS) {
+					int nx = cx + offset.offsetX;
+					int ny = cy + offset.offsetY;
+					int nz = cz + offset.offsetZ;
+					long key = pack(nx, ny, nz);
+
+					if(addableBlocks.contains(key) || contains(nx, ny, nz) || !cache.isAllowed(nx, ny, nz)) continue;
+
+					long distSq = distanceSquared(nx, ny, nz, root);
+					if(distSq > maxDistSq) {
+						MainRegistry.logger.info("Atmosphere leak at: {}, {}, {}", nx, ny, nz);
+						if(depress) decompress(start, dir);
+						success = false;
+						break search;
+					}
+
+					addableBlocks.add(key);
+					int index = (int) Math.sqrt(distSq);
+					pushToBucket(buckets, index, key);
+					if(index > top) top = index;
+				}
 			}
 		} catch (Throwable e) {
 			MainRegistry.logger.error("Critical error in AtmosphereBlob thread", e);
 			success = false;
 		}
 
-		if (success) {
-			synchronized (graph) {
-				for(ThreeInts addableBlock : addableBlocks) {
-					addSingleBlock(addableBlock);
+		if(success) {
+			synchronized(graph) {
+				LongIterator iterator = addableBlocks.iterator();
+				while(iterator.hasNext()) {
+					long key = iterator.nextLong();
+					addSingleBlock(new ThreeInts(unpackX(key), unpackY(key), unpackZ(key)));
 				}
 				handler.onBlobCreated(this);
 			}
@@ -332,7 +409,82 @@ public class AtmosphereBlob implements Runnable {
 			clearBlob();
 		}
 
-		executing = false;
+		executing.set(false);
+
+		ThreeInts pending = pendingPos;
+		pendingPos = null;
+		if(pending != null && (success || pending.equals(getRootPosition()))) addBlock(pending);
+	}
+
+	private static void pushToBucket(LongArrayList[] buckets, int index, long key) {
+		LongArrayList bucket = buckets[index];
+		if(bucket == null) {
+			bucket = new LongArrayList();
+			buckets[index] = bucket;
+		}
+		bucket.add(key);
+	}
+
+	private static long distanceSquared(int x, int y, int z, ThreeInts root) {
+		long dx = x - root.x;
+		long dy = y - root.y;
+		long dz = z - root.z;
+		return dx * dx + dy * dy + dz * dz;
+	}
+
+	private static long pack(int x, int y, int z) {
+		return ((long) x & 0x3FFFFFFL) << 38 | ((long) y & 0xFFFL) << 26 | ((long) z & 0x3FFFFFFL);
+	}
+
+	private static int unpackX(long key) {
+		return (int) (key >> 38);
+	}
+
+	private static int unpackY(long key) {
+		return (int) (key << 26 >> 52);
+	}
+
+	private static int unpackZ(long key) {
+		return (int) (key << 38 >> 38);
+	}
+
+	private static void runOnWorldThread(World world, Runnable task) {
+		if(world instanceof WorldServer server) {
+			server.addScheduledTask(task);
+		} else {
+			task.run();
+		}
+	}
+
+	private static final class SealCache {
+
+		private final World world;
+		private final IChunkProvider provider;
+		private Chunk chunk;
+		private int chunkX;
+		private int chunkZ;
+
+		private SealCache(World world) {
+			this.world = world;
+			this.provider = world.getChunkProvider();
+		}
+
+		private boolean isAllowed(int x, int y, int z) {
+			if(y < 0 || y > 256) return true;
+
+			int cx = x >> 4;
+			int cz = z >> 4;
+			if(chunk == null || cx != chunkX || cz != chunkZ) {
+				chunk = provider.getLoadedChunk(cx, cz);
+				chunkX = cx;
+				chunkZ = cz;
+			}
+
+			if(chunk == null) return false;
+			if(chunk.getBlockState(x, y, z).getBlock() == Blocks.AIR) return true;
+
+			return !isBlockSealed(world, x, y, z);
+		}
 	}
 
 
@@ -353,14 +505,14 @@ public class AtmosphereBlob implements Runnable {
     public void decompress(ThreeInts pos, ForgeDirection dir) {
         World world = handler.getAtmoWorld();
 
-        EntityDepress depress = new EntityDepress(world, dir.getOpposite().toEnumFacing(), 20);
-        depress.posX = pos.x + 0.5;
-        depress.posY = pos.y + 0.5;
-        depress.posZ = pos.z + 0.5;
-        world.spawnEntity(depress);
+        runOnWorldThread(world, () -> {
+            EntityDepress depress = new EntityDepress(world, dir.getOpposite().toEnumFacing(), 20);
+            depress.setPosition(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5);
+            world.spawnEntity(depress);
 
-        world.playSound(null, depress.posX, depress.posY, depress.posZ, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.NEUTRAL, 1.0F, 1.6F);
-        world.playSound(null, depress.posX, depress.posY, depress.posZ, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.NEUTRAL, 1.0F, 0.25F);
+            world.playSound(null, depress.posX, depress.posY, depress.posZ, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.NEUTRAL, 1.0F, 1.6F);
+            world.playSound(null, depress.posX, depress.posY, depress.posZ, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.NEUTRAL, 1.0F, 0.25F);
+        });
     }
 
     public void checkGrowth() {
