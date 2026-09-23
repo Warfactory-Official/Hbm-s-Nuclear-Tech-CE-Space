@@ -18,6 +18,7 @@ import com.hbmspace.items.tool.ItemTransporterLinker;
 import com.hbmspace.tileentity.ISpaceGuiProvider;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -473,7 +474,7 @@ public abstract class TileEntityTransporterBase extends TileEntityMachineBase im
 
     // Is commutative, will automatically link and unlink its pair
     @Override
-    public void receiveControl(NBTTagCompound nbt) {
+    public void receiveControl(EntityPlayerMP player, NBTTagCompound nbt) {
         if(nbt.hasKey("name")) name = nbt.getString("name");
         if(nbt.hasKey("unlink")) {
             unlinkTransporter();

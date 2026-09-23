@@ -16,6 +16,7 @@ import com.hbmspace.items.ItemVOTVdrive;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -212,8 +213,8 @@ public class TileEntityTransporterRocket extends TileEntityTransporterBase {
     }
 
     @Override
-    public void receiveControl(NBTTagCompound nbt) {
-        super.receiveControl(nbt);
+    public void receiveControl(EntityPlayerMP player, NBTTagCompound nbt) {
+        super.receiveControl(player, nbt);
         if(nbt.hasKey("threshold"))
             threshold = nbt.getInteger("threshold");
     }

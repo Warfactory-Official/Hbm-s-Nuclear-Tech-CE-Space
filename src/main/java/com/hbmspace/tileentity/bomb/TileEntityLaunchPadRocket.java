@@ -558,9 +558,6 @@ public class TileEntityLaunchPadRocket extends TileEntityMachineBase implements 
     }
 
     @Override
-    public void receiveControl(NBTTagCompound data) { }
-
-    @Override
     public void receiveControl(EntityPlayerMP player, NBTTagCompound data) {
         if(data.getBoolean("launch")) {
             launch(player);
